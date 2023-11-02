@@ -1,0 +1,40 @@
+@import '~/scss-vars/monitors.scss';
+@import '~/scss-vars/colors.scss';
+
+.appWrapper {
+  & > .siteHeader {
+    // border-bottom: 2px dashed #{$color-red};
+    border-bottom: 2px solid lightgray;
+  }
+  @media(max-width: #{$monitor-md}px) {
+    & > .siteHeader {
+      height: #{$height-limit-header-mobile}px;
+    }
+  }
+  @media(min-width:calc(#{$monitor-md}px + 1px)) {
+    & > .siteHeader {
+      height: #{$height-limit-header-desktop}px;
+    }
+  }
+
+  & > .siteBody {
+    // border: 2px dashed lightgray;
+
+    padding: 64px 0 64px 0;
+  }
+  @media(max-width: #{$monitor-md}px) {
+    & > .siteBody {
+      min-height: calc(100dvh - #{$height-limit-header-mobile}px);
+    }
+  }
+  @media(min-width:calc(#{$monitor-md}px + 1px)) {
+    & > .siteBody {
+      min-height: calc(100dvh - #{$height-limit-header-desktop}px);
+    }
+  }
+
+  & > .siteFooter {
+    // border: 2px dashed lightgray;
+    border-top: 2px solid lightgray;
+  }
+}

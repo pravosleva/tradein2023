@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import axios, { AxiosInstance, AxiosResponse, CancelToken } from 'axios'
+import axios, { AxiosError, AxiosInstance, AxiosResponse, CancelToken } from 'axios'
 // import axiosRetry from 'axios-retry'
 // @ts-ignore
 import * as rax from 'retry-axios'
@@ -90,10 +90,16 @@ export class Api {
           console.log('Request canceled', err.message)
         } else {
           console.dir({
-            REACT_APP_API_URL,
+            // REACT_APP_API_URL,
             err,
-            url,
+            // url,
           })
+          switch (true) {
+            case err instanceof AxiosError:
+              return { isOk: false, message: err.message, res: err.response?.data }
+            default:
+              break
+          }
         }
         return { isOk: false, message: err.message || 'No err.message', res: err }
       })

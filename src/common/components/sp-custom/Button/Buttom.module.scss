@@ -1,0 +1,109 @@
+@import '~/scss-vars/colors.scss';
+
+.spBtn {
+  user-select: none;
+  text-decoration: none;
+  outline: none;
+  // letter-spacing: .09em;
+  // text-transform: uppercase;
+
+  border-radius: 8px;
+  border-width: 2px;
+  cursor: pointer;
+  // padding: 5px;
+  transition: all 0.3s linear, box-shadow 0.3s linear;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  // NOTE: variant
+  &_outlined {
+    background-color: #fff;
+
+    &_default {
+      border-color: lightgray;
+      color: lightgray;
+    }
+
+    &_primary {
+      border-color: $color-blue-main;
+      color: $color-blue-main;
+    }
+    &_primary:hover {
+      box-shadow: 0px 14px 30px -8px rgba(38, 114, 182, 0.5);
+      background: #599DDB;
+    }
+
+    &_secondary {
+      border-color: gray;
+      color: gray;
+    }
+
+    &_success {
+      border-color: $color-green-dark;
+      color: $color-green-dark;
+    }
+    &_success:hover {
+      background: #49C77C;
+      box-shadow: 0px 14px 30px -8px rgba(4, 156, 119, 0.5);
+    }
+
+    &_black {
+      border-color: #000;
+      color: #000;
+    }
+    &_black:hover {
+      background: #000;
+      color: #fff;
+    }
+  }
+  &_filled {
+    color: #fff;
+
+    &_default {
+      background-color: lightgray;
+      border-color: lightgray;
+    }
+
+    &_primary {
+      background-color: $color-blue-main;
+      border-color: $color-blue-main;
+    }
+    &_primary:hover {
+      border: 2px solid #599DDB;
+      box-shadow: 0px 14px 30px -8px rgba(38, 114, 182, 0.5);
+      background: #599DDB;
+    }
+
+    &_secondary {
+      background-color: gray;
+      border-color: gray;
+    }
+
+    &_success {
+      background-color: $color-green-dark;
+      border-color: $color-green-dark;
+    }
+    &_success:hover {
+      border: 2px solid #49C77C;
+      box-shadow: 0px 14px 30px -8px rgba(4, 156, 119, 0.5);
+      background: #49C77C;
+    }
+
+    &_black {
+      background-color: #000;
+      border-color: #000;
+    }
+    &_black:hover {
+      border: 2px solid #000;
+      box-shadow: 0px 14px 30px -8px rgba(4, 156, 119, 0.5);
+      background: #000;
+    }
+  }
+
+  &_fullWidth {
+    width: 100%;
+  }
+}

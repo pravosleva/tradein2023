@@ -1,127 +1,290 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+// import reactLogo from '~/assets/react.svg'
+// import viteLogo from '/vite.svg'
+import classes from '~/App.module.scss'
 // import { pageMachine } from './xstate/pageMachine'
-import { stepMachine, EStep } from './xstate/stepMachine'
+import { stepMachine, EStep } from '~/common/xstate/stepMachine'
 // import { actions } from 'xstate'
 import { useMachine } from '@xstate/react'
 import { useMemo } from 'react'
+// import {} from '@headlessui/react'
+import {
+  // Button,
+  Menu,
+} from '~/common/components/tailwind'
+import { Button, ContentWithControls, ResponsiveBlock } from '~/common/components/sp-custom'
+import { BaseLayout } from '~/common/components/layout/BaseLayout'
+import {
+  InitStep,
+  EnterImeiStep,
+  UploadPhotoProcessStep,
+} from '~/common/components/steps'
+import {
+  WithAppContextHOC,
+  // useStore, NEvent, TAppMicroStore, initialState,
+} from '~/common/context/WithAppContextHOC'
+import clsx from 'clsx'
 
 function App() {
-  // const [count, setCount] = useState(0)
   const [state, send] = useMachine(stepMachine)
   const can = state.can.bind(state)
 
   const Step = useMemo(() => {
     switch (state.value) {
-      case EStep.INIT:
+      case EStep.Init:
+        return <InitStep onStart={() => send({ type: 'goIMEI' })} />
+      case EStep.EnterImei:
         return (
-          <div className='stack'>
-            <div>{state.value}</div>
-            <button onClick={() => send({ type: 'goIMEI' })}>
-              Start
-            </button>
-          </div>
+          <EnterImeiStep
+            value={state.context.imei.value}
+            onChangeIMEI={(e: React.FormEvent<HTMLInputElement>) => send({ type: 'SET_IMEI', value: e.currentTarget.value })}
+            onSendIMEI={() => send({ type: 'goNext' })}
+            isNextBtnDisabled={!can({ type: 'goNext' })}
+            onPrev={() => send({ type: 'goPrev' })}
+            isPrevBtnDisabled={!can({ type: 'goPrev' })}
+          />
         )
-      case EStep.ENTER_IMEI:
+      case EStep.SendImei:
         return (
-          <div className='stack'>
-            <div>{state.value} | {state.context.imei.value}</div>
-            <input
-              value={state.context.imei.value}
-              onChange={(e: React.FormEvent<HTMLInputElement>) => {
-                send({ type: 'SET_IMEI', value: e.currentTarget.value })
-              }}
-            />
-            <button
-              onClick={() => {
-                send({ type: 'goNext' })
-              }}
-              disabled={!can({ type: 'goNext' })}
-            >
-              Проверить IMEI
-            </button>
-          </div>
-        )
-      case EStep.SEND_IMEI:
-        return (
-          <div className='stack'>
-            <div>{state.value} [{state.context.imei.result.state}]</div>
+          <ContentWithControls
+            header='Подождите...'
+            controls={[]}
+          >
+            <div>{state.context.imei.result.state}</div>
             {/* <pre className='pre-style'>{JSON.stringify(fetchIMEIMachineState.context, null, 2)}</pre> */}
-          </div>
+          </ContentWithControls>
         )
-      case EStep.IMEI_ERR:
+      case EStep.ImeiErr:
         return (
-          <div className='stack'>
-            <div>{state.value} | {state.context.imei.uiMsg}</div>
-            <button
-              onClick={() => {
-                send({ type: 'prevStep' })
-              }}
+          <div className={classes.stack}>
+            <div>{state.context.imei.uiMsg}</div>
+            <Button
+              variant='outlined'
+              color='default'
+              onClick={() => send({ type: 'prevStep' })}
             >
               Назад
-            </button>
+            </Button>
           </div>
         )
-      case EStep.FINAL:
+      case EStep.EnterMemoryAndColor:
         return (
-          <div className='stack'>
-            <div>{state.value}</div>
-          </div>
+          <ContentWithControls
+            header='Параметры устройства'
+            controls={[
+              {
+                id: '1',
+                label: 'Дальше',
+                btn: { variant: 'filled', color: 'primary' },
+                onClick: () => send({ type: 'goNext' }),
+                isDisabled: !can({ type: 'goNext' }),
+              },
+              {
+                id: '2',
+                label: 'Назад',
+                btn: { variant: 'outlined', color: 'default' },
+                onClick: () => send({ type: 'goPrev' }),
+                isDisabled: !can({ type: 'goPrev' }),
+              },
+            ]}
+          >
+            <div className={clsx(classes.specialActionsGrid)}>
+              {
+                !state.context.imei.response?.phone.memory && (
+                  <Menu
+                    selectedId={state.context.memory.selectedItem?.value}
+                    onItemSelect={({ item }) => send({ type: 'SET_MEMORY', value: item })}
+                    sections={[
+                      {
+                        id: 'mem',
+                        items: state.context.imei.result.memoryList
+                      }
+                    ]}
+                    label={!state.context.memory.selectedItem ? 'Выберите Память' : state.context.memory.selectedItem.label}
+                    isDisabled={state.context.imei.result.memoryList.length === 0}
+                    shoudHaveAttention={!state.context.memory.selectedItem}
+                  />
+                )
+              }
+              {
+                !state.context.imei.response?.phone.color && (
+                  <Menu
+                    selectedId={state.context.color.selectedItem?.value}
+                    onItemSelect={({ item }) => send({ type: 'SET_COLOR', value: item })}
+                    sections={[
+                      {
+                        id: 'col',
+                        items: state.context.color.dynamicList,
+                      }
+                    ]}
+                    label={!state.context.color.selectedItem ? 'Выберите Цвет' : state.context.color.selectedItem.label}
+                    isDisabled={!state.context.memory.selectedItem}
+                    shoudHaveAttention={!state.context.color.selectedItem}
+                  />
+                )
+              }
+            </div>
+          </ContentWithControls>
         )
-      case EStep.ENTER_MEM_AND_COLOR:
+      case EStep.PrePriceTable:
         return (
-          <div className='stack'>
-            <div>{state.value}</div>
-            {/* <input
-              value={state.context.color.value || ''}
-              onChange={(e: React.FormEvent<HTMLInputElement>) => send({ type: 'SET_COLOR', value: { value: e.currentTarget.value, label: 'wip' } })}
-            />
-            <input
-              value={state.context.memory.value || ''}
-              onChange={(e: React.FormEvent<HTMLInputElement>) => send({ type: 'SET_MEMORY', value: { value: e.currentTarget.value, label: 'wip' } })}
-            /> */}
-            <button
-              onClick={() => send({ type: 'goNext' })}
-              disabled={!can({ type: 'goNext' })}
-            >
-              Next
-            </button>
-          </div>
+          <ContentWithControls
+            header='Предварительная сумма скидки'
+            controls={[
+              {
+                id: '1',
+                label: 'Клиент согласен',
+                btn: { variant: 'filled', color: 'success' },
+                onClick: () => send({ type: 'goNext' }),
+                // isDisabled: !can({ type: 'goNext' }),
+              },
+              {
+                id: '2',
+                label: 'Назад',
+                btn: { variant: 'outlined', color: 'default' },
+                onClick: () => send({ type: 'goPrev' }),
+                // isDisabled: !can({ type: 'goPrev' }),
+              },
+            ]}
+          >
+            <div>[ TODO: Content will be set here... ]</div>
+          </ContentWithControls>
+        )
+      case EStep.CheckPhone:
+        return (
+          <ContentWithControls
+            header='/phone/check'
+            controls={[
+              {
+                id: '1',
+                label: 'Next (dev)',
+                btn: { variant: 'filled', color: 'primary' },
+                onClick: () => send({ type: 'goNext' }),
+                isDisabled: !can({ type: 'goNext' }),
+              },
+              {
+                id: '2',
+                label: 'Prev (dev)',
+                btn: { variant: 'outlined', color: 'default' },
+                onClick: () => send({ type: 'goPrev' }),
+                isDisabled: !can({ type: 'goPrev' }),
+              },
+            ]}
+          >
+            <div>{state.context.checkPhone.result.state}</div>
+            {!!state.context.checkPhone.uiMsg && (
+              <div>{state.context.checkPhone.uiMsg}</div>
+            )}
+            <pre className={classes.preStyled}>{JSON.stringify(state.context.checkPhone.response, null, 2)}</pre>
+          </ContentWithControls>
+        )
+      case EStep.GetPhotoLink:
+        return (
+          <ContentWithControls
+            header='/photo/link'
+            controls={[
+              {
+                id: '1',
+                label: 'Next (dev)',
+                btn: { variant: 'filled', color: 'primary' },
+                onClick: () => send({ type: 'goNext' }),
+                isDisabled: !can({ type: 'goNext' }),
+              },
+              {
+                id: '2',
+                label: 'Prev (dev)',
+                btn: { variant: 'outlined', color: 'default' },
+                onClick: () => send({ type: 'goPrev' }),
+                isDisabled: !can({ type: 'goPrev' }),
+              },
+            ]}
+          >
+            <h3 className='text-2xl font-bold'>TODO</h3>
+            <ul className="max-w-md px-4 space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400">
+              <li>No <code className={classes.inlineCode}>tradeinId</code> in <code className={classes.inlineCode}>state.context</code> for this step!</li>
+            </ul>
+            <div>{state.context.photoLink.result.state}</div>
+            {!!state.context.photoLink.uiMsg && (
+              <div>{state.context.photoLink.uiMsg}</div>
+            )}
+            <pre className={classes.preStyled}>{JSON.stringify(state.context.photoLink.response, null, 2)}</pre>
+          </ContentWithControls>
+        )
+      case EStep.UploadPhotoProcess:
+        return (
+          <UploadPhotoProcessStep
+            header='Ожидание загрузки фото'
+            controls={[
+              {
+                id: '1',
+                label: 'Next (dev)',
+                btn: { variant: 'filled', color: 'primary' },
+                onClick: () => send({ type: 'goNext' }),
+              },
+              {
+                id: '2',
+                label: 'Prev (dev)',
+                btn: { variant: 'outlined', color: 'default' },
+                onClick: () => send({ type: 'goPrev' }),
+              },
+            ]}
+          />
+        )
+      case EStep.Final:
+        return (
+          <ContentWithControls
+            header='Done.'
+            controls={[]}
+          >
+            {null}
+          </ContentWithControls>
         )
       default:
         return (
-          <div className='stack'>
-            <div>Unknown step: {String(state.value)}</div>
-          </div>
+          <ContentWithControls
+            header={`Unknown step: ${String(state.value)}`}
+            controls={[]}
+          >
+            {null}
+          </ContentWithControls>
         )
     }
   }, [
     state.value, send, state.context.imei, can,
-    // state.context.color.selectedItem, state.context.memory.selectedItem,
+    state.context.color.selectedItem, state.context.memory.selectedItem,
+    state.context.color.dynamicList,
+    state.context.checkPhone.result.state,
+    state.context.checkPhone.response,
+    state.context.checkPhone.uiMsg,
+    state.context.photoLink.response,
+    state.context.photoLink.result.state,
+    state.context.photoLink.uiMsg,
   ])
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      {Step}
-      <div className="card">
-        <pre className='pre-style'>{JSON.stringify(state.context, null, 2)}</pre>
-      </div>
-      {/* <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p> */}
-    </>
+    <WithAppContextHOC>
+      <BaseLayout>
+        <div className={classes.stack}>
+          {/* <ResponsiveBlock isPaddedMobile isLimitedForDesktop>
+            <h1 className="text-3xl font-bold underline" style={{ marginBottom: '50px' }}>Vite + React + Tailwind</h1>
+          </ResponsiveBlock> */}
+
+          <ResponsiveBlock isPaddedMobile isLimitedForDesktop>
+            <div className={classes.stack}>
+              {/* <h2 className="text-2xl font-bold">{String(state.value)}</h2> */}
+              {Step}
+            </div>
+          </ResponsiveBlock>
+
+          {/* <ResponsiveBlock isPaddedMobile isLimitedForDesktop>
+            <div className={classes.card}>
+              <pre className={classes.preStyled}>{JSON.stringify(state.context.checkPhone, null, 2)}</pre>
+            </div>
+          </ResponsiveBlock> */}
+        </div>
+      </BaseLayout>
+    </WithAppContextHOC>
   )
 }
 

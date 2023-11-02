@@ -1,0 +1,68 @@
+@import '~/scss-vars/monitors.scss';
+@import '~/scss-vars/colors.scss';
+@import '~/scss-vars/sizes.scss';
+
+// #root {
+//   max-width: 1280px;
+//   margin: 0 auto;
+//   padding: 2rem;
+//   text-align: center;
+// }
+
+.truncate {
+  box-sizing: border-box;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card {
+  padding: 2em;
+  border: 1px solid black;
+}
+
+.redBorder {
+  border: 1px solid red;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  // border: 1px dashed red;
+  gap: 16px;
+}
+.preStyled {
+  text-align: left;
+  max-height: 300px;
+  width: 100%;
+  overflow-y: auto;
+
+  white-space: pre-wrap;       /* css-3 */
+  white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+  white-space: -pre-wrap;      /* Opera 4-6 */
+  white-space: -o-pre-wrap;    /* Opera 7 */
+  word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+
+.specialActionsGrid {
+  display: grid;
+  column-gap: #{$size-pad-2}px;
+  row-gap: #{$size-pad-2}px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.inlineCode {
+  font-family: system-ui; // monospace, monospace;
+  font-weight: bold;
+  padding: 2px 5px;
+  /* background: rgb(180, 204, 56); */
+  background: #262626;
+  color: #FFF;
+  border-radius: 6px;
+  /* box-shadow: 0 0 3px rgba(0,0,0,.2); */
+}
