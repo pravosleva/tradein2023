@@ -126,7 +126,6 @@ export const Menu = memo(({
               'cursor-not-allowed': isDisabled,
               ['bg-gradient-to-br from-green-400 to-blue-600 hover:bg-gradient-to-bl']: !shoudHaveAttention,
               ['bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-pink-200 dark:focus:ring-pink-800']: shoudHaveAttention,
-
             },
           )}
           disabled={isDisabled}

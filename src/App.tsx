@@ -13,6 +13,7 @@ import {
   Alert,
   // Button,
   Menu,
+  Spinner,
 } from '~/common/components/tailwind'
 import { Button, ContentWithControls, ResponsiveBlock } from '~/common/components/sp-custom'
 import { BaseLayout } from '~/common/components/layout/BaseLayout'
@@ -51,14 +52,19 @@ function App() {
             header='Подождите...'
             controls={[]}
           >
-            <div>{state.context.imei.result.state}</div>
-            <div>[ TODO: Loader... ]</div>
+            {/* <div>{state.context.imei.result.state}</div> */}
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}><Spinner /></div>
           </ContentWithControls>
         )
       case EStep.ImeiErr:
         return (
           <div className={classes.stack}>
-            <div>{state.context.imei.uiMsg}</div>
+            <Alert
+              type='danger'
+              // header={state.context.checkPhone.result.state}
+            >
+              <div>{state.context.imei.uiMsg}</div>
+            </Alert>
             <Button
               variant='outlined'
               color='default'
@@ -174,7 +180,7 @@ function App() {
           >
             {
               state.context.checkPhone.result.state === 'pending' ? (
-                <div>[ TODO: Loader... ]</div>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}><Spinner /></div>
               ) : (
                 <Alert
                   type={state.context.checkPhone.result.state === 'error' ? 'danger' : 'info'}
@@ -184,7 +190,11 @@ function App() {
                 </Alert>
               )
             }
-            <pre className={classes.preStyled}>{JSON.stringify(state.context.checkPhone.response, null, 2)}</pre>
+            {
+              !!state.context.checkPhone.response && (
+                <pre className={classes.preStyled}>{JSON.stringify(state.context.checkPhone.response, null, 2)}</pre>
+              )
+            }
           </ContentWithControls>
         )
       case EStep.GetPhotoLink:
@@ -210,7 +220,7 @@ function App() {
           >
             {
               state.context.photoLink.result.state === 'pending' ? (
-                <div>[ TODO: Loader... ]</div>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}><Spinner /></div>
               ) : (
                 <Alert
                   type={state.context.photoLink.result.state === 'error' ? 'danger' : 'success'}
@@ -220,7 +230,11 @@ function App() {
                 </Alert>
               )
             }
-            <pre className={classes.preStyled}>{JSON.stringify(state.context.photoLink.response, null, 2)}</pre>
+            {
+              !!state.context.photoLink.response && (
+                <pre className={classes.preStyled}>{JSON.stringify(state.context.photoLink.response, null, 2)}</pre>
+              )
+            }
           </ContentWithControls>
         )
       case EStep.UploadPhotoProcess:
