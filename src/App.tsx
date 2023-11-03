@@ -29,7 +29,6 @@ import clsx from 'clsx'
 function App() {
   const [state, send] = useMachine(stepMachine)
   const can = state.can.bind(state)
-
   const Step = useMemo(() => {
     switch (state.value) {
       case EStep.Init:
@@ -51,8 +50,7 @@ function App() {
             header='Подождите...'
             controls={[]}
           >
-            <div>{state.context.imei.result.state}</div>
-            {/* <pre className='pre-style'>{JSON.stringify(fetchIMEIMachineState.context, null, 2)}</pre> */}
+            <div>{state.context.imei.result.state} [ Loader... ]</div>
           </ContentWithControls>
         )
       case EStep.ImeiErr:
@@ -200,10 +198,6 @@ function App() {
               },
             ]}
           >
-            <h3 className='text-2xl font-bold'>TODO</h3>
-            <ul className="max-w-md px-4 space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400">
-              <li>No <code className={classes.inlineCode}>tradeinId</code> in <code className={classes.inlineCode}>state.context</code> for this step!</li>
-            </ul>
             <div>{state.context.photoLink.result.state}</div>
             {!!state.context.photoLink.uiMsg && (
               <div>{state.context.photoLink.uiMsg}</div>
@@ -279,7 +273,7 @@ function App() {
 
           {/* <ResponsiveBlock isPaddedMobile isLimitedForDesktop>
             <div className={classes.card}>
-              <pre className={classes.preStyled}>{JSON.stringify(state.context.checkPhone, null, 2)}</pre>
+              <pre className={classes.preStyled}>{JSON.stringify(state.context.photoLink, null, 2)}</pre>
             </div>
           </ResponsiveBlock> */}
         </div>

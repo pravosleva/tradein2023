@@ -41,7 +41,9 @@ enum EErrCode {
 
 
 type TState = {
-  // stepName: EStep;
+  baseSessionInfo: {
+    tradeinId: number | null;
+  },
   imei: {
     value: string;
     response: null | NSP.TImeiResponse;
@@ -79,6 +81,9 @@ export const stepMachine = createMachine<TState>(
   {
     initial: EStep.Init,
     context: {
+      baseSessionInfo: {
+        tradeinId: null,
+      },
       imei: {
         value: '',
         response: null,
@@ -324,17 +329,17 @@ export const stepMachine = createMachine<TState>(
     predictableActionArguments: true,
   },
   {
-    // actions: {
-    //   imeiSendStart: assign({
-    //     imei: (ctx) => ({ ...ctx.imei, req: { ...ctx.imei.req, state: 'pending' } }),
-    //   }),
-    //   imeiSendOk: assign({
-    //     imei: (ctx) => ({ ...ctx.imei, req: { ...ctx.imei.req, state: 'success' } }),
-    //   }),
-    //   imeiSendErr: assign({
-    //     imei: (ctx) => ({ ...ctx.imei, req: { ...ctx.imei.req, state: 'error' } } ),
-    //   }),
-    // },
+    actions: {
+      // imeiSendStart: assign({
+      //   imei: (ctx) => ({ ...ctx.imei, req: { ...ctx.imei.req, state: 'pending' } }),
+      // }),
+      // imeiSendOk: assign({
+      //   imei: (ctx) => ({ ...ctx.imei, req: { ...ctx.imei.req, state: 'success' } }),
+      // }),
+      // imeiSendErr: assign({
+      //   imei: (ctx) => ({ ...ctx.imei, req: { ...ctx.imei.req, state: 'error' } } ),
+      // }),
+    },
     services: {
       fetchIMEIMachine: async (context, _ev, _invMeta) => {
         // NOTE: thats received data
@@ -383,9 +388,12 @@ export const stepMachine = createMachine<TState>(
         return Promise.reject(res)
       },
       checkPhoneMachine: async (context, _ev, _invMeta) => {
-        context.checkPhone.response = null
-        context.checkPhone.uiMsg = null
-        context.checkPhone.result.state = 'pending'
+        const cleanupCheckPhoneStep = () => {
+          context.checkPhone.response = null
+          context.checkPhone.uiMsg = null
+          context.checkPhone.result.state = 'pending'
+        }
+        cleanupCheckPhoneStep()
 
         const res = await httpClient.checkPhone({
           IMEI: context.imei.value,
@@ -408,13 +416,21 @@ export const stepMachine = createMachine<TState>(
         return Promise.reject(res)
       },
       getPhotoLinkMachine: async (context, _ev, _invMeta) => {
-        context.photoLink.response = null
-        context.photoLink.uiMsg = null
-        context.photoLink.result.state = 'pending'
+        const cleanupPhotoLinkStep = () => {
+          context.photoLink.response = null
+          context.photoLink.uiMsg = null
+          context.photoLink.result.state = 'pending'
+        }
+        cleanupPhotoLinkStep()
+
+        if (!context.baseSessionInfo.tradeinId) return Promise.reject({
+          ok: false,
+          message: 'tradeinId не установлен в данной сессии',
+        })
 
         const res = await httpClient.getPhotoLink({
           // TODO: Should be got from state!
-          tradeinId: '1',
+          tradeinId: context.baseSessionInfo.tradeinId || 0,
           responseValidator: ({ res }) => res.ok === true,
         })
           .catch((err) => err)

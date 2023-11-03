@@ -86,7 +86,7 @@ class Singleton extends Api {
   }
 
   async getPhotoLink({ tradeinId, responseValidator }: {
-    tradeinId: string;
+    tradeinId: number;
     responseValidator?: ({ res }: { res: any }) => boolean;
   }): Promise<NSP.TPhotoLinkResponse> {
     // TODO:
