@@ -10,6 +10,7 @@ import { useMachine } from '@xstate/react'
 import { useMemo } from 'react'
 // import {} from '@headlessui/react'
 import {
+  Alert,
   // Button,
   Menu,
 } from '~/common/components/tailwind'
@@ -50,7 +51,8 @@ function App() {
             header='Подождите...'
             controls={[]}
           >
-            <div>{state.context.imei.result.state} [ Loader... ]</div>
+            <div>{state.context.imei.result.state}</div>
+            <div>[ TODO: Loader... ]</div>
           </ContentWithControls>
         )
       case EStep.ImeiErr:
@@ -170,10 +172,18 @@ function App() {
               },
             ]}
           >
-            <div>{state.context.checkPhone.result.state}</div>
-            {!!state.context.checkPhone.uiMsg && (
-              <div>{state.context.checkPhone.uiMsg}</div>
-            )}
+            {
+              state.context.checkPhone.result.state === 'pending' ? (
+                <div>[ TODO: Loader... ]</div>
+              ) : (
+                <Alert
+                  type={state.context.checkPhone.result.state === 'error' ? 'danger' : 'info'}
+                  header={state.context.checkPhone.result.state}
+                >
+                  <div>{state.context.checkPhone.uiMsg}</div>
+                </Alert>
+              )
+            }
             <pre className={classes.preStyled}>{JSON.stringify(state.context.checkPhone.response, null, 2)}</pre>
           </ContentWithControls>
         )
@@ -198,10 +208,18 @@ function App() {
               },
             ]}
           >
-            <div>{state.context.photoLink.result.state}</div>
-            {!!state.context.photoLink.uiMsg && (
-              <div>{state.context.photoLink.uiMsg}</div>
-            )}
+            {
+              state.context.photoLink.result.state === 'pending' ? (
+                <div>[ TODO: Loader... ]</div>
+              ) : (
+                <Alert
+                  type={state.context.photoLink.result.state === 'error' ? 'danger' : 'success'}
+                  header={state.context.photoLink.result.state}
+                >
+                  <div>{state.context.photoLink.uiMsg}</div>
+                </Alert>
+              )
+            }
             <pre className={classes.preStyled}>{JSON.stringify(state.context.photoLink.response, null, 2)}</pre>
           </ContentWithControls>
         )

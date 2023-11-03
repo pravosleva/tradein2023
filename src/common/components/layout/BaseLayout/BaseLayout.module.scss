@@ -2,9 +2,15 @@
 @import '~/scss-vars/colors.scss';
 
 .appWrapper {
+  display: flex;
+  flex-direction: column;
+
   & > .siteHeader {
     // border-bottom: 2px dashed #{$color-red};
     border-bottom: 2px solid lightgray;
+
+    position: sticky;
+    top: 0;
   }
   @media(max-width: #{$monitor-md}px) {
     & > .siteHeader {

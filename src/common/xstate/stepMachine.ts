@@ -82,7 +82,7 @@ export const stepMachine = createMachine<TState>(
     initial: EStep.Init,
     context: {
       baseSessionInfo: {
-        tradeinId: null,
+        tradeinId: 1,
       },
       imei: {
         value: '',
@@ -425,7 +425,7 @@ export const stepMachine = createMachine<TState>(
 
         if (!context.baseSessionInfo.tradeinId) return Promise.reject({
           ok: false,
-          message: 'tradeinId не установлен в данной сессии',
+          message: 'tradeinId не установлен для данной сессии (запрос не был отправлен)',
         })
 
         const res = await httpClient.getPhotoLink({

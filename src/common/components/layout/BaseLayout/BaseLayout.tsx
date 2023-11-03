@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ResponsiveBlock } from '~/common/components/sp-custom'
 import classes from './BaseLayout.module.scss'
+import clsx from 'clsx'
 
 export const BaseLayout: React.FC<any> = ({ children }) => {
   return (
     <div className={classes.appWrapper}>
       <div
-        className={classes.siteHeader}
+        className={clsx(classes.siteHeader, 'backdrop-blur--lite')}
         style={{
           display: 'flex',
           alignItems: 'center',
