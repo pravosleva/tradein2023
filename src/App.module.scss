@@ -36,6 +36,19 @@
   // border: 1px dashed red;
   gap: 16px;
 }
+.stack2 {
+  display: flex;
+  flex-direction: column;
+  // border: 1px dashed red;
+  gap: 16px;
+}
+.stack4 {
+  display: flex;
+  flex-direction: column;
+  // border: 1px dashed red;
+  gap: 32px;
+}
+
 .preStyled {
   text-align: left;
   // max-height: 300px;

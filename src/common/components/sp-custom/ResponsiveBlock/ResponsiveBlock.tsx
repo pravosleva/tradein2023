@@ -7,7 +7,7 @@ type TProps = {
   isLimited?: boolean;
   isPaddedMobile?: boolean;
   style?: React.CSSProperties;
-  // className?: any;
+  className?: string;
   hasDesktopFrame?: boolean;
   children: React.ReactNode;
   // zeroPaddingMobile?: boolean;
@@ -22,7 +22,7 @@ export const ResponsiveBlock: React.FC<any> = ({
   // isLimited,
   isPaddedMobile,
   style,
-  // className,
+  className,
   // hasDesktopFrame,
   isLimitedForDesktop,
   // isLastSection,
@@ -41,6 +41,7 @@ export const ResponsiveBlock: React.FC<any> = ({
               [classes.isPaddedMobile]: isPaddedMobile,
               [classes.redBorder]: hasRedBorder,
             },
+            className,
           )}
           style={style || {}}
         >
@@ -63,12 +64,16 @@ export const ResponsiveBlock: React.FC<any> = ({
     //   )
     default:
       return (
-        <div className={clsx(
-          classes.base,
-          {
-            [classes.redBorder]: hasRedBorder,
-          },
-        )}>
+        <div
+          className={clsx(
+            classes.base,
+            {
+              [classes.redBorder]: hasRedBorder,
+            },
+            className,
+          )}
+          style={style || {}}
+        >
           {children}
         </div>
       )

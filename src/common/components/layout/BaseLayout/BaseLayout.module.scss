@@ -1,4 +1,5 @@
 @import '~/scss-vars/monitors.scss';
+@import '~/scss-vars/sizes.scss';
 @import '~/scss-vars/colors.scss';
 
 .appWrapper {
@@ -6,6 +7,13 @@
   flex-direction: column;
 
   & > .siteHeader {
+    z-index: 1;
+    .logo {
+      // border: 1px solid red;
+      border: none;
+      max-width: 130px;
+      transform: translateY(2px);
+    }
     // border-bottom: 2px dashed #{$color-red};
     border-bottom: 2px solid lightgray;
 

@@ -7,7 +7,7 @@ import classes from '~/App.module.scss'
 import { stepMachine, EStep } from '~/common/xstate/stepMachine'
 // import { actions } from 'xstate'
 import { useMachine } from '@xstate/react'
-import { useMemo } from 'react'
+import { useLayoutEffect, useMemo, useRef } from 'react'
 // import {} from '@headlessui/react'
 import {
   Alert,
@@ -15,11 +15,12 @@ import {
   Menu,
   Spinner,
 } from '~/common/components/tailwind'
-import { Button, ContentWithControls, ResponsiveBlock } from '~/common/components/sp-custom'
+import { Button, ContentWithControls } from '~/common/components/sp-custom'
 import { BaseLayout } from '~/common/components/layout/BaseLayout'
 import {
   InitStep,
   EnterImeiStep,
+  PrePriceTableStep,
   UploadPhotoProcessStep,
 } from '~/common/components/steps'
 import {
@@ -77,7 +78,7 @@ function App() {
       case EStep.EnterMemoryAndColor:
         return (
           <ContentWithControls
-            header='Параметры устройства'
+            header={state.context.imei.response?.phone.model || '⚠️ Модель устройства не определена'}
             controls={[
               {
                 id: '1',
@@ -131,11 +132,13 @@ function App() {
                 )
               }
             </div>
+            {/* <pre className={classes.preStyled}>{JSON.stringify(state.context.imei.response, null, 2)}</pre> */}
           </ContentWithControls>
         )
       case EStep.PrePriceTable:
         return (
           <ContentWithControls
+            hasChildrenFreeWidth
             header='Предварительная сумма скидки'
             controls={[
               {
@@ -154,7 +157,7 @@ function App() {
               },
             ]}
           >
-            <div>[ TODO: Content will be set here... ]</div>
+            <PrePriceTableStep />
           </ContentWithControls>
         )
       case EStep.CheckPhone:
@@ -223,7 +226,7 @@ function App() {
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}><Spinner /></div>
               ) : (
                 <Alert
-                  type={state.context.photoLink.result.state === 'error' ? 'danger' : 'success'}
+                  type={state.context.photoLink.result.state === 'error' ? 'danger' : 'info'}
                   header={state.context.photoLink.result.state}
                 >
                   <div>{state.context.photoLink.uiMsg}</div>
@@ -261,7 +264,17 @@ function App() {
         return (
           <ContentWithControls
             header='Done.'
-            controls={[]}
+            controls={[
+              {
+                id: '1',
+                label: 'Go Start',
+                onClick: () => send({ type: 'goStart' }),
+                btn: {
+                  color: 'primary',
+                  variant: 'outlined',
+                },
+              },
+            ]}
           >
             {null}
           </ContentWithControls>
@@ -288,20 +301,26 @@ function App() {
     state.context.photoLink.uiMsg,
   ])
 
+  const stepContentTopRef = useRef<HTMLDivElement>(null)
+  useLayoutEffect(() => {
+    if (stepContentTopRef.current) window.scrollTo({ top: stepContentTopRef.current.offsetTop, behavior: 'smooth'})
+  }, [state.value])
+
   return (
     <WithAppContextHOC>
+      <div ref={stepContentTopRef} />
       <BaseLayout>
         <div className={classes.stack}>
           {/* <ResponsiveBlock isPaddedMobile isLimitedForDesktop>
             <h1 className="text-3xl font-bold underline" style={{ marginBottom: '50px' }}>Vite + React + Tailwind</h1>
           </ResponsiveBlock> */}
 
-          <ResponsiveBlock isPaddedMobile isLimitedForDesktop>
-            <div className={classes.stack}>
-              {/* <h2 className="text-2xl font-bold">{String(state.value)}</h2> */}
-              {Step}
-            </div>
-          </ResponsiveBlock>
+          
+          <div className={classes.stack}>
+            {/* <h2 className="text-2xl font-bold">{String(state.value)}</h2> */}
+            {Step}
+          </div>
+          {/* <ResponsiveBlock isPaddedMobile isLimitedForDesktop></ResponsiveBlock> */}
 
           {/* <ResponsiveBlock isPaddedMobile isLimitedForDesktop>
             <div className={classes.card}>

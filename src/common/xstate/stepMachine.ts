@@ -298,7 +298,13 @@ export const stepMachine = createMachine<TState>(
       },
 
       // NOTE: Done.
-      [EStep.Final]: {},
+      [EStep.Final]: {
+        on: {
+          goStart: {
+            target: EStep.Init,
+          },
+        },
+      },
     },
 
     // NOTE: actions

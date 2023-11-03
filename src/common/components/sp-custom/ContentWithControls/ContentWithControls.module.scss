@@ -1,0 +1,25 @@
+@import '~/scss-vars/monitors.scss';
+// @import '~/scss-vars/colors.scss';
+@import '~/scss-vars/sizes.scss';
+
+.stickyHeader {
+  // border: 1px dashed red;
+  // border-bottom: 1px solid lightgray;
+  background-color: #fff;
+  position: sticky;
+  // top: 50px;
+  z-index: 1;
+  padding: 32px 0px 32px 0px !important;
+}
+
+@media(max-width: #{$monitor-md}px) {
+  .stickyHeader {
+    top: #{$height-limit-header-mobile}px;
+  }
+}
+@media(min-width:calc(#{$monitor-md}px + 1px)) {
+  .stickyHeader {
+    top: #{$height-limit-header-desktop}px;
+  }
+}
+

@@ -1,2 +1,10 @@
 $size-pad-1: 8;
 $size-pad-2: 16;
+
+// Limits:
+// $limit-md: 960;
+$limit-md: 500;
+
+// Header & Footer height limit:
+$height-limit-header-mobile: 40;
+$height-limit-header-desktop: 50;

@@ -5,11 +5,11 @@
 * {
   box-sizing: border-box;
 }
+
 /* slightly transparent fallback */
 .backdrop-blur {
   background-color: rgba(255, 255, 255, .9);
 }
-
 /* if backdrop support: very transparent and blurred */
 @supports ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
   .backdrop-blur {

@@ -9,18 +9,18 @@ const getColor = ({ type }: { type: TAlertType }): string => {
   switch (type) {
     case 'info':
       // return 'text-blue-800 border border-blue-300 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400 dark:border-blue-800'
-      return 'border-l-4 border-blue-500 text-blue-500 border border-blue-300 rounded-lg bg-blue-50 text-blue-400 border-blue-800'
+      return 'border-l-4 border-blue-500 text-blue-500 border rounded-lg bg-blue-50'
     case 'warning':
       // return 'text-yellow-800 border border-yellow-300 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300 dark:border-yellow-800'
-      return 'border-l-4 border-yellow-600 text-yellow-600 border border-yellow-300 rounded-lg bg-yellow-50 bg-gray-800 text-yellow-300 border-yellow-800'
+      return 'border-l-4 border-yellow-600 text-yellow-600 border rounded-lg bg-yellow-50'
     case 'danger':
       // return 'text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800'
-      return 'border-l-4 border-red-600 text-red-600 border border-red-300 rounded-lg bg-red-50 text-red-400 border-red-800'
+      return 'border-l-4 border-red-500 text-red-500 border rounded-lg bg-red-50'
     case 'success':
       // return 'text-green-800 border border-green-300 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 dark:border-green-800'
-      return 'border-l-4 border-green-600 text-green-600 border border-green-300 rounded-lg bg-green-50 bg-gray-800 text-green-400 border-green-800'
+      return 'border-l-4 border-green-600 text-green-600 border rounded-lg bg-green-50'
     default:
-      return 'text-gray-800 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600'
+      return 'text-gray-800 border border-gray-300 rounded-lg bg-gray-50'
   }
 }
 
