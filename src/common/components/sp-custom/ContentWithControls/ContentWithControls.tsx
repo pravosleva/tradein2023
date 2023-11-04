@@ -16,6 +16,8 @@ export type TControlBtn = {
 }
 type TProps = {
   header: string;
+  subheader?: string | (string | null | undefined | false)[];
+  subheaderJsx?: React.ReactNode;
   children: React.ReactNode;
   controls: TControlBtn[];
   controlsAsGrid?: boolean;
@@ -24,6 +26,8 @@ type TProps = {
 
 export const ContentWithControls = ({
   header,
+  subheader,
+  subheaderJsx,
   children,
   controls,
   controlsAsGrid,
@@ -40,26 +44,55 @@ export const ContentWithControls = ({
           <ResponsiveBlock
             isPaddedMobile
             isLimitedForDesktop
+            className={baseClasses.stack2}
           >
             <h2 className='text-3xl font-bold'>{header}</h2>
+            {!!subheader && (
+              typeof subheader === 'string' ? (
+                <h3 className='text-xl font-bold'>{subheader}</h3>
+              ) : Array.isArray(subheader) && (
+                subheader.map((str, i) => {
+                  const isFirst = i === 0
+                  switch (true) {
+                    case isFirst:
+                      return (
+                        <h3 key={`${str}-${i}`} className='text-xl font-bold'>{str}</h3>
+                      )
+                    default:
+                      return (
+                        <div
+                          key={`${str}-${i}`}
+                          style={{
+                            fontWeight: 'bold',
+                            color: 'gray',
+                          }}
+                        >{str}</div>
+                      )
+                  }
+                })
+              )
+            )}
+            {!!subheaderJsx && subheaderJsx}
           </ResponsiveBlock>
           
         </ResponsiveBlock>
         
         {
-          hasChildrenFreeWidth ? (
-            <div className={baseClasses.stack}>
-              {children}
-            </div>
-          ) : (
-            <ResponsiveBlock
-              isPaddedMobile
-              isLimitedForDesktop
-            >
+          !!children && (
+            hasChildrenFreeWidth ? (
               <div className={baseClasses.stack}>
                 {children}
               </div>
-            </ResponsiveBlock>
+            ) : (
+              <ResponsiveBlock
+                isPaddedMobile
+                isLimitedForDesktop
+              >
+                <div className={baseClasses.stack}>
+                  {children}
+                </div>
+              </ResponsiveBlock>
+            )
           )
         }
 

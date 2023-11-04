@@ -1,4 +1,7 @@
 export * from './Button'
 export * from './ContentWithControls'
 export * from './Input'
+export * from './PollingComponent'
+export * from './PriceTable'
 export * from './ResponsiveBlock'
+export * from './WaitForUploadPhoto'

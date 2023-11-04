@@ -7,20 +7,36 @@
 // }
 
 export namespace NSP {
+  export type TPhone = {
+    vendor?: string;
+    type?: string;
+    model?: string;
+    memory?: string;
+    memory_choices: string[];
+    color?: string;
+    color_choices: {
+      [key: string]: string[];
+    };
+    // find_my_iphone: any;
+  }
+  export type TSubcidyPricesObject = {
+    [key: string]: {
+      [key: string]: {
+        [key: string]: number;
+      };
+    };
+  };
+  export type TSubcidy = {
+    prices: TSubcidyPricesObject;
+    vendor: string;
+    model: string;
+    title: string;
+    default_variant_id?: number;
+  }
+
   export type TImeiResponse = {
     ok: boolean;
-    phone: {
-      vendor?: string;
-      type?: string;
-      model?: string;
-      memory?: string;
-      memory_choices: string[];
-      color?: string;
-      color_choices: {
-        [key: string]: string[];
-      };
-      // find_my_iphone: any;
-    };
+    phone: TPhone;
     imei: string;
     currency: string;
     possible_prices: {
@@ -30,7 +46,7 @@ export namespace NSP {
         }
       }
     };
-    // "possible_subsidies": [];
+    possible_subsidies: TSubcidy[];
     photo?: string | null;
     id: number;
     show_warning: boolean;
@@ -54,5 +70,23 @@ export namespace NSP {
     qr: string;
     short_url: string;
     qr_url: string;
+  };
+  export type TPhotoStatusResponse = {
+    ok: boolean;
+    started: boolean;
+    // TODO: Declare all statuses here
+    status: 'ok' | 'not_checked' | 'fake' | 'bad_quality'; // NOTE: Чтоб крутилка исчезла и флоу пошел дальше
+    photo_states: {
+      // TODO: Declare all statuses here
+      [key: string]: 'not_checked';
+    };
+    loop: boolean;
+    // TODO: Declare all condition vals here
+    condition: 'C' | 'D' | 'NC';
+    // TODO: Wtf is this?
+    condition_limit: null | any;
+    // TODO: Declare all condition_limit_reason vals here
+    condition_limit_reason: null | 'no_defects';
+    is_condition_limit_violated: boolean;
   };
 }

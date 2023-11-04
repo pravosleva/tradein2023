@@ -9,25 +9,22 @@ import { stepMachine, EStep } from '~/common/xstate/stepMachine'
 import { useMachine } from '@xstate/react'
 import { useLayoutEffect, useMemo, useRef } from 'react'
 // import {} from '@headlessui/react'
-import {
-  Alert,
-  // Button,
-  Menu,
-  Spinner,
-} from '~/common/components/tailwind'
-import { Button, ContentWithControls } from '~/common/components/sp-custom'
+import { Alert, Menu, Spinner } from '~/common/components/tailwind'
+import { Button, ContentWithControls, ResponsiveBlock } from '~/common/components/sp-custom'
 import { BaseLayout } from '~/common/components/layout/BaseLayout'
 import {
   InitStep,
   EnterImeiStep,
   PrePriceTableStep,
   UploadPhotoProcessStep,
+  FinalPriceTableStep,
 } from '~/common/components/steps'
 import {
   WithAppContextHOC,
   // useStore, NEvent, TAppMicroStore, initialState,
 } from '~/common/context/WithAppContextHOC'
 import clsx from 'clsx'
+// import { getTranslatedConditionCode } from '~/common/components/sp-custom/PriceTable/utils'
 
 function App() {
   const [state, send] = useMachine(stepMachine)
@@ -140,6 +137,7 @@ function App() {
           <ContentWithControls
             hasChildrenFreeWidth
             header='Предварительная сумма скидки'
+            subheader={state.context.imei.response?.phone.model || '⚠️ Модель устройства не определена'}
             controls={[
               {
                 id: '1',
@@ -157,21 +155,47 @@ function App() {
               },
             ]}
           >
-            <PrePriceTableStep />
+            {
+              state.context.imei.response ? (
+                <PrePriceTableStep
+                  imeiResponse={state.context.imei.response}
+                  checkPhoneResponse={state.context.checkPhone.response}
+                  // photoStatusResponse={state.context.}
+                  byUser={{
+                    selectedColor: state.context.color.selectedItem,
+                    selectedMemory: state.context.memory.selectedItem,
+                  }}
+                  conditionCodeValidator={() => true}
+                />
+              ) : (
+                <ResponsiveBlock
+                  isPaddedMobile
+                  isLimitedForDesktop
+                >
+                  <Alert
+                    type='danger'
+                    header='Что-то пошло не так'
+                  >
+                    <div>Отсутствуют ожидаемые ответы от сервера</div>
+                    <pre className={classes.preStyled}>{JSON.stringify({
+                      'imei.response': state.context.imei.response ? 'OK' : String(state.context.imei.response),
+                      'checkPhone.response': state.context.checkPhone.response ? 'OK' : String(state.context.checkPhone.response),
+                    }, null, 2)}</pre>
+                  </Alert>
+                </ResponsiveBlock>
+              )
+            }
           </ContentWithControls>
         )
       case EStep.CheckPhone:
         return (
           <ContentWithControls
-            header='/phone/check'
+            header='Подождите...'
+            subheader={[
+              state.context.imei.response?.phone.model || '⚠️ Модель устройства не определена',
+              '/phone/check',
+            ]}
             controls={[
-              {
-                id: '1',
-                label: 'Next (dev)',
-                btn: { variant: 'filled', color: 'primary' },
-                onClick: () => send({ type: 'goNext' }),
-                isDisabled: !can({ type: 'goNext' }),
-              },
               {
                 id: '2',
                 label: 'Prev (dev)',
@@ -203,15 +227,12 @@ function App() {
       case EStep.GetPhotoLink:
         return (
           <ContentWithControls
-            header='/photo/link'
+            header='Подождите...'
+            subheader={[
+              state.context.imei.response?.phone.model || '⚠️ Модель устройства не определена',
+              '/photo/link',
+            ]}
             controls={[
-              {
-                id: '1',
-                label: 'Next (dev)',
-                btn: { variant: 'filled', color: 'primary' },
-                onClick: () => send({ type: 'goNext' }),
-                isDisabled: !can({ type: 'goNext' }),
-              },
               {
                 id: '2',
                 label: 'Prev (dev)',
@@ -240,35 +261,177 @@ function App() {
             }
           </ContentWithControls>
         )
-      case EStep.UploadPhotoProcess:
+      case EStep.UploadPhotoInProgress:
         return (
-          <UploadPhotoProcessStep
-            header='Ожидание загрузки фото'
+          <>
+            {!state.context.baseSessionInfo.tradeinId ? (
+              <Alert
+                type='danger'
+                header='Отсутствует Tradein-Id для текущей сессии'
+              >
+                <pre className={classes.preStyled}>{JSON.stringify(state.context.baseSessionInfo, null, 2)}</pre>
+              </Alert>
+            ) : (
+              <UploadPhotoProcessStep
+                tradeinId={state.context.baseSessionInfo.tradeinId}
+                header='Загрузите фото устройства'
+                subheader={[
+                  // state.context.imei.response?.phone.model || '⚠️ Модель устройства не определена',
+                  'Для финальной оценки и подтверждения состояния',
+                ]}
+                controls={[
+                  {
+                    id: '2',
+                    label: 'Назад',
+                    btn: { variant: 'outlined', color: 'default' },
+                    onClick: () => send({ type: 'goPrev' }),
+                  },
+                ]}
+                onDone={({ value }) => {
+                  console.log('- App: UploadPhotoProcessStep.onDone')
+
+                  send({ type: 'SET_PHOTO_STATUS_RESPONSE', value })
+
+                  switch (value.status) {
+                    case 'fake':
+                    case 'bad_quality':
+                      send({ type: 'goUploadPhotoResultInNotOk' })
+                      break
+                    case 'ok':
+                      send({ type: 'goNext' })
+                      break
+                    default:
+                      console.log(`- APP: UNKNOWN CASE for ${value.status}`)
+                      break
+                  }
+                }}
+              />
+            )}
+          </>
+        )
+      case EStep.UploadPhotoResultInNotOk:
+        return (
+          <ContentWithControls
+            header='📵 Что-то пошло не так'
+            controls={[
+              {
+                id: '2',
+                label: 'Вернуться к скидке',
+                onClick: () => send({ type: 'goPrev' }),
+                btn: {
+                  color: 'primary',
+                  variant: 'outlined',
+                },
+              },
+            ]}
+          >
+            <Alert
+              type='danger'
+              header='Oops...'
+            >
+              {
+                state.context.photoStatus.uiMsg ? (
+                  <div>{state.context.photoStatus.uiMsg}</div>
+                ) : (
+                  <pre className={classes.preStyled}>{JSON.stringify(state.context.photoStatus.response, null, 2)}</pre>
+                )
+              }
+            </Alert>
+          </ContentWithControls>
+        )
+      case EStep.FinalPriceTable:
+        return (
+          <ContentWithControls
+            hasChildrenFreeWidth
+            header='Итоговая сумма скидки'
+            subheader={[
+              `${state.context.imei.response?.phone.model || '⚠️ Модель устройства не определена'}`,
+            ]}
+            // subheaderJsx={
+            //   <div
+            //     style={{
+            //       display: 'flex',
+            //       flexDirection: 'column',
+            //       alignItems: 'center',
+            //       color: 'gray',
+            //     }}
+            //   >
+            //     <b>{!!state.context.checkPhone.response?.condition && `Состояние: ${getTranslatedConditionCode(state.context.checkPhone.response?.condition)}`}</b>
+            //     <div>Дефекты: [ TODO ]</div>
+            //   </div>
+            // }
             controls={[
               {
                 id: '1',
-                label: 'Next (dev)',
-                btn: { variant: 'filled', color: 'primary' },
+                label: 'Клиент согласен',
                 onClick: () => send({ type: 'goNext' }),
-              },
-              {
-                id: '2',
-                label: 'Prev (dev)',
-                btn: { variant: 'outlined', color: 'default' },
-                onClick: () => send({ type: 'goPrev' }),
+                btn: {
+                  color: 'success',
+                  variant: 'filled',
+                },
               },
             ]}
-          />
+          >
+            {
+              state.context.imei.response && state.context.checkPhone.response ? (
+                <FinalPriceTableStep
+                  imeiResponse={state.context.imei.response}
+                  checkPhoneResponse={state.context.checkPhone.response}
+                  photoStatusResponse={state.context.photoStatus.response}
+                  byUser={{
+                    selectedColor: state.context.color.selectedItem,
+                    selectedMemory: state.context.memory.selectedItem,
+                  }}
+                  conditionCodeValidator={({ value }) => value === state.context.checkPhone.response?.condition }
+                  /* NOTE: Originl legacy arg
+                    cfg: {},
+                    originalDataCases: {
+                      possiblePricesStruct: {
+                        tableHeader: 'Сумма без учета дополнительной скидки',
+                        prices: window.proxiedState.imeiStep?.__response?.possible_prices || {},
+                      },
+                      subsidiesStruct2: {
+                        price: window.proxiedState.phoneCheckResponse?.price || 0,
+                        tableHeader: 'Сумма с учетом дополнительной скидки при покупке следующих моделей',
+                        subsidies: window.proxiedState.phoneCheckResponse?.subsidies || [],
+                        noAllZeroSubsidies: true,
+                        itemValidation: ({ price }) => !!price,
+                      },
+                    },
+                  */
+                />
+              ) : (
+                <ResponsiveBlock
+                  isPaddedMobile
+                  isLimitedForDesktop
+                >
+                  <Alert
+                    type='danger'
+                    header='Что-то пошло не так'
+                  >
+                    <div>Отсутствуют ожидаемые ответы от сервера</div>
+                    <pre className={classes.preStyled}>{JSON.stringify({
+                      'imei.response': state.context.imei.response ? 'OK' : String(state.context.imei.response),
+                      'checkPhone.response': state.context.checkPhone.response,
+                    }, null, 2)}</pre>
+                  </Alert>
+                </ResponsiveBlock>
+              )
+            }
+          </ContentWithControls>
         )
       case EStep.Final:
         return (
           <ContentWithControls
-            header='Done.'
+            header='🎉 Done.'
             controls={[
               {
                 id: '1',
                 label: 'Go Start',
-                onClick: () => send({ type: 'goStart' }),
+                onClick: () => {
+                  send({ type: 'RESET_ALL_RESPONSES' })
+                  send({ type: 'goStart' })
+                },
                 btn: {
                   color: 'primary',
                   variant: 'outlined',
@@ -299,6 +462,9 @@ function App() {
     state.context.photoLink.response,
     state.context.photoLink.result.state,
     state.context.photoLink.uiMsg,
+    state.context.baseSessionInfo,
+    state.context.photoStatus.uiMsg,
+    state.context.photoStatus.response,
   ])
 
   const stepContentTopRef = useRef<HTMLDivElement>(null)
@@ -315,7 +481,6 @@ function App() {
             <h1 className="text-3xl font-bold underline" style={{ marginBottom: '50px' }}>Vite + React + Tailwind</h1>
           </ResponsiveBlock> */}
 
-          
           <div className={classes.stack}>
             {/* <h2 className="text-2xl font-bold">{String(state.value)}</h2> */}
             {Step}

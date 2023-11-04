@@ -14,7 +14,7 @@ import {
 } from 'xstate'
 // import { fetchIMEIMachine } from './tools/fetchIMEIMachine'
 import { httpClient, NSP } from '~/utils/httpClient'
-import { getReadableSnakeCase } from '~/utils/string-ops'
+import { getReadableSnakeCase } from '~/utils/aux-ops'
 
 export enum EStep {
   Init = 'init',
@@ -25,7 +25,9 @@ export enum EStep {
   PrePriceTable = 'pre-price-table',
   CheckPhone = 'check-phone',
   GetPhotoLink = 'get-photo-link',
-  UploadPhotoProcess = 'upload-photo-process',
+  UploadPhotoInProgress = 'upload-photo:in-progress',
+  UploadPhotoResultInNotOk = 'upload-photo:result-is-not-ok',
+  FinalPriceTable = 'final-price-table',
   Final = 'final',
 }
 enum EErrCode {
@@ -39,7 +41,7 @@ enum EErrCode {
 
 // const fetchIMEIMachine
 
-
+export type TSelectedItem = { value: string; label: string; }
 type TState = {
   baseSessionInfo: {
     tradeinId: number | null;
@@ -55,10 +57,10 @@ type TState = {
     };
   },
   memory: {
-    selectedItem: { value: string; label: string; } | null;
+    selectedItem: TSelectedItem | null;
   };
   color: {
-    selectedItem: { value: string; label: string; } | null;
+    selectedItem: TSelectedItem | null;
     dynamicList: { id: string; value: string; label: string; }[];
   };
   checkPhone: {
@@ -75,47 +77,62 @@ type TState = {
       state: 'stopped' | 'pending' | 'success' | 'error';
     };
   };
+  photoStatus: {
+    response: null | NSP.TPhotoStatusResponse; // NOTE: Success only or null!
+    uiMsg: string | null;
+    result: {
+      state: 'stopped' | 'pending' | 'success' | 'error';
+    };
+  };
+}
+const initialContextState: TState = {
+  baseSessionInfo: {
+    tradeinId: 1,
+  },
+  imei: {
+    value: '',
+    response: null,
+    uiMsg: null,
+    result: {
+      state: 'stopped',
+      memoryList: [],
+      // fullDiscountTable: [],
+    },
+  },
+  memory: {
+    selectedItem: null,
+  },
+  color: {
+    selectedItem: null,
+    dynamicList: [],
+  },
+  checkPhone: {
+    response: null,
+    uiMsg:null,
+    result: {
+      state: 'stopped',
+    },
+  },
+  photoLink: {
+    response: null,
+    uiMsg:null,
+    result: {
+      state: 'stopped',
+    },
+  },
+  photoStatus: {
+    response: null,
+    uiMsg:null,
+    result: {
+      state: 'stopped',
+    },
+  },
 }
 
 export const stepMachine = createMachine<TState>(
   {
     initial: EStep.Init,
-    context: {
-      baseSessionInfo: {
-        tradeinId: 1,
-      },
-      imei: {
-        value: '',
-        response: null,
-        uiMsg: null,
-        result: {
-          state: 'stopped',
-          memoryList: [],
-          // fullDiscountTable: [],
-        },
-      },
-      memory: {
-        selectedItem: null,
-      },
-      color: {
-        selectedItem: null,
-        dynamicList: [],
-      },
-      checkPhone: {
-        response: null,
-        uiMsg:null,
-        result: {
-          state: 'stopped',
-        },
-      },
-      photoLink: {
-        response: null,
-        uiMsg:null,
-        result: {
-          state: 'stopped',
-        },
-      },
-    },
+    context: initialContextState,
     states: {
       [EStep.Init]: {
         on: {
@@ -239,7 +256,7 @@ export const stepMachine = createMachine<TState>(
           },
           goNext: {
             cond: (context) => context.checkPhone?.response?.ok === true,
-            target: EStep.UploadPhotoProcess,
+            target: EStep.GetPhotoLink,
           },
         },
       },
@@ -250,7 +267,7 @@ export const stepMachine = createMachine<TState>(
           // data: (context) => ({}),
           onDone: {
             // NOTE: Uncomment for go automatically
-            // target: EStep.UploadPhotoProcess,
+            target: EStep.UploadPhotoInProgress,
             actions: assign({
               photoLink: (ctx, e) => ({ ...ctx.photoLink, response: e.data, uiMsg: 'OK' })
             }),
@@ -280,20 +297,39 @@ export const stepMachine = createMachine<TState>(
           },
           goNext: {
             cond: (context) => context.photoLink?.response?.ok === true,
-            target: EStep.UploadPhotoProcess,
+            target: EStep.UploadPhotoInProgress,
           },
         },
       },
 
       // NOTE: Ожидание загрузки фото
-      [EStep.UploadPhotoProcess]: {
+      [EStep.UploadPhotoInProgress]: {
+        on: {
+          goNext: {
+            target: EStep.FinalPriceTable,
+          },
+          goPrev: {
+            target: EStep.PrePriceTable,
+          },
+          goUploadPhotoResultInNotOk: {
+            target: EStep.UploadPhotoResultInNotOk,
+          },
+        },
+      },
+      [EStep.UploadPhotoResultInNotOk]: {
+        on: {
+          goPrev: {
+            target: EStep.PrePriceTable,
+          }
+        },
+      },
+
+      // NOTE: Итоговая сумма скидки
+      [EStep.FinalPriceTable]: {
         on: {
           goNext: {
             target: EStep.Final,
           },
-          goPrev: {
-            target: EStep.PrePriceTable,
-          }
         },
       },
 
@@ -329,6 +365,22 @@ export const stepMachine = createMachine<TState>(
               ? ctx.imei.response?.phone.color_choices[e.value.id].map((val) => ({ id: val, value: val, label: getReadableSnakeCase(val) }))
               : []
           }),
+        }),
+      },
+      SET_PHOTO_STATUS_RESPONSE: {
+        actions: assign({
+          photoStatus: (ctx, e) => ({ ...ctx.photoStatus, response: e.value }),
+        }),
+      },
+      RESET_ALL_RESPONSES: {
+        actions: assign({
+          imei: (_ctx, _e) => ({ ...initialContextState.imei } ),
+          memory: (_ctx, _e) => ({ ...initialContextState.memory } ),
+          color: (_ctx, _e) => ({ ...initialContextState.color } ),
+          checkPhone: (_ctx, _e) => ({ ...initialContextState.checkPhone } ),
+          photoLink: (_ctx, _e) => ({ ...initialContextState.photoLink } ),
+          photoStatus: (_ctx, _e) => ({ ...initialContextState.photoStatus } ),
+          // NOTE: Etc.
         }),
       },
     },

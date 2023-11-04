@@ -61,6 +61,9 @@ export const EnterImeiStep = memo(({
         ref={inputRef}
         value={value}
         onChange={onChangeIMEI}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' && !isNextBtnDisabled) onSendIMEI()
+        }}
       />
     </ContentWithControls>
   )
