@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios, { CancelTokenSource } from 'axios'
 import { NSP } from './types'
@@ -47,13 +48,14 @@ class Singleton extends Api {
     })
       .then((r) => r)
       .catch((r) => r)
-    
+
     this.sendIMEICancelTokenSource.cancel('axios request done')
 
     switch (true) {
       case !!responseValidator:
         // console.log('-- this case', responseValidator({ res: data }))
-        return responseValidator({ res: data }) ? Promise.resolve(data) : Promise.reject(data)
+        // @ts-ignore
+        return responseValidator({ res: data }) ? Promise.resolve(data || altResult) : Promise.reject(data)
       default:
         return data.ok ? Promise.resolve(data) : Promise.reject(data)
     }
@@ -84,7 +86,7 @@ class Singleton extends Api {
 
     switch (true) {
       case !!responseValidator:
-        // console.log('-- this case', responseValidator({ res: data }))
+        // @ts-ignore
         return responseValidator({ res: data }) ? Promise.resolve(data) : Promise.reject(data)
       default:
         return data.ok ? Promise.resolve(data) : Promise.reject(data)
@@ -115,6 +117,7 @@ class Singleton extends Api {
     switch (true) {
       case !!responseValidator:
         // console.log('-- this case', responseValidator({ res: data }))
+        // @ts-ignore
         return responseValidator({ res: data }) ? Promise.resolve(data) : Promise.reject(data)
       default:
         return data.ok ? Promise.resolve(data) : Promise.reject(data)
@@ -189,6 +192,7 @@ class Singleton extends Api {
     switch (true) {
       case !!responseValidator:
         // console.log('-- this case', responseValidator({ res: data }))
+        // @ts-ignore
         return responseValidator({ res: data }) ? Promise.resolve(data) : Promise.reject(data)
       default:
         return data.ok ? Promise.resolve(data) : Promise.reject(data)

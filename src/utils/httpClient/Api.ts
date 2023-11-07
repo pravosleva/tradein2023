@@ -39,8 +39,9 @@ export class Api {
         console.log(`Retry attempt #${cfg.currentRetryAttempt}`)
       },
     };
-    const _interceptorId = rax.attach(axiosInstance);
-    console.log(_interceptorId)
+    // const _interceptorId = rax.attach(axiosInstance)
+    // console.log(_interceptorId)
+    rax.attach(axiosInstance)
 
     this.api = this.api.bind(this)
   }

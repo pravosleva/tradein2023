@@ -2,12 +2,17 @@
 /* eslint-disable react-refresh/only-export-components */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import createFastContext from '~/common/context/createFastContext'
+import pkg from '../../../package.json'
 
 export type TAppMicroStore = {
-  isConnected: boolean;
+  // isConnected: boolean;
+  stateValue: string | null | undefined;
+  appVersion: string;
 }
 export const initialState = {
-  isConnected: false,
+  // isConnected: false,
+  stateValue: null,
+  appVersion: pkg.version,
 }
 const { Provider, useStore } = createFastContext<TAppMicroStore>(initialState);
 

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // import { useState } from 'react'
 // import reactLogo from '~/assets/react.svg'
@@ -19,14 +20,13 @@ import {
   UploadPhotoProcessStep,
   FinalPriceTableStep,
 } from '~/common/components/steps'
-import {
-  WithAppContextHOC,
-  // useStore, NEvent, TAppMicroStore, initialState,
-} from '~/common/context/WithAppContextHOC'
 import clsx from 'clsx'
+import { useStore } from './common/context/WithAppContextHOC'
 // import { getTranslatedConditionCode } from '~/common/components/sp-custom/PriceTable/utils'
+import { useMetrix } from '~/common/hooks'
 
 function App() {
+  const [_store, setStore] = useStore((store) => store)
   const [state, send] = useMachine(stepMachine)
   const can = state.can.bind(state)
   const Step = useMemo(() => {
@@ -347,19 +347,7 @@ function App() {
             subheader={[
               `${state.context.imei.response?.phone.model || '⚠️ Модель устройства не определена'}`,
             ]}
-            // subheaderJsx={
-            //   <div
-            //     style={{
-            //       display: 'flex',
-            //       flexDirection: 'column',
-            //       alignItems: 'center',
-            //       color: 'gray',
-            //     }}
-            //   >
-            //     <b>{!!state.context.checkPhone.response?.condition && `Состояние: ${getTranslatedConditionCode(state.context.checkPhone.response?.condition)}`}</b>
-            //     <div>Дефекты: [ TODO ]</div>
-            //   </div>
-            // }
+            // subheaderJsx={}
             controls={[
               {
                 id: '1',
@@ -383,7 +371,7 @@ function App() {
                     selectedMemory: state.context.memory.selectedItem,
                   }}
                   conditionCodeValidator={({ value }) => value === state.context.checkPhone.response?.condition }
-                  /* NOTE: Originl legacy arg
+                  /* TODO: Originl legacy arg
                     cfg: {},
                     originalDataCases: {
                       possiblePricesStruct: {
@@ -469,11 +457,14 @@ function App() {
 
   const stepContentTopRef = useRef<HTMLDivElement>(null)
   useLayoutEffect(() => {
+    if (state.value) setStore({ stateValue: String(state.value) })
+
     if (stepContentTopRef.current) window.scrollTo({ top: stepContentTopRef.current.offsetTop, behavior: 'smooth'})
-  }, [state.value])
+  }, [state.value, setStore])
+  useMetrix({ isDebugEnabled: true })
 
   return (
-    <WithAppContextHOC>
+    <>
       <div ref={stepContentTopRef} />
       <BaseLayout>
         <div className={classes.stack}>
@@ -494,7 +485,7 @@ function App() {
           </ResponsiveBlock> */}
         </div>
       </BaseLayout>
-    </WithAppContextHOC>
+    </>
   )
 }
 
