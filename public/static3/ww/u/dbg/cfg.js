@@ -1,8 +1,11 @@
 const dbg = {
-  // evsFromClientToWorker: { isEnabled: true },
-  // evsFromWorkerToClient: { isEnabled: true },
-  evsFromServerToWorker: {
-    isEnabled: true,
+  workerEvs: {
+    fromClient: {
+      isEnabled: true,
+    },
+    fromServer: {
+      isEnabled: true,
+    },
   },
   socketState: {
     isEnabled: true,

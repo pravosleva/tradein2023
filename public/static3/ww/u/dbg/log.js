@@ -3,7 +3,7 @@
 
 var log = ({ label, msgs }) => {
   switch (true) {
-    case !_isDebugEnabled:
+    case !_isDebugEnabled: // NOTE: На случай, если вызван не по условию
     case !label:
       return
     case !!msgs && Array.isArray(msgs) && msgs.length > 0:
