@@ -1,3 +1,4 @@
+// NOTE: Remember. Full path regarding main file (dx.sw.js for example)
 importScripts('./u/xcaesar/src.js')
 // importScripts('./u/xcaesar/_t.js')
 

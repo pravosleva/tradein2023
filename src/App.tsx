@@ -11,7 +11,7 @@ import { useMachine } from '@xstate/react'
 import { useLayoutEffect, useMemo, useRef } from 'react'
 // import {} from '@headlessui/react'
 import { Alert, Menu, Spinner } from '~/common/components/tailwind'
-import { Button, ContentWithControls, ResponsiveBlock } from '~/common/components/sp-custom'
+import { ContentWithControls, ResponsiveBlock } from '~/common/components/sp-custom'
 import { BaseLayout } from '~/common/components/layout/BaseLayout'
 import {
   InitStep,
@@ -56,21 +56,25 @@ function App() {
         )
       case EStep.ImeiErr:
         return (
-          <div className={classes.stack}>
+          <ContentWithControls
+            header='Подождите...'
+            controls={[
+              {
+                id: '2',
+                label: 'Назад',
+                btn: { variant: 'outlined', color: 'default' },
+                onClick: () => send({ type: 'prevStep' }),
+                isDisabled: !can({ type: 'prevStep' }),
+              },
+            ]}
+          >
             <Alert
               type='danger'
               // header={state.context.checkPhone.result.state}
             >
               <div>{state.context.imei.uiMsg}</div>
             </Alert>
-            <Button
-              variant='outlined'
-              color='default'
-              onClick={() => send({ type: 'prevStep' })}
-            >
-              Назад
-            </Button>
-          </div>
+          </ContentWithControls>
         )
       case EStep.EnterMemoryAndColor:
         return (

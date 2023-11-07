@@ -44,7 +44,7 @@ class Singleton {
   }
   private log ({ label, msgs }: { label: string; msgs?: any[] }): void {
     if (this.isDebugEnabled) groupLog({ namespace: `-webWorkersInstance: ${label}`, items: msgs || [] })
-  } 
+  }
 
   public subscribeOnData<T>({ wName, cb }: { wName: string; cb: (d: T) => void; }) {
     // @ts-ignore
@@ -87,7 +87,8 @@ class Singleton {
     }
   }
 
-  public post<T>({ wName, eType, data }: { wName: string; eType: string; data: T; }) {
+  public post<T>(e: { wName: string; eType: string; data: T; }) {
+    const { wName, eType, data } = e
     // @ts-ignore
     if (!this[wName]) throw new Error(`No worker ${wName} yet #3`)
 
@@ -99,10 +100,7 @@ class Singleton {
         break
       // @ts-ignore
       case this[wName] instanceof SharedWorker:
-        this.log({ label: 'before post to sw...' })
-        // @ts-ignore
-        // console.log(typeof this[wName])
-        // console.log(this[wName].port)
+        this.log({ label: 'before post to sw...', msgs: [e] })
         // @ts-ignore
         this[wName].port.postMessage({ __eType: eType, ...data })
         break
@@ -135,5 +133,5 @@ class Singleton {
 
 export const wws = Singleton.getInstance({
   noSharedWorkers: false,
-  isDebugEnabled: true,
+  isDebugEnabled: false,
 })

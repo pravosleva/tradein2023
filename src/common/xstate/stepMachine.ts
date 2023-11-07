@@ -36,7 +36,7 @@ enum EErrCode {
   ERR3 = 'ERR3',
   ERR4 = 'ERR4',
   ERR5 = 'ERR5',
-  ERR6 = 'ERR6',
+  // ERR6 = 'ERR6',
 }
 
 // const fetchIMEIMachine
@@ -142,7 +142,7 @@ export const stepMachine = createMachine<TState>(
         }
       },
 
-      // NOTE: IMEI
+      // NOTE: IMEI Step
       [EStep.EnterImei]: {
         on: {
           goPrev: {
@@ -186,6 +186,7 @@ export const stepMachine = createMachine<TState>(
       [EStep.ImeiErr]: {
         on: {
           prevStep: {
+            cond: () => true,
             target: EStep.EnterImei,
           },
         }
@@ -196,12 +197,12 @@ export const stepMachine = createMachine<TState>(
       [EStep.EnterMemoryAndColor]: {
         on: {
           goPrev: {
-            // cond: (context) => !!context.memory?.selectedItem && !!context.color?.selectedItem,
+            // cond: (ctx) => !!ctx.memory?.selectedItem && !!ctx.color?.selectedItem,
             cond: () => true,
             target: EStep.EnterImei,
           },
           goNext: {
-            cond: (context) => !!context.memory?.selectedItem && !!context.color?.selectedItem,
+            cond: (ctx) => !!ctx.memory?.selectedItem && !!ctx.color?.selectedItem,
             target: EStep.PrePriceTable,
           },
         },
@@ -273,8 +274,9 @@ export const stepMachine = createMachine<TState>(
             }),
           },
           onError: {
-            // TODO?
+            // -- TODO? More cases ->
             // target: EStep.GetPhotoLinkErr,
+            // --
             actions: assign({
               photoLink: (ctx, e: any) => {
                 // console.warn(e.data instanceof AxiosError)
@@ -286,8 +288,8 @@ export const stepMachine = createMachine<TState>(
                   response: e?.data || e,
                   uiMsg: e?.data?.message || `${EErrCode.ERR3}: ${JSON.stringify(e)}`
                 }
-              }
-            })
+              },
+            }),
           },
         },
         on: {
@@ -400,7 +402,7 @@ export const stepMachine = createMachine<TState>(
     },
     services: {
       fetchIMEIMachine: async (context, _ev, _invMeta) => {
-        // NOTE: thats received data
+        // NOTE: thats received data from states[EStep.SendImei].invoke.data (for example)
         // console.log(_invMeta.data)
         const cleanupImeiStep = () => {
           context.imei.response = null
@@ -419,24 +421,24 @@ export const stepMachine = createMachine<TState>(
           responseValidator: ({ res }) => res.ok && !!res?.phone?.color_choices
         })
           .catch((err) => {
-            console.log(err)
-            return err
+            return { ok: false, ...(err || { ok: false, message: err?.message || EErrCode.ERR4 }) }
           })
 
         if (res.ok) {
           context.imei.result.state = 'success'
 
-          // -- TODO: Set anything to context
+          // -- NOTE: Set anything to state.context
           // 1. Reset colorList (Will be update when memoryList will be selected)
           context.color.dynamicList = []
           // 2. Set memoryList from response
           try {
-            const memoryList = Object.keys(res.phone.color_choices)
+            const memoryList = Object.keys(res.phone?.color_choices)
             context.imei.result.memoryList = memoryList.map((value) => ({ id: value, value, label: value.toUpperCase() }))
           } catch (err: any) {
             context.imei.result.state = 'error'
-            return Promise.reject(new Error(`${EErrCode.ERR2}: res.ok But! Не удалось составить список memoryList: ${err?.message || 'No err?.message'}`))
+            return Promise.reject(new Error(`${EErrCode.ERR5}: res.ok But! Не удалось составить список memoryList: ${err?.message || 'No err?.message'}`))
           }
+          // 3. TODO?
           // --
 
           return Promise.resolve(res)
@@ -461,11 +463,12 @@ export const stepMachine = createMachine<TState>(
         })
           .catch((err) => err)
 
+        // NOTE: Commented cuz it will be set in states[EStep.CheckPhone].invoke.onDone
         // context.checkPhone.response = res
         if (res.ok) {
           context.checkPhone.result.state = 'success'
 
-          // TODO?
+          // TODO? More cases for status.fake | status.bad_quality
 
           return Promise.resolve(res)
         }
@@ -487,17 +490,20 @@ export const stepMachine = createMachine<TState>(
         })
 
         const res = await httpClient.getPhotoLink({
+
           // TODO: Should be got from state!
+
           tradeinId: context.baseSessionInfo.tradeinId || 0,
           responseValidator: ({ res }) => res.ok === true,
         })
           .catch((err) => err)
 
+        // NOTE: Commented cuz it will be set in states[EStep.GetPhotoLink].invoke.onDone
         // context.photoLink.response = res
         if (res.ok) {
           context.photoLink.result.state = 'success'
 
-          // TODO?
+          // TODO: Seit image src to state -> show it in ui
 
           return Promise.resolve(res)
         }
@@ -513,5 +519,3 @@ export const stepMachine = createMachine<TState>(
     delays: {},
   },
 );
-
-// const pageActor = createActor(pageMachine).start();

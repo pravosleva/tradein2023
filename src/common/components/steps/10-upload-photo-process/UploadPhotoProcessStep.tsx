@@ -36,7 +36,7 @@ export const UploadPhotoProcessStep = ({
               <Spinner />
             </div>
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              Сотрудник проверяет фото...
+              [ TODO: UI Сотрудник проверяет фото... ]
             </div>
           </div>
         )
@@ -45,7 +45,7 @@ export const UploadPhotoProcessStep = ({
           <div className={baseClasses.stack6}>
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
               {/* <WaitForUploadPhoto /> */}
-              [ TODO: Загрузите фото ]
+              [ TODO: UI ожидания загрузки фото ]
             </div>
           </div>
         )

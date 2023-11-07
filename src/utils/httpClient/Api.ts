@@ -87,22 +87,25 @@ export class Api {
         })
       )
       .catch((err: any) => {
+        let _msg
+        try {
+          _msg = err?.toString()
+        } catch (er: any) {
+          _msg = `ERR: ${err?.message || er?.message || 'No er.message'}`
+        }
+
         if (axios.isCancel(err)) {
           console.log('Request canceled', err.message)
         } else {
-          console.dir({
-            // REACT_APP_API_URL,
-            err,
-            // url,
-          })
+          // console.dir({ err })
           switch (true) {
             case err instanceof AxiosError:
-              return { isOk: false, message: err.message, res: err.response?.data }
+              return { isOk: false, message: err.message, res: { ...(err?.response?.data || { ok: false, message: _msg }) } }
             default:
-              break
+              return { isOk: false, message: err?.message, res: { ok: false, message: err?.message, ...(err || { ok: false, message: _msg }) } }
           }
         }
-        return { isOk: false, message: err.message || 'No err.message', res: err }
+        return { isOk: false, message: err.message || 'No err.message', res: { ...(err || { ok: false, message: _msg }) } }
       })
 
     // console.log(result) // { isOk: true, res: { ok: true, _originalBody: { username: 'pravosleva', chatId: 432590698 } } }
