@@ -38,14 +38,14 @@ export const getPriceTableHtml = ({
         thead: {
           main: 'text-xs text-gray-700 uppercase bg-gray-50',
           tr: {
-            th: 'px-2 py-3',
+            th: 'px-3 py-3',
           },
         },
         tbody: {
           tr: {
             main: 'bg-white border-b',
-            th: 'px-2 py-2 font-medium text-gray-900 whitespace-nowrap',
-            td: 'px-2 py-2',
+            th: 'px-3 py-2 font-medium text-gray-900 whitespace-nowrap',
+            td: 'px-3 py-2',
           },
         },
       },
