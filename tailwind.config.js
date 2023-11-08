@@ -25,7 +25,14 @@ export default {
       '4xl': '2.441rem',
       '5xl': '3.052rem',
     },
-    extend: {},
+    extend: {
+      // maxWidth: {
+      //   'sm': '640px',
+      // },
+      // width: {
+      //   '110': '110px',
+      // }
+    },
   },
   plugins: [],
 }

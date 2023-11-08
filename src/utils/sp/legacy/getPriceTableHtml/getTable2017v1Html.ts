@@ -208,7 +208,7 @@ export const getTable2017v1Html = ({ cfg, originalDataCases, classNameMap }: TPr
       .join('')
     if (tbody)
       html += `
-<table${classNameMap?.table.main ? ` class="${classNameMap?.table.main}"` : ''}>
+<table${classNameMap?.table.main ? ` class="${classNameMap?.table.main} mt-6"` : ''}>
   <thead${classNameMap ? ` class="${classNameMap.table.thead.main}"` : ''}>
     <tr>
       <th colspan="${cfg.enabledConditionsCodes.length + 1}"${classNameMap ? ` class="${classNameMap.table.thead.tr.th}"` : ''}>
@@ -229,7 +229,7 @@ export const getTable2017v1Html = ({ cfg, originalDataCases, classNameMap }: TPr
   }
   if (originalDataCases?.subsidiesStruct3?.price) {
     html += `
-<table${classNameMap?.table.main ? ` class="${classNameMap?.table.main}"` : ''}>
+<table${classNameMap?.table.main ? ` class="${classNameMap?.table.main} mt-6"` : ''}>
   <thead${classNameMap ? ` class="${classNameMap.table.thead.main}"` : ''}>
     <tr>
       <th colspan="${cfg.enabledConditionsCodes.length + 1}"${classNameMap ? ` class="${classNameMap.table.thead.tr.th}"` : ''}>

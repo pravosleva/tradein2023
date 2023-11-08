@@ -115,7 +115,7 @@ export const WaitForUploadPhoto = ({ photoLinkResponse }: TProps) => {
 
         <Dialog
           title='Отсканируйте QR'
-          size='sm'
+          size='md'
           isOpened={isQrModalOpened}
           onClose={handleCloseModal}
           controls={[

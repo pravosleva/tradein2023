@@ -376,6 +376,7 @@ function App() {
                     selectedMemory: state.context.memory.selectedItem,
                   }}
                   conditionCodeValidator={({ value }) => value === state.context.checkPhone.response?.condition }
+                  
                   /* TODO: Originl legacy arg
                     cfg: {},
                     originalDataCases: {
@@ -392,6 +393,15 @@ function App() {
                       },
                     },
                   */
+                 finalPriceTableProps={{
+                  subsidiesStruct2: {
+                    tableHeader: 'Сумма с учетом дополнительной скидки при покупке следующих моделей',
+                    price: state.context.checkPhone.response.price || 0,
+                    subsidies: state.context.checkPhone.response.subsidies || [],
+                    noAllZeroSubsidies: true,
+                    itemValidation: ({ price /* vendor, model, title */ }) => !!price,
+                  },
+                 }}
                 />
               ) : (
                 <ResponsiveBlock
@@ -411,6 +421,40 @@ function App() {
                 </ResponsiveBlock>
               )
             }
+          </ContentWithControls>
+        )
+      case EStep.Contract:
+        return (
+          <ContentWithControls
+            header='Договор'
+            controls={[
+              {
+                id: '1',
+                label: 'Next (dev)',
+                onClick: () => {
+                  send({ type: 'goNext' })
+                },
+                btn: {
+                  color: 'primary',
+                  variant: 'outlined',
+                },
+                isDisabled: !can({ type: 'goNext' }),
+              },
+              {
+                id: '2',
+                label: 'Назад',
+                onClick: () => {
+                  send({ type: 'goPrev' })
+                },
+                btn: {
+                  color: 'default',
+                  variant: 'outlined',
+                },
+                isDisabled: !can({ type: 'goPrev' }),
+              },
+            ]}
+          >
+            <div>[ TODO: Contract form ]</div>
           </ContentWithControls>
         )
       case EStep.Final:

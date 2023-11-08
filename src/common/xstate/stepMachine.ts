@@ -28,6 +28,7 @@ export enum EStep {
   UploadPhotoInProgress = 'upload-photo:in-progress',
   UploadPhotoResultInNotOk = 'upload-photo:result-is-not-ok',
   FinalPriceTable = 'final-price-table',
+  Contract = 'contract',
   Final = 'final',
 }
 enum EErrCode {
@@ -38,8 +39,6 @@ enum EErrCode {
   ERR5 = 'ERR5',
   // ERR6 = 'ERR6',
 }
-
-// const fetchIMEIMachine
 
 export type TSelectedItem = { value: string; label: string; }
 type TState = {
@@ -84,6 +83,14 @@ type TState = {
       state: 'stopped' | 'pending' | 'success' | 'error';
     };
   };
+  contract: {
+    response: any;
+    uiMsg: string | null;
+    result: {
+      state: 'stopped' | 'pending' | 'success' | 'error';
+    };
+    // form: {};
+  },
 }
 const initialContextState: TState = {
   baseSessionInfo: {
@@ -121,6 +128,13 @@ const initialContextState: TState = {
     },
   },
   photoStatus: {
+    response: null,
+    uiMsg:null,
+    result: {
+      state: 'stopped',
+    },
+  },
+  contract: {
     response: null,
     uiMsg:null,
     result: {
@@ -330,6 +344,20 @@ export const stepMachine = createMachine<TState>(
       [EStep.FinalPriceTable]: {
         on: {
           goNext: {
+            target: EStep.Contract,
+          },
+        },
+      },
+
+      // NOTE: Договор
+      [EStep.Contract]: {
+        on: {
+          goPrev: {
+            cond: (context) => context.contract?.result.state !== 'pending' || !context.contract?.response?.ok,
+            target: EStep.FinalPriceTable,
+          },
+          goNext: {
+            cond: (context) => context.contract?.response?.ok === true,
             target: EStep.Final,
           },
         },

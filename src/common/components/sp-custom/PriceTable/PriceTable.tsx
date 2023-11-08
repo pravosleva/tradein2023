@@ -1,6 +1,6 @@
 import { NSP } from "~/utils/httpClient"
 import { TSelectedItem } from '~/common/xstate/stepMachine'
-import { getPriceTableHtml } from '~/utils/sp'
+import { getPriceTableHtml, NLegacy2017Props } from '~/utils/sp'
 import { possibleConditionCodes as defaultPossibleConditionCodes } from './utils/getTranslatedConditionCode'
 
 export type TPriceTableProps = {
@@ -13,6 +13,11 @@ export type TPriceTableProps = {
   }
   possibleConditionCodes?: { value: string; label: string; }[]; // 'C', 'D', 'NC'
   conditionCodeValidator: ({ value, label }: { value: string; label: string; }) => boolean;
+
+  finalPriceTableProps?: {
+    subsidiesStruct2: NLegacy2017Props.TSubsidiesStruct2;
+    // subsidiesStruct3?: NLegacy2017Props.TSubsidiesStruct3;
+  };
 }
 
 type TActualValuesResult = {
@@ -66,6 +71,7 @@ export const PriceTable = ({
   // photoStatusResponse,
   possibleConditionCodes = defaultPossibleConditionCodes,
   conditionCodeValidator,
+  finalPriceTableProps,
 }: TPriceTableProps) => {
   const values = getSynthesis({
     byUser,
@@ -98,13 +104,13 @@ export const PriceTable = ({
         noAllZeroSubsidies: true,
         itemValidation: ({ prices }) => !!prices,
       },
+      subsidiesStruct2: finalPriceTableProps?.subsidiesStruct2,
+
     },
   })
   return (
     <div
-      style={{
-        minWidth: '100%',
-      }}
+      style={{ minWidth: '100%' }}
       dangerouslySetInnerHTML={{
         __html: html,
       }}

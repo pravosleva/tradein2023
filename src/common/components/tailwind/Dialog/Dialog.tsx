@@ -11,7 +11,7 @@ type TProps = {
   title: string;
   description?: string;
   Body: React.ReactNode;
-  size: 'sm' | 'md' | 'lg';
+  size: 'xs' | 'sm' | 'md' | 'lg';
 }
 
 export function Dialog({
