@@ -46,17 +46,18 @@ export const ContentWithControls = ({
             isLimitedForDesktop
             className={baseClasses.stack2}
           >
-            <h2 className='text-3xl font-bold'>{header}</h2>
+            <h2 className='text-xl sm:text-xl md:text-3xl font-bold'>{header}</h2>
+
             {!!subheader && (
               typeof subheader === 'string' ? (
-                <h3 className='text-xl font-bold'>{subheader}</h3>
+                <h3 className='text-lg sm:text-lg md:text-xl font-bold'>{subheader}</h3>
               ) : Array.isArray(subheader) && (
                 subheader.map((str, i) => {
                   const isFirst = i === 0
                   switch (true) {
                     case isFirst:
                       return (
-                        <h3 key={`${str}-${i}`} className='text-xl font-bold'>{str}</h3>
+                        <h3 key={`${str}-${i}`} className='text-lg sm:text-lg md:text-xl font-bold'>{str}</h3>
                       )
                     default:
                       return (

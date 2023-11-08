@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ContentWithControls, TControlBtn } from '~/common/components/sp-custom/ContentWithControls'
 // import baseClasses from '~/App.module.scss'
 import { PollingComponent } from '~/common/components/sp-custom/PollingComponent'
 import { httpClient, NSP } from '~/utils/httpClient'
 import { Spinner } from '~/common/components/tailwind'
-import { useCallback, useState, useMemo } from 'react'
+import { useCallback, useMemo, memo, useState } from 'react'
 import baseClasses from '~/App.module.scss'
 // import { WaitForUploadPhoto } from '~/common/components/sp-custom'
 
@@ -16,10 +17,10 @@ type TProps = {
   onDone: ({ value }: { value: NSP.TPhotoStatusResponse }) => void;
 }
 
-export const UploadPhotoProcessStep = ({
+export const UploadPhotoProcessStep = memo(({
   tradeinId,
-  header,
-  subheader,
+  header: initHeader,
+  subheader: initSubheader,
   controls,
   onDone,
 }: TProps) => {
@@ -52,6 +53,15 @@ export const UploadPhotoProcessStep = ({
     }
   }, [state?.started])
 
+  // -- NOTE: !state?.started -> Фото не загружены -> Проверка устройства не начала
+  const header = useMemo(() => {
+    return !state?.started ? initHeader : 'Подождите...'
+  }, [state?.started, initHeader])
+  const subheader = useMemo(() => {
+    return !state?.started ? initSubheader : undefined
+  }, [state?.started, initSubheader])
+  // --
+
   return (
     <ContentWithControls
       header={header}
@@ -59,20 +69,15 @@ export const UploadPhotoProcessStep = ({
       controls={controls}
     >
       {UiStatus}
-
       <PollingComponent
         // isDebugEnabled
         promise={() => httpClient.checkPhotoState({ tradeinId })}
         resValidator={(data: NSP.TPhotoStatusResponse) => {
           let result = false
-
           if (data?.ok && !!data?.status) {
-            const statusesToDonePolling = ['ok', 'bad_quality', 'fake']
-            statusesToDonePolling.forEach((s) => {
-              if (data.status === s) result = true
-            })
+            const statusesForDonePolling = ['ok', 'bad_quality', 'fake']
+            for (const s of statusesForDonePolling) if (data.status === s) result = true
           }
-
           return result;
         }}
         onEachResponse={handleEachResponse}
@@ -82,4 +87,4 @@ export const UploadPhotoProcessStep = ({
       />
     </ContentWithControls>
   )
-}
+})

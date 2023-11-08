@@ -465,7 +465,7 @@ function App() {
 
     if (stepContentTopRef.current) window.scrollTo({ top: stepContentTopRef.current.offsetTop, behavior: 'smooth'})
   }, [state.value, setStore])
-  useMetrix({ isDebugEnabled: true })
+  useMetrix({ isDebugEnabled: false })
 
   return (
     <>

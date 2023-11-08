@@ -42,8 +42,8 @@ export const PollingComponent = memo(({
   }, [onSuccess, promise, resValidator, setIsWorking])
 
   useLayoutEffect(() => {
-    console.log('--- eff: PollingComponent init')
-  }, [])
+    if (isDebugEnabled) console.log('--- eff: PollingComponent init')
+  }, [isDebugEnabled])
 
   useLayoutEffect(() => {
     if (onEachResponse) onEachResponse({ data: lastResponse })

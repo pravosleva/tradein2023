@@ -9,17 +9,18 @@
   position: sticky;
   // top: 50px;
   z-index: 1;
-  padding: 32px 0px 32px 0px !important;
 }
 
 @media(max-width: #{$monitor-md}px) {
   .stickyHeader {
     top: #{$height-limit-header-mobile}px;
+    padding: 24px 0px 24px 0px !important;
   }
 }
 @media(min-width:calc(#{$monitor-md}px + 1px)) {
   .stickyHeader {
     top: #{$height-limit-header-desktop}px;
+    padding: 32px 0px 32px 0px !important;
   }
 }
 
