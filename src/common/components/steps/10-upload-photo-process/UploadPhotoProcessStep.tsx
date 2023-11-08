@@ -7,7 +7,7 @@ import { httpClient, NSP } from '~/utils/httpClient'
 import { Spinner } from '~/common/components/tailwind'
 import { useCallback, useMemo, memo, useState } from 'react'
 import baseClasses from '~/App.module.scss'
-// import { WaitForUploadPhoto } from '~/common/components/sp-custom'
+import { WaitForUploadPhoto } from '~/common/components/sp-custom'
 
 type TProps = {
   tradeinId: number;
@@ -15,6 +15,7 @@ type TProps = {
   subheader?: string | (string | null | undefined | false)[];
   controls: TControlBtn[];
   onDone: ({ value }: { value: NSP.TPhotoStatusResponse }) => void;
+  photoLinkResponse: NSP.TPhotoLinkResponse | null;
 }
 
 export const UploadPhotoProcessStep = memo(({
@@ -23,6 +24,7 @@ export const UploadPhotoProcessStep = memo(({
   subheader: initSubheader,
   controls,
   onDone,
+  photoLinkResponse,
 }: TProps) => {
   const [state, setState] = useState<NSP.TPhotoStatusResponse | null>(null)
   const handleEachResponse = useCallback(({ data }: { data: NSP.TPhotoStatusResponse }) => {
@@ -36,29 +38,31 @@ export const UploadPhotoProcessStep = memo(({
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
               <Spinner />
             </div>
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            {/* <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
               [ TODO: UI Сотрудник проверяет фото... ]
-            </div>
+            </div> */}
           </div>
         )
       default:
         return (
           <div className={baseClasses.stack6}>
+            {/* <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <Spinner />
+            </div> */}
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              {/* <WaitForUploadPhoto /> */}
-              [ TODO: UI ожидания загрузки фото ]
+              <WaitForUploadPhoto photoLinkResponse={photoLinkResponse} />
             </div>
           </div>
         )
     }
-  }, [state?.started])
+  }, [state?.started, photoLinkResponse])
 
   // -- NOTE: !state?.started -> Фото не загружены -> Проверка устройства не начала
   const header = useMemo(() => {
     return !state?.started ? initHeader : 'Подождите...'
   }, [state?.started, initHeader])
   const subheader = useMemo(() => {
-    return !state?.started ? initSubheader : undefined
+    return !state?.started ? initSubheader : 'Сотрудник проверяет фото'
   }, [state?.started, initSubheader])
   // --
 

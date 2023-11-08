@@ -31,8 +31,9 @@ export const Button = React.forwardRef(({
   color,
   fullWidth,
   variant,
-  ...nativeProps
+  ..._nativeProps
 }: IButtonProps, ref) => {
+  const { className, ...nativeProps } = _nativeProps
   return (
     <button
       // @ts-ignore
@@ -49,6 +50,7 @@ export const Button = React.forwardRef(({
         'text-md',
         'py-2',
         'px-5',
+        className,
       )}
       {...nativeProps}
     >

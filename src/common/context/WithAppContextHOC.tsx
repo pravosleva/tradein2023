@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable react-refresh/only-export-components */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -24,18 +25,18 @@ export const WithAppContextHOC = ({ children }: any) => {
   )
 }
 
-export namespace NEvent {
-  export enum ServerIncoming {
-    TEST = 'lab:client:tst-action',
-    WANNA_BE_CONNECTED_TO_ROOM = 'lab:client:wanna-be-connected-to-room',
-    WANNA_BE_DISCONNECTED_FROM_ROOM = 'lab:client:wanna-be-disconnected-from-room',
-  }
-  export enum ServerOutgoing {
-    TEST = 'lab:server:tst-action',
-    SOMEBODY_CONNECTED_TO_ROOM = 'lab:server:somebody-connected',
-    COMMON_MESSAGE = 'lab:server:common-message',
-  }
-}
+// NOTE: Add this if necessary
+// export namespace NEvent {
+//   export enum ServerIncoming {
+//     TEST = 'lab:client:tst-action',
+//   }
+//   export enum ServerOutgoing {
+//     TEST = 'lab:server:tst-action',
+//   }
+// }
+
+// @ts-ignore
+window.appVersion = pkg.version
 
 export {
   useStore,

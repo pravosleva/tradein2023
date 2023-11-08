@@ -23,7 +23,7 @@
   flex-direction: column;
   width: 100%;
   // box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
-  box-shadow: 0 16px 16px rgba(0, 0, 0, 0.3);
+  // box-shadow: 0 16px 16px rgba(0, 0, 0, 0.3);
   // border: 1px solid red;
   border-radius: 16px;
 }
@@ -58,6 +58,9 @@
     border-top-left-radius: 16px;
     border-top-right-radius: 16px;
   }
+}
+.borderRounded {
+  border-radius: 16px;
 }
 
 .subboxBottom {

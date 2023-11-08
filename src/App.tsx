@@ -278,7 +278,7 @@ function App() {
             ) : (
               <UploadPhotoProcessStep
                 tradeinId={state.context.baseSessionInfo.tradeinId}
-                header='Загрузите фото устройства'
+                header={`Загрузите фото устройства${state.context.imei.response?.phone.model ? ` ${state.context.imei.response?.phone.model}` : ''}`}
                 subheader={[
                   // state.context.imei.response?.phone.model || '⚠️ Модель устройства не определена',
                   'Для финальной оценки и подтверждения состояния',
@@ -309,6 +309,7 @@ function App() {
                       break
                   }
                 }}
+                photoLinkResponse={state.context.photoLink.response}
               />
             )}
           </>

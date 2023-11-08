@@ -2,10 +2,7 @@
 import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
-import {
-  WithAppContextHOC,
-  // useStore, NEvent, TAppMicroStore, initialState,
-} from '~/common/context/WithAppContextHOC'
+import { WithAppContextHOC } from '~/common/context/WithAppContextHOC'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   // <React.StrictMode>
