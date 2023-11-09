@@ -98,6 +98,12 @@
   row-gap: #{$size-pad-2}px;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
+.specialGridV {
+  display: grid;
+  column-gap: #{$size-pad-2}px;
+  row-gap: #{$size-pad-2}px;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+}
 
 .inlineCode {
   font-family: system-ui; // monospace;

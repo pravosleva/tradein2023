@@ -22,7 +22,7 @@ import {
   ContractStep,
 } from '~/common/components/steps'
 import clsx from 'clsx'
-import { useStore } from './common/context/WithAppContextHOC'
+import { useStore } from '~/common/context/WithAppContextHOC'
 // import { getTranslatedConditionCode } from '~/common/components/sp-custom/PriceTable/utils'
 import { useMetrix } from '~/common/hooks'
 import { getReadableSnakeCase } from '~/utils/aux-ops'
@@ -59,7 +59,7 @@ function App() {
       case EStep.ImeiErr:
         return (
           <ContentWithControls
-            header='Подождите...'
+            header='Oops...'
             controls={[
               {
                 id: '2',
@@ -72,9 +72,15 @@ function App() {
           >
             <Alert
               type='danger'
-              // header={state.context.checkPhone.result.state}
+              header={state.context.imei.uiMsg || undefined}
             >
-              <div>{state.context.imei.uiMsg}</div>
+              {
+                state.context.imei.response ? (
+                  <pre className={classes.preStyled}>{JSON.stringify(state.context.imei.response, null, 2)}</pre>
+                ) : (
+                  <div>No state.context.imei.response</div>
+                )
+              }
             </Alert>
           </ContentWithControls>
         )
@@ -297,7 +303,6 @@ function App() {
                 tradeinId={state.context.baseSessionInfo.tradeinId}
                 header={`Загрузите фото устройства${state.context.imei.response?.phone.model ? ` ${state.context.imei.response?.phone.model}` : ''}`}
                 subheader={[
-                  // state.context.imei.response?.phone.model || '⚠️ Модель устройства не определена',
                   'Для финальной оценки и подтверждения состояния',
                 ]}
                 controls={[
@@ -309,10 +314,7 @@ function App() {
                   },
                 ]}
                 onDone={({ value }) => {
-                  console.log('- App: UploadPhotoProcessStep.onDone')
-
                   send({ type: 'SET_PHOTO_STATUS_RESPONSE', value })
-
                   switch (value.status) {
                     case 'fake':
                     case 'bad_quality':
@@ -322,7 +324,7 @@ function App() {
                       send({ type: 'goNext' })
                       break
                     default:
-                      console.log(`- APP: UNKNOWN CASE for ${value.status}`)
+                      console.log(`-APP: UNKNOWN CASE for status ${value.status} (TODO: This case should be tested)`)
                       break
                   }
                 }}
@@ -482,31 +484,28 @@ function App() {
       case EStep.ContractError:
         return (
           <ContentWithControls
-          header='ERR'
-          controls={[
-            {
-              id: '2',
-              label: 'Вернуться',
-              onClick: () => {
-                // send({ type: 'RESET_ALL_RESPONSES' })
-                send({ type: 'goPrev' })
+            header='ERR'
+            controls={[
+              {
+                id: '2',
+                label: 'Вернуться',
+                onClick: () => send({ type: 'goPrev' }),
+                btn: {
+                  color: 'primary',
+                  variant: 'outlined',
+                },
               },
-              btn: {
-                color: 'primary',
-                variant: 'outlined',
-              },
-            },
-          ]}
-        >
-          <Alert
-            type='danger'
-            header={state.context.contract.uiMsg || 'Что-то пошло не так'}
+            ]}
           >
-            <pre className={classes.preStyled}>{JSON.stringify({
-              contractResponse: state.context.contract.response,
-            }, null, 2)}</pre>
-          </Alert>
-        </ContentWithControls>
+            <Alert
+              type='danger'
+              header={state.context.contract.uiMsg || 'Что-то пошло не так'}
+            >
+              <pre className={classes.preStyled}>{JSON.stringify({
+                contractResponse: state.context.contract.response,
+              }, null, 2)}</pre>
+            </Alert>
+          </ContentWithControls>
         )
       case EStep.Final:
         return (

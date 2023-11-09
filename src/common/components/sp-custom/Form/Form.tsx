@@ -39,12 +39,12 @@ export const Form = ({
   const {
     register,
     // handleSubmit,
-    getValues,
+    // getValues,
     formState: {
       errors,
       // defaultValues,
-      isDirty,
-      isValid,
+      // isDirty,
+      // isValid,
       // ...restFormStateProps
     },
     // clearErrors,
@@ -67,12 +67,6 @@ export const Form = ({
   const setFieldValue = useCallback((fn: string, val: any) => {
     setAuxState({ [fn]: val })
   }, [setAuxState])
-
-  // useLayoutEffect(() => {
-  //   console.log('-Form:useLayoutEffect | restFormState')
-  //   console.log(restProps)
-    
-  // }, [restProps])
 
   // Callback version of watch.  It's your responsibility to unsubscribe when done.
   useLayoutEffect(() => {
@@ -113,15 +107,10 @@ export const Form = ({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watch, schema, onFormReady, onFormNotReady])
 
-  const tst = () => {
-    const values = getValues()
-
-    _getValues({
-      values,
-      isDirty,
-      isValid,
-    })
-  }
+  // const tst = () => {
+  //   const values = getValues()
+  //   _getValues({ values, isDirty, isValid })
+  // }
 
   return (
     <>
@@ -132,7 +121,7 @@ export const Form = ({
           'grid',
           'gap-6',
           'mb-6',
-          'md:grid-cols-2',
+          'md:grid-cols-1',
         )}
       >
         {
@@ -223,7 +212,7 @@ export const Form = ({
         }
         {/* <Input type="submit" /> */}
       </div>
-      <button onClick={tst}>tst</button>
+      {/* <button onClick={tst}>tst</button> */}
     </>
   )
 }
