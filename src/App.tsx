@@ -83,6 +83,7 @@ function App() {
           <ContentWithControls
             header={state.context.imei.response?.phone.model || '⚠️ Модель устройства не определена'}
             subheader={clsx(
+              !(!!state.context.imei.response?.phone.color || !!state.context.color.selectedItem || state.context.imei.response?.phone.memory || !!state.context.memory.selectedItem) && 'Выберите параметры',
               getReadableSnakeCase(state.context.imei.response?.phone.color || '') || state.context.color.selectedItem?.label,
               state.context.imei.response?.phone.memory || state.context.memory.selectedItem?.label,
             )}
