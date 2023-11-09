@@ -16,9 +16,6 @@ export const FinalPriceTableStep = (props: TFinalPriceTableProps) => {
       <ResponsiveBlock
         isPaddedMobile
         isLimitedForDesktop
-        // style={{
-        //   border: '1px dashed lightgray',
-        // }}
       >
         <div
           style={{
@@ -70,9 +67,7 @@ export const FinalPriceTableStep = (props: TFinalPriceTableProps) => {
       {/* <ResponsiveBlock
         isPaddedMobile
         isLimitedForDesktop
-        style={{
-          border: '1px dashed lightgray',
-        }}
+        style={{ border: '1px dashed lightgray' }}
       >
         <pre>{JSON.stringify(values, null, 2)}</pre>
       </ResponsiveBlock> */}

@@ -14,20 +14,14 @@ export const ContractStep = ({
 }: TProps) => {
   return (
     <div className={baseClasses.stack}>
-      {/* <div>[ ContractStep ]</div> */}
       <Form
         getValues={(vals) => {
           console.log(vals)
         }}
-        // onSubmit={(data) => {
-        //   console.log(data)
-        // }}
         onFormReady={({ state }) => {
-          // console.log(state)
           onFormReady({ formState: state })
         }} 
         onFormNotReady={({ state }) => {
-          // console.log(state)
           onFormNotReady({ formState: state })
         }} 
         schema={{
@@ -53,9 +47,10 @@ export const ContractStep = ({
             type: 'tel',
             label: 'Телефон',
 
-            // TODO: Other countries
+            // -- TODO? Validation for other countries
             validate: (val: string) => val.length === 11,
-            // NOTE: For example 79163385212
+            // NOTE: For example (ru) 79163385212
+            // -- 
             
             isRequired: true,
           },

@@ -7,14 +7,12 @@ import { useForm } from 'react-hook-form'
 import { useLayoutEffect, Fragment, useState, useCallback } from 'react'
 import clsx from 'clsx'
 import { PhoneInput } from '~/common/components/sp-custom'
-// import classes from './From.module.scss'
 
-type TType = 'text' | 'number' | 'tel'
-
+type TFieldType = 'text' | 'number' | 'tel'
 type TField = {
   label: string;
   initValue?: string | number;
-  type: TType;
+  type: TFieldType;
   validate: (val: any) => boolean;
   isRequired?: boolean;
 }
@@ -78,33 +76,19 @@ export const Form = ({
       const counters = { ok: 0, fail: 0 }
       for (const key in schema) {
         switch (key) {
-          // case 'phone':
-          //   if (schema[key].validate(auxState[key])) counters.ok += 1
-          //   else counters.fail += 1
-          //   break
           default:
-            if (schema[key].validate(state[key])) counters.ok += 1
-            else counters.fail += 1
+            if (schema[key].isRequired) {
+              if (schema[key].validate(state[key])) counters.ok += 1
+              else counters.fail += 1
+            } else counters.ok += 1
             break
         }
       }
 
-      // console.log(counters, state.phone)
-
-      if (
-        // counters.ok === Object.keys(schema).length &&
-        counters.fail === 0
-      ) {
-        // console.log('-ok')
-        onFormReady({ state })
-      } else {
-        // console.log('-not ok')
-        onFormNotReady({ state })
-      }
-
+      if (counters.ok === Object.keys(schema).length && counters.fail === 0) onFormReady({ state })
+      else onFormNotReady({ state })
     })
     return () => subscription.unsubscribe()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watch, schema, onFormReady, onFormNotReady])
 
   // const tst = () => {
@@ -135,28 +119,6 @@ export const Form = ({
                         htmlFor={key}
                         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                       >{schema[key].label}</label> */}
-                      {/* <input
-                        type='tel'
-                        id={key}
-                        className={clsx(
-                          'bg-gray-50',
-                          'border',
-                          'border-gray-300',
-                          'text-gray-900',
-                          'text-sm',
-                          'rounded-lg',
-                          // NOTE: Focus
-                          'focus:ring-blue-500',
-                          'focus:border-blue-500',
-                          
-                          'block',
-                          'w-full',
-                          'p-2.5',
-                        )}
-                        placeholder="123-45-678"
-                        pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}"
-                        required
-                      /> */}
                       <PhoneInput
                         // id={key}
                         value={auxState.phone}
@@ -182,9 +144,8 @@ export const Form = ({
                           setFieldValue('phone', `+${e}` || '');
                           setValue('phone', e)
                         }}
-                        // {...register(key, { required: schema[key].isRequired, maxLength: 30 })}
                       />
-                  </div>
+                    </div>
                   </Fragment>
                 )
               case 'text':

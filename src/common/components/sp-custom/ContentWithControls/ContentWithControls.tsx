@@ -37,8 +37,6 @@ export const ContentWithControls = ({
     <ErrorBoundary>
       <div className={baseClasses.stack4}>
         <ResponsiveBlock
-          // isPaddedMobile
-          // isLimitedForDesktop
           className={clsx(classes.stickyHeader, 'backdrop-blur--lite')}
         >
           <ResponsiveBlock
@@ -46,18 +44,36 @@ export const ContentWithControls = ({
             isLimitedForDesktop
             className={baseClasses.stack2}
           >
-            <h2 className='text-xl sm:text-xl md:text-3xl font-bold'>{header}</h2>
+            <h2
+              className={clsx(
+                'text-xl',
+                'sm:text-xl',
+                'md:text-3xl',
+                'font-bold',
+              )}
+            >{header}</h2>
 
             {!!subheader && (
               typeof subheader === 'string' ? (
-                <h3 className='text-lg sm:text-lg md:text-xl font-bold'>{subheader}</h3>
+                <h3
+                  className={clsx(
+                    'text-lg',
+                    'sm:text-lg',
+                    'md:text-xl',
+                    'font-bold',
+                  )}
+                >{subheader}</h3>
               ) : Array.isArray(subheader) && (
                 subheader.map((str, i) => {
+                  if (!str) return null
                   const isFirst = i === 0
                   switch (true) {
                     case isFirst:
                       return (
-                        <h3 key={`${str}-${i}`} className='text-lg sm:text-lg md:text-xl font-bold'>{str}</h3>
+                        <h3
+                          key={`${str}-${i}`}
+                          className={clsx('text-lg', 'sm:text-lg', 'md:text-xl', 'font-bold')}
+                        >{str}</h3>
                       )
                     default:
                       return (
@@ -102,7 +118,7 @@ export const ContentWithControls = ({
             <>
               <ResponsiveBlock
                 style={{
-                  // border: '1px solid red',
+                  // border: '1px dashed red',
                   padding: '16px 0 16px 0',
                   position: 'sticky',
                   bottom: 0,
