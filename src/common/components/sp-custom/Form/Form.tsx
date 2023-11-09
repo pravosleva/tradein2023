@@ -119,7 +119,7 @@ export const Form = ({
         // className={baseClasses.specialActionsGrid}
         className={clsx(
           'grid',
-          'gap-6',
+          'gap-3',
           'mb-6',
           'md:grid-cols-1',
         )}
