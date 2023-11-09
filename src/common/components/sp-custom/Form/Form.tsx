@@ -179,6 +179,7 @@ export const Form = ({
                           // setFieldValue("phoneNumber", formatPhoneNumberIntl(e))
                           const rusSymbolsToChangeP7 = ['7', '+7', '8', '+8']
                           const rusSymbolsToChangeP79 = ['9', '+9']
+                          // TODO? const rusSymbolsToChangeP791 = ['78']
                           if (rusSymbolsToChangeP7.includes(e)) {
                             setFieldValue('phone', '+7' || '');
                             setValue('phone', '7')

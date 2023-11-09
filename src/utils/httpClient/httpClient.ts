@@ -44,38 +44,7 @@ class Singleton extends Api {
 
     const postData = { IMEI }
     // @ts-ignore
-    if (isDev) postData._add_data = {
-      phone: {
-        "vendor": "Samsung",
-        "type": "mobile_phone",
-        "model": "Galaxy S10 plus",
-        "memory": "",
-        "memory_choices": [
-          "512 GB",
-          "128 GB",
-          "1024 GB"
-        ],
-        "color": "cardinal_red",
-        "color_choices": {
-          "512 GB": [
-            "canary_yellow",
-            "cardinal_red"
-          ],
-          "128 GB": [
-            "ceramic_white",
-            "ceramic_black"
-          ],
-          "1024 GB": [
-            "prism_white",
-            "prism_green",
-            "prism_blue",
-            "prism_black",
-            "flamingo_pink"
-          ]
-        },
-        "find_my_iphone": ""
-      },
-    }
+    // if (isDev) postData._add_data = {}
 
     const data = await this.api({
       url: '/partner_api/tradein/imei',
