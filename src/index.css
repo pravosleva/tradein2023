@@ -100,3 +100,23 @@ table > tbody > tr > td:first-child {
   /* border: 1px solid red; */
   width: 100%;
 }
+
+.react-phone-input-2_containerClass {
+  border-radius: 8px;
+}
+.react-phone-input-2_containerClass > .flag-dropdown,
+.react-tel-input .selected-flag:hover {
+  border-radius: 8px 0 0 8px;
+}
+/* .react-tel-input > .flag-dropdown > .open .selected-flag {
+  border-radius: 8px 0 0 0 !important;
+} */
+
+.react-phone-input-2_inputClass {
+  max-width: 100%;
+  border-radius: 8px !important;
+}
+/* .react-phone-input-2_searchClass {} */
+/* .react-phone-input-2_dropdownClass {
+  border: 1px solid red;
+} */

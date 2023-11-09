@@ -19,11 +19,13 @@ import {
   PrePriceTableStep,
   UploadPhotoProcessStep,
   FinalPriceTableStep,
+  ContractStep,
 } from '~/common/components/steps'
 import clsx from 'clsx'
 import { useStore } from './common/context/WithAppContextHOC'
 // import { getTranslatedConditionCode } from '~/common/components/sp-custom/PriceTable/utils'
 import { useMetrix } from '~/common/hooks'
+import { getReadableSnakeCase } from '~/utils/aux-ops'
 
 function App() {
   const [_store, setStore] = useStore((store) => store)
@@ -80,6 +82,10 @@ function App() {
         return (
           <ContentWithControls
             header={state.context.imei.response?.phone.model || '⚠️ Модель устройства не определена'}
+            subheader={clsx(
+              getReadableSnakeCase(state.context.imei.response?.phone.color || '') || state.context.color.selectedItem?.label,
+              state.context.imei.response?.phone.memory || state.context.memory.selectedItem?.label,
+            )}
             controls={[
               {
                 id: '1',
@@ -106,11 +112,13 @@ function App() {
                     sections={[
                       {
                         id: 'mem',
-                        items: state.context.imei.result.memoryList
+                        items: state.context.memory.dynamicList.length > 0
+                          ? state.context.memory.dynamicList
+                          : state.context.imei.result.memoryList
                       }
                     ]}
                     label={!state.context.memory.selectedItem ? 'Выберите Память' : state.context.memory.selectedItem.label}
-                    isDisabled={state.context.imei.result.memoryList.length === 0}
+                    isDisabled={state.context.memory.dynamicList.length === 0 && state.context.imei.result.memoryList.length === 0}
                     shoudHaveAttention={!state.context.memory.selectedItem}
                   />
                 )
@@ -127,7 +135,7 @@ function App() {
                       }
                     ]}
                     label={!state.context.color.selectedItem ? 'Выберите Цвет' : state.context.color.selectedItem.label}
-                    isDisabled={!state.context.memory.selectedItem}
+                    isDisabled={state.context.imei.response?.phone.memory ? state.context.color.dynamicList.length === 0 : !state.context.memory.selectedItem}
                     shoudHaveAttention={!state.context.color.selectedItem}
                   />
                 )
@@ -141,7 +149,11 @@ function App() {
           <ContentWithControls
             hasChildrenFreeWidth
             header='Предварительная сумма скидки'
-            subheader={state.context.imei.response?.phone.model || '⚠️ Модель устройства не определена'}
+            subheader={clsx(
+              state.context.imei.response?.phone.model || '⚠️ Модель устройства не определена',
+              getReadableSnakeCase(state.context.imei.response?.phone.color || '') || state.context.color.selectedItem?.label,
+              state.context.imei.response?.phone.memory || state.context.memory.selectedItem?.label,
+            )}
             controls={[
               {
                 id: '1',
@@ -196,7 +208,11 @@ function App() {
           <ContentWithControls
             header='Подождите...'
             subheader={[
-              state.context.imei.response?.phone.model || '⚠️ Модель устройства не определена',
+              clsx(
+                state.context.imei.response?.phone.model || '⚠️ Модель устройства не определена',
+                getReadableSnakeCase(state.context.imei.response?.phone.color || '') || state.context.color.selectedItem?.label,
+                state.context.imei.response?.phone.memory || state.context.memory.selectedItem?.label,
+              ),
               '/phone/check',
             ]}
             controls={[
@@ -349,9 +365,11 @@ function App() {
           <ContentWithControls
             hasChildrenFreeWidth
             header='Итоговая сумма скидки'
-            subheader={[
-              `${state.context.imei.response?.phone.model || '⚠️ Модель устройства не определена'}`,
-            ]}
+            subheader={clsx(
+              state.context.imei.response?.phone.model || '⚠️ Модель устройства не определена',
+              getReadableSnakeCase(state.context.imei.response?.phone.color || '') || state.context.color.selectedItem?.label,
+              state.context.imei.response?.phone.memory || state.context.memory.selectedItem?.label,
+            )}
             // subheaderJsx={}
             controls={[
               {
@@ -377,31 +395,15 @@ function App() {
                   }}
                   conditionCodeValidator={({ value }) => value === state.context.checkPhone.response?.condition }
                   
-                  /* TODO: Originl legacy arg
-                    cfg: {},
-                    originalDataCases: {
-                      possiblePricesStruct: {
-                        tableHeader: 'Сумма без учета дополнительной скидки',
-                        prices: window.proxiedState.imeiStep?.__response?.possible_prices || {},
-                      },
-                      subsidiesStruct2: {
-                        price: window.proxiedState.phoneCheckResponse?.price || 0,
-                        tableHeader: 'Сумма с учетом дополнительной скидки при покупке следующих моделей',
-                        subsidies: window.proxiedState.phoneCheckResponse?.subsidies || [],
-                        noAllZeroSubsidies: true,
-                        itemValidation: ({ price }) => !!price,
-                      },
+                  finalPriceTableProps={{
+                    subsidiesStruct2: {
+                      tableHeader: 'Сумма с учетом дополнительной скидки при покупке следующих моделей',
+                      price: state.context.checkPhone.response.price || 0,
+                      subsidies: state.context.checkPhone.response.subsidies || [],
+                      noAllZeroSubsidies: true,
+                      itemValidation: ({ price /* vendor, model, title */ }) => !!price,
                     },
-                  */
-                 finalPriceTableProps={{
-                  subsidiesStruct2: {
-                    tableHeader: 'Сумма с учетом дополнительной скидки при покупке следующих моделей',
-                    price: state.context.checkPhone.response.price || 0,
-                    subsidies: state.context.checkPhone.response.subsidies || [],
-                    noAllZeroSubsidies: true,
-                    itemValidation: ({ price /* vendor, model, title */ }) => !!price,
-                  },
-                 }}
+                  }}
                 />
               ) : (
                 <ResponsiveBlock
@@ -430,13 +432,13 @@ function App() {
             controls={[
               {
                 id: '1',
-                label: 'Next (dev)',
+                label: 'Далее',
                 onClick: () => {
                   send({ type: 'goNext' })
                 },
                 btn: {
-                  color: 'primary',
-                  variant: 'outlined',
+                  color: 'success',
+                  variant: 'filled',
                 },
                 isDisabled: !can({ type: 'goNext' }),
               },
@@ -454,8 +456,56 @@ function App() {
               },
             ]}
           >
-            <div>[ TODO: Contract form ]</div>
+            <div className={classes.stack}>
+              <ContractStep
+                onFormReady={({ formState }) => {
+                  send({ type: 'SET_CONTRACT_FORM_STATE', value: { state: formState, isReady: true } })
+                }}
+                onFormNotReady={({ formState }) => {
+                  send({ type: 'SET_CONTRACT_FORM_STATE', value: { state: formState, isReady: false } })
+                }}
+              />
+              <pre className={classes.preStyled}>{JSON.stringify(state.context.contract, null, 2)}</pre>
+            </div>
           </ContentWithControls>
+        )
+      case EStep.ContractSending:
+        return (
+          <ContentWithControls
+            header='Подождите...'
+            controls={[]}
+          >
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}><Spinner /></div>
+          </ContentWithControls>
+        )
+      case EStep.ContractError:
+        return (
+          <ContentWithControls
+          header='ERR'
+          controls={[
+            {
+              id: '2',
+              label: 'Вернуться',
+              onClick: () => {
+                // send({ type: 'RESET_ALL_RESPONSES' })
+                send({ type: 'goPrev' })
+              },
+              btn: {
+                color: 'primary',
+                variant: 'outlined',
+              },
+            },
+          ]}
+        >
+          <Alert
+            type='danger'
+            header={state.context.contract.uiMsg || 'Что-то пошло не так'}
+          >
+            <pre className={classes.preStyled}>{JSON.stringify({
+              contractResponse: state.context.contract.response,
+            }, null, 2)}</pre>
+          </Alert>
+        </ContentWithControls>
         )
       case EStep.Final:
         return (
@@ -502,6 +552,8 @@ function App() {
     state.context.baseSessionInfo,
     state.context.photoStatus.uiMsg,
     state.context.photoStatus.response,
+    state.context.contract,
+    state.context.memory.dynamicList,
   ])
 
   const stepContentTopRef = useRef<HTMLDivElement>(null)
@@ -525,7 +577,6 @@ function App() {
             {/* <h2 className="text-2xl font-bold">{String(state.value)}</h2> */}
             {Step}
           </div>
-          {/* <ResponsiveBlock isPaddedMobile isLimitedForDesktop></ResponsiveBlock> */}
 
           {/* <ResponsiveBlock isPaddedMobile isLimitedForDesktop>
             <div className={classes.card}>

@@ -1,0 +1,35 @@
+.phoneInputWrapper {
+  box-sizing: border-box;
+
+  // > div.react-phone-input-2_containerClass.react-tel-input
+  // > div > input.form-control.react-phone-input-2_inputClass._spInput_4otgd_1
+  // > div.flag-dropdown
+
+  .flagDropdown {
+    .selectedFlag {
+      border: 1px solid red !important;
+    }
+  }
+  .buttonClass {
+    border: 1px solid black;
+  }
+
+  & input {
+    border: 1px solid red;
+  }
+  // & > div > * {
+  //   border: 1px solid red !important;
+  // }
+  // & .flag-dropdown {
+  //   border: 1px solid red;
+  // }
+  & > div > * > div {
+    border-radius: 8px 0 0 8px !important;
+  }
+  // & > * > * > * > * {
+  //   border: 1px solid red;
+  // }
+  // & > * > * > * > * > * {
+  //   border: 1px solid red;
+  // }
+}

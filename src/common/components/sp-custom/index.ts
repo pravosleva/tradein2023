@@ -1,5 +1,6 @@
 export * from './Button'
 export * from './ContentWithControls'
+export * from './Form'
 export * from './Input'
 export * from './PollingComponent'
 export * from './PriceTable'

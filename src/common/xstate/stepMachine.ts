@@ -29,6 +29,9 @@ export enum EStep {
   UploadPhotoResultInNotOk = 'upload-photo:result-is-not-ok',
   FinalPriceTable = 'final-price-table',
   Contract = 'contract',
+  ContractSending = 'contract-sending',
+  ContractError = 'contract-error',
+
   Final = 'final',
 }
 enum EErrCode {
@@ -37,7 +40,8 @@ enum EErrCode {
   ERR3 = 'ERR3',
   ERR4 = 'ERR4',
   ERR5 = 'ERR5',
-  // ERR6 = 'ERR6',
+  ERR6 = 'ERR6',
+  // ERR7 = 'ERR7',
 }
 
 export type TSelectedItem = { value: string; label: string; }
@@ -57,6 +61,7 @@ type TState = {
   },
   memory: {
     selectedItem: TSelectedItem | null;
+    dynamicList: { id: string; value: string; label: string; }[];
   };
   color: {
     selectedItem: TSelectedItem | null;
@@ -89,7 +94,12 @@ type TState = {
     result: {
       state: 'stopped' | 'pending' | 'success' | 'error';
     };
-    // form: {};
+    form: {
+      state: null | {
+        [key: string]: any;
+      };
+      isReady: boolean;
+    };
   },
 }
 const initialContextState: TState = {
@@ -107,6 +117,7 @@ const initialContextState: TState = {
     },
   },
   memory: {
+    dynamicList: [],
     selectedItem: null,
   },
   color: {
@@ -139,6 +150,10 @@ const initialContextState: TState = {
     uiMsg:null,
     result: {
       state: 'stopped',
+    },
+    form: {
+      state: null,
+      isReady: false,
     },
   },
 }
@@ -179,7 +194,12 @@ export const stepMachine = createMachine<TState>(
           onDone: {
             target: EStep.EnterMemoryAndColor,
             actions: assign({
-              imei: (ctx, e) => ({ ...ctx.imei, response: e.data, uiMsg: 'OK' })
+              imei: (ctx, e) => ({
+                ...ctx.imei,
+                // result: { state: 'success' },
+                response: e.data,
+                uiMsg: 'OK',
+              })
             })
           },
           onError: {
@@ -189,6 +209,7 @@ export const stepMachine = createMachine<TState>(
                 // console.warn(e.data)
                 return {
                   ...ctx.imei,
+                  // result: { state: 'error' },
                   response: e?.data || e,
                   uiMsg: e?.data?.message || `${EErrCode.ERR1}: ${JSON.stringify(e)}`
                 }
@@ -216,7 +237,7 @@ export const stepMachine = createMachine<TState>(
             target: EStep.EnterImei,
           },
           goNext: {
-            cond: (ctx) => !!ctx.memory?.selectedItem && !!ctx.color?.selectedItem,
+            cond: (ctx) => !!(ctx.imei.response?.phone.memory || !!ctx.memory?.selectedItem) && !!(ctx.imei.response?.phone.color || !!ctx.color?.selectedItem),
             target: EStep.PrePriceTable,
           },
         },
@@ -243,20 +264,26 @@ export const stepMachine = createMachine<TState>(
             // NOTE: Uncomment for go automatically
             target: EStep.GetPhotoLink,
             actions: assign({
-              checkPhone: (ctx, e) => ({ ...ctx.checkPhone, response: e.data, uiMsg: 'OK' })
+              checkPhone: (ctx, e) => ({
+                ...ctx.checkPhone,
+                // result: { state: 'success' },
+                response: e.data,
+                uiMsg: 'OK',
+              })
             }),
           },
           onError: {
-            // TODO?
+            // --
+            // TODO? More cases
             // target: EStep.CheckPhoneErr,
+            // --
+            
             actions: assign({
               checkPhone: (ctx, e: any) => {
                 // console.warn(e.data instanceof AxiosError)
                 return {
                   ...ctx.checkPhone,
-                  result: {
-                    state: 'error',
-                  },
+                  // result: { state: 'error' },
                   response: e?.data || e,
                   uiMsg: e?.data?.message || `${EErrCode.ERR2}: ${JSON.stringify(e)}`
                 }
@@ -284,7 +311,12 @@ export const stepMachine = createMachine<TState>(
             // NOTE: Uncomment for go automatically
             target: EStep.UploadPhotoInProgress,
             actions: assign({
-              photoLink: (ctx, e) => ({ ...ctx.photoLink, response: e.data, uiMsg: 'OK' })
+              photoLink: (ctx, e) => ({
+                ...ctx.photoLink,
+                // result: { state: 'success' },
+                response: e.data,
+                uiMsg: 'OK',
+              })
             }),
           },
           onError: {
@@ -296,9 +328,7 @@ export const stepMachine = createMachine<TState>(
                 // console.warn(e.data instanceof AxiosError)
                 return {
                   ...ctx.photoLink,
-                  result: {
-                    state: 'error',
-                  },
+                  result: { state: 'error' },
                   response: e?.data || e,
                   uiMsg: e?.data?.message || `${EErrCode.ERR3}: ${JSON.stringify(e)}`
                 }
@@ -353,12 +383,61 @@ export const stepMachine = createMachine<TState>(
       [EStep.Contract]: {
         on: {
           goPrev: {
-            cond: (context) => context.contract?.result.state !== 'pending' || !context.contract?.response?.ok,
+            cond: (context) => context.contract.result.state !== 'pending' || !context.contract.response?.ok,
             target: EStep.FinalPriceTable,
           },
           goNext: {
-            cond: (context) => context.contract?.response?.ok === true,
+            cond: (context) => context.contract.form.isReady === true,
+            target: EStep.ContractSending,
+          },
+        },
+      },
+      [EStep.ContractSending]: {
+        invoke: {
+          src: 'sendContractMachine',
+          // data: (context) => ({}),
+          onDone: {
+            // NOTE: Uncomment for go automatically
             target: EStep.Final,
+            actions: assign({
+              contract: (ctx, e) => ({
+                ...ctx.contract,
+                // result: { state: 'success' },
+                response: e.data,
+                uiMsg: 'OK',
+              })
+            }),
+          },
+          onError: {
+            target: EStep.ContractError,
+            actions: assign({
+              contract: (ctx, e: any) => {
+                // console.warn(e.data instanceof AxiosError)
+                return {
+                  ...ctx.contract,
+                  // result: { state: 'error' },
+                  response: e?.data || e,
+                  uiMsg: e?.data?.message || `${EErrCode.ERR6}: ${JSON.stringify(e)}`
+                }
+              },
+            }),
+          },
+        },
+        on: {
+          goPrev: {
+            cond: (context) => context.photoLink?.result.state !== 'pending',
+            target: EStep.PrePriceTable,
+          },
+          goNext: {
+            cond: (context) => context.photoLink?.response?.ok === true,
+            target: EStep.UploadPhotoInProgress,
+          },
+        },
+      },
+      [EStep.ContractError]: {
+        on: {
+          goPrev: {
+            target: EStep.Contract,
           },
         },
       },
@@ -404,15 +483,44 @@ export const stepMachine = createMachine<TState>(
       },
       RESET_ALL_RESPONSES: {
         actions: assign({
-          imei: (_ctx, _e) => ({ ...initialContextState.imei } ),
-          memory: (_ctx, _e) => ({ ...initialContextState.memory } ),
-          color: (_ctx, _e) => ({ ...initialContextState.color } ),
-          checkPhone: (_ctx, _e) => ({ ...initialContextState.checkPhone } ),
-          photoLink: (_ctx, _e) => ({ ...initialContextState.photoLink } ),
-          photoStatus: (_ctx, _e) => ({ ...initialContextState.photoStatus } ),
+          imei: (_ctx, _e) => ({ ...initialContextState.imei }),
+          memory: (_ctx, _e) => ({ ...initialContextState.memory }),
+          color: (_ctx, _e) => ({ ...initialContextState.color }),
+          checkPhone: (_ctx, _e) => ({ ...initialContextState.checkPhone }),
+          photoLink: (_ctx, _e) => ({ ...initialContextState.photoLink }),
+          photoStatus: (_ctx, _e) => ({ ...initialContextState.photoStatus }),
           // NOTE: Etc.
         }),
       },
+      SET_CONTRACT_FORM_STATE: {
+        actions: assign({
+          contract: (ctx, e) => ({
+            ...ctx.contract,
+            form: {
+              // ...ctx.contract.form,
+              state: e.value.state,
+              isReady: e.value.isReady,
+            },
+          })
+        }),
+      },
+      // SET_CONTRACT_FORM_IS_READY: {
+      //   actions: assign({
+      //     contract: (ctx, e) => {
+      //       console.log('--SET_CONTRACT_FORM_READY_STATE')
+      //       console.log(e.value)
+      //       console.log('--')
+      //       return {
+      //         ...ctx.contract,
+      //         form: {
+      //           // ...ctx.contract.form,
+      //           state: e.state,
+      //           isReady: e.isReady,
+      //         },
+      //       }
+      //     }
+      //   }),
+      // },
     },
     predictableActionArguments: true,
   },
@@ -456,17 +564,40 @@ export const stepMachine = createMachine<TState>(
           context.imei.result.state = 'success'
 
           // -- NOTE: Set anything to state.context
-          // 1. Reset colorList (Will be update when memoryList will be selected)
+          // 1. Reset dynamic lists (Col: Will be update when memoryList will be selected; Mem: too)
           context.color.dynamicList = []
+          context.memory.dynamicList = []
           // 2. Set memoryList from response
           try {
+            // ---
+            // TODO: Check color_choices
+            // 2.1 Incorrect res.phone?.color_choices
+            // ---
             const memoryList = Object.keys(res.phone?.color_choices)
             context.imei.result.memoryList = memoryList.map((value) => ({ id: value, value, label: value.toUpperCase() }))
           } catch (err: any) {
             context.imei.result.state = 'error'
             return Promise.reject(new Error(`${EErrCode.ERR5}: res.ok But! Не удалось составить список memoryList: ${err?.message || 'No err?.message'}`))
           }
-          // 3. TODO?
+          // ---
+          // TODO: Обработка ошибочных кейсов
+          // 3.1 Память определена: Формируем список выбора цветов
+          if (res.phone.memory) {
+            if (!res.phone.color_choices[res.phone.memory]) return Promise.reject({ ok: false, message: `Неконсистентный ответ: нет выбора цвета для памяти ${res.phone.memory}` })
+            context.color.dynamicList = res.phone.color_choices[res.phone.memory].map((value: string) => ({ id: value, label: getReadableSnakeCase(value), value }))
+          }
+          // 3.2 Цвет определен, память - нет: Формируем выбор памяти
+          if (res.phone.color && !res.phone.memory) {
+            if (!res.phone.memory_choices) return Promise.reject({ ok: false, message: 'Неконсистентный ответ: нет выбора памяти' })
+            const memoryDynamicList = []
+            for (const memory in res.phone.color_choices) {
+              const _list = res.phone.color_choices[memory]
+              if (_list.includes(res.phone.color)) memoryDynamicList.push({ id: memory, value: memory, label: memory.toUpperCase() })
+            }
+            if (memoryDynamicList.length === 0) return Promise.reject({ ok: false, message: `Неконсистентный ответ: не удалось сформировать список выбора памяти для цвета ${res.phone.color}` })
+            context.memory.dynamicList = memoryDynamicList
+          }
+          // ---
           // --
 
           return Promise.resolve(res)
@@ -496,7 +627,9 @@ export const stepMachine = createMachine<TState>(
         if (res.ok) {
           context.checkPhone.result.state = 'success'
 
+          // --
           // TODO? More cases for status.fake | status.bad_quality
+          // --
 
           return Promise.resolve(res)
         }
@@ -518,9 +651,6 @@ export const stepMachine = createMachine<TState>(
         })
 
         const res = await httpClient.getPhotoLink({
-
-          // TODO: Should be got from state!
-
           tradeinId: context.baseSessionInfo.tradeinId || 0,
           responseValidator: ({ res }) => res.ok === true,
         })
@@ -533,6 +663,44 @@ export const stepMachine = createMachine<TState>(
 
           // TODO: Seit image src to state -> show it in ui
 
+          return Promise.resolve(res)
+        }
+
+        context.photoLink.result.state = 'error'
+        return Promise.reject(res)
+      },
+      sendContractMachine: async (context, _ev, _invMeta) => {
+        if (!context.baseSessionInfo.tradeinId) return Promise.reject({
+          ok: false,
+          message: 'tradeinId не установлен для данной сессии (запрос не был отправлен)',
+        })
+        if (!context.contract.form.state || !context.contract.form.isReady) return Promise.reject({
+          ok: false,
+          message: '(FRONT WTF) Неожиданное состояние формы Договора',
+        })
+
+        const cleanupContractStep = () => {
+          context.contract.response = null
+          context.contract.uiMsg = null
+          context.contract.result.state = 'pending'
+        }
+        cleanupContractStep()
+
+        // --
+        // TODO: form should be modified!
+        // --
+
+        const res = await httpClient.sendContractData({
+          tradeinId: context.baseSessionInfo.tradeinId,
+          form: context.contract.form.state,
+          responseValidator: ({ res }) => res.ok === true,
+        })
+          .catch((err) => err)
+
+        // NOTE: Commented cuz it will be set in states[EStep.GetPhotoLink].invoke.onDone
+        // context.photoLink.response = res
+        if (res.ok) {
+          context.contract.result.state = 'success'
           return Promise.resolve(res)
         }
 

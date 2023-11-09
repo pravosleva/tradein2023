@@ -15,6 +15,7 @@ class Singleton extends Api {
   checkPhoneCancelTokenSource: CancelTokenSource
   getPhotoLinkCancelTokenSource: CancelTokenSource
   checkPhotoStateCancelTokenSource: CancelTokenSource
+  sendContractCancelTokenSource: CancelTokenSource
   // axiosInstance: AxiosInstance
 
   private constructor() {
@@ -24,6 +25,7 @@ class Singleton extends Api {
     this.checkPhoneCancelTokenSource = axios.CancelToken.source()
     this.getPhotoLinkCancelTokenSource = axios.CancelToken.source()
     this.checkPhotoStateCancelTokenSource = axios.CancelToken.source()
+    this.sendContractCancelTokenSource = axios.CancelToken.source()
   }
   public static getInstance(): Singleton {
     if (!Singleton.instance) Singleton.instance = new Singleton()
@@ -40,11 +42,46 @@ class Singleton extends Api {
     this.sendIMEICancelTokenSource.cancel('axios request canceled')
     this.sendIMEICancelTokenSource = axios.CancelToken.source()
 
+    const postData = { IMEI }
+    // @ts-ignore
+    if (isDev) postData._add_data = {
+      phone: {
+        "vendor": "Samsung",
+        "type": "mobile_phone",
+        "model": "Galaxy S10 plus",
+        "memory": "",
+        "memory_choices": [
+          "512 GB",
+          "128 GB",
+          "1024 GB"
+        ],
+        "color": "cardinal_red",
+        "color_choices": {
+          "512 GB": [
+            "canary_yellow",
+            "cardinal_red"
+          ],
+          "128 GB": [
+            "ceramic_white",
+            "ceramic_black"
+          ],
+          "1024 GB": [
+            "prism_white",
+            "prism_green",
+            "prism_blue",
+            "prism_black",
+            "flamingo_pink"
+          ]
+        },
+        "find_my_iphone": ""
+      },
+    }
+
     const data = await this.api({
       url: '/partner_api/tradein/imei',
       method: 'POST',
-      data: { IMEI },
-      cancelToken: this.sendIMEICancelTokenSource.token
+      data: postData,
+      cancelToken: this.sendIMEICancelTokenSource.token,
     })
       .then((r) => r)
       .catch((r) => r)
@@ -188,6 +225,48 @@ class Singleton extends Api {
       .catch((r) => r)
 
     this.checkPhotoStateCancelTokenSource.cancel('axios request done')
+
+    switch (true) {
+      case !!responseValidator:
+        // console.log('-- this case', responseValidator({ res: data }))
+        // @ts-ignore
+        return responseValidator({ res: data }) ? Promise.resolve(data) : Promise.reject(data)
+      default:
+        return data.ok ? Promise.resolve(data) : Promise.reject(data)
+    }
+  }
+
+  async sendContractData({
+    tradeinId,
+    form,
+    responseValidator,
+  }: {
+    tradeinId: number;
+    form: {
+      [key: string]: any;
+    };
+    responseValidator?: ({ res }: { res: any }) => boolean;
+  }) {
+    this.sendContractCancelTokenSource.cancel('axios request canceled')
+    this.sendContractCancelTokenSource = axios.CancelToken.source()
+
+    // TODO:
+    // const inputData: {
+    //   // id: number;
+    //   [key: string]: any;
+    // } = {}
+    // if (isDev) {}
+
+    const data = await this.api({
+      url: '/partner_api/tradein/client/data',
+      method: 'POST',
+      data: { id: tradeinId, form },
+      cancelToken: this.sendContractCancelTokenSource.token
+    })
+      .then((r) => r)
+      .catch((r) => r)
+
+    this.sendContractCancelTokenSource.cancel('axios request done')
 
     switch (true) {
       case !!responseValidator:
