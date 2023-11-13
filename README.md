@@ -27,13 +27,11 @@ offline-tradein-2023.mtsmain.xstate/
 │  ├─ index.html
 # ---
 
-├─ index.html
 ├─ src/
 │  ├─ common/
 │  ├─ ...
-│  ├─ main.js
-│  ├─ style.scss
-├─ style.scss
+│  ├─ main.tsx
+├─ ...
 ├─ package.json
 ```
 
