@@ -7,6 +7,7 @@ import { getRandomString, getRandomValue } from '~/utils/aux-ops'
 
 // const createCancelTokenSource = () => axios.CancelToken.source()
 const isDev = process.env.NODE_ENV === 'development'
+const isLocalProd = import.meta.env.VITE_LOCAL_PROD
 
 class Singleton extends Api {
   private static instance: Singleton
@@ -147,7 +148,7 @@ class Singleton extends Api {
     } = {
       id: tradeinId,
     }
-    if (isDev) {
+    if (isDev || isLocalProd) {
       inputData._odd_scenario = {
         status: {
           // NOTE: status -> not_checked will be set by default

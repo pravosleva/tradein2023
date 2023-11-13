@@ -1,4 +1,38 @@
-# React + TypeScript + Vite
+# SmartPrice Trade-In v3
+
+## Сборка
+
+### На [test.smartprice.ru](https://test.smartprice.ru/tradein)
+
+```bash
+yarn build:staging
+```
+
+### На продакшен [smartprice.ru/tradein](https://smartprice.ru/tradein)
+
+```bash
+yarn build:prod
+```
+
+## Envs
+
+```bash
+VITE_ENV_SAMPLE=1
+VITE_BASE_API_URL=https://smartprice.ru
+```
+
+[See also about Vite envs](https://vitejs.dev/guide/env-and-mode.html)
+
+```bash
+.env                # loaded in all cases
+.env.local          # loaded in all cases, ignored by git
+.env.[mode]         # only loaded in specified mode
+.env.[mode].local   # only loaded in specified mode, ignored by git
+```
+
+# Original template notes
+
+## React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
@@ -14,12 +48,12 @@ If you are developing a production application, we recommend updating the config
 - Configure the top-level `parserOptions` property like this:
 
 ```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
+parserOptions: {
+  ecmaVersion: 'latest',
+  sourceType: 'module',
+  project: ['./tsconfig.json', './tsconfig.node.json'],
+  tsconfigRootDir: __dirname,
+},
 ```
 
 - Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`

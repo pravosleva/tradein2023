@@ -5,15 +5,14 @@ import axios, { AxiosError, AxiosInstance, AxiosResponse, CancelToken } from 'ax
 // @ts-ignore
 import * as rax from 'retry-axios'
 
-// const REACT_APP_API_URL = process.env.REACT_APP_API_URL || ''
-const REACT_APP_API_URL = 'https://pravosleva.pro/express-helper/smartprice'
+const VITE_BASE_API_URL = import.meta.env.VITE_BASE_API_URL
 
 export class Api {
   axiosInstance: AxiosInstance
 
   constructor() {
     const axiosInstance = this.axiosInstance = axios.create({
-      baseURL: REACT_APP_API_URL,
+      baseURL: VITE_BASE_API_URL,
       // timeout: 1000,
       // headers: { 'X-Custom-Header': 'foobar' },
     })
