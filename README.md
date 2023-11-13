@@ -17,7 +17,7 @@ yarn build:prod
 ### Build product structure
 
 ```bash
-offline-tradein-2023.mtsmain.xstate/
+sp.offline-tradein-2023.mtsmain.xstate/
 ├─ node_modules/
 
 # --- NOTE: Вот что нужно доставить на прод после сборки:
