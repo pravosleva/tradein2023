@@ -1,6 +1,6 @@
 # SmartPrice Trade-In v3
 
-## Сборка
+## ⚠️ Сборка
 
 ### На [test.smartprice.ru](https://test.smartprice.ru/tradein)
 
@@ -14,20 +14,42 @@ yarn build:staging
 yarn build:prod
 ```
 
-## Envs
+### Build product structure
 
 ```bash
-VITE_ENV_SAMPLE=1
+offline-tradein-2023.mtsmain.xstate/
+├─ node_modules/
+
+# --- NOTE: Вот что нужно доставить на прод после сборки:
+├─ dist/
+│  ├─ assets/
+│  ├─ static3/
+│  ├─ index.html
+# ---
+
+├─ index.html
+├─ src/
+│  ├─ common/
+│  ├─ ...
+│  ├─ main.js
+│  ├─ style.scss
+├─ style.scss
+├─ package.json
+```
+
+## 🧪 Envs
+
+```bash
 VITE_BASE_API_URL=https://smartprice.ru
 ```
 
 [See also about Vite envs](https://vitejs.dev/guide/env-and-mode.html)
 
 ```bash
-.env                # loaded in all cases
-.env.local          # loaded in all cases, ignored by git
-.env.[mode]         # only loaded in specified mode
-.env.[mode].local   # only loaded in specified mode, ignored by git
+.env                # ⛔ Dont touch. Loaded in all cases
+.env.local          # ⛔ Dont touch. Loaded in all cases, ignored by git
+.env.[mode]         # ⛔ Dont touch. Only loaded in specified mode
+.env.[mode].local   # ✅ Could be modified. Only loaded in specified mode, ignored by git
 ```
 
 # Original template notes

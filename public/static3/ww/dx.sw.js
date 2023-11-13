@@ -8,12 +8,11 @@ const _perfInfo = {
       ts: tsT0,
       name: 'Начало загрузки SW',
       // NOTE: Optional
-      // data?: any;
+      // data?: { input: { metrixEventType: NEvents.EMetrixClientOutgoing.SP_MX_EV; stateValue: string; } } | any;
     },
   ]
 }
 
-importScripts('./u/_t.js')
 importScripts('./u/s-tools/socket.io-client@4.7.2.min.js')
 importScripts('./u/gu.js')
 importScripts('./u/ev/evs.js')
@@ -54,6 +53,8 @@ let port // TODO? var ports = new Map()
     connectionsCounter++
   
     port.addEventListener(NES.SharedWorker.Native.EPort.MESSAGE, function(e) {
+      // const isNew = _perfInfo.tsList[_perfInfo.tsList.length - 1].descr === e.data.
+      // if () 
       _perfInfo.tsList.push({
         descr: `c->[sw:port:listener]: ${NES.SharedWorker.Native.EPort.MESSAGE}`,
         p: performance.now(),
@@ -76,13 +77,13 @@ let port // TODO? var ports = new Map()
                   result.ok = false
                   result.reason = 'Value type should be a string'
                   break
-                case !!val:
+                case !val:
                   result.ok = false
                   result.reason = 'Value type should not be empty'
                   break
                 case !Object.values(NES.Custom.EType).includes(val):
                   result.ok = false
-                  result.reason = 'Double check the unknown value, plz'
+                  result.reason = 'Double check the unknown event, plz'
                   break
                 default:
                   break
@@ -155,37 +156,48 @@ let port // TODO? var ports = new Map()
   socket.on(NES.Socket.ENative.CONNECT, function () {
     _perfInfo.tsList.push({ descr: `[sock-nat]: ${NES.Socket.ENative.CONNECT}`, p: performance.now(), ts: new Date().getTime(), name: 'Socket подключен' })
     if (dbg.socketState.isEnabled) log({ label: '🟢 Socket connected' })
-    port.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_SOCKET_CONNECTED })
+    port.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_CONN })
   })
 
   socket.on(NES.Socket.ENative.CONNECT_ERROR, function (e) {
     _perfInfo.tsList.push({ descr: `[sock-nat]: ${NES.Socket.ENative.CONNECT_ERROR}`, p: performance.now(), ts: new Date().getTime(), name: 'Socket в ошибке' })
     if (dbg.socketState.isEnabled) log({ label: '🔴 Socket connection errored', msgs: [e] })
-    port.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_SOCKET_CONNECTION_ERRORED })
+    port.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_CONNN_ERR })
   })
 
   socket.on(NES.Socket.ENative.RECONNECT, function (e) {
     _perfInfo.tsList.push({ descr: `[sock-nat]: ${NES.Socket.ENative.RECONNECT}`, p: performance.now(), ts: new Date().getTime(), name: 'Socket переподключен' })
     if (dbg.socketState.isEnabled) log({ label: '🔵 Socket reconnected', msgs: [e] })
-    port.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_SOCKET_RECONNECTED })
+    port.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_RECONN })
   })
 
   socket.on(NES.Socket.ENative.RECONNECT_ATTEMPT, function (e) {
     _perfInfo.tsList.push({ descr: `[sock-nat]: ${NES.Socket.ENative.RECONNECT_ATTEMPT}`, p: performance.now(), ts: new Date().getTime(), name: 'Socket пытается переподключиться' })
     if (dbg.socketState.isEnabled) log({ label: '🟡 Socket trying to reconnect...', msgs: [e] })
-    port.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_SOCKET_TRYING_TO_RECONNECT })
+    port.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_TRY_TO_RECONN })
   })
 
-  socket.on(NES.Socket.Metrix.EClientIncoming.LAB_TEST, function (e) {
+  // socket.on(NES.Socket.Metrix.EClientIncoming.LAB_TEST, function (e) {
+  //   _perfInfo.tsList.push({
+  //     descr: `[sock-cus]<-s: ${NES.Socket.Metrix.EClientIncoming.LAB_TEST}`,
+  //     p: performance.now(),
+  //     ts: new Date().getTime(),
+  //     data: { ...e },
+  //     name: 'Socket получил данные',
+  //   })
+  //   if (dbg.workerEvs.fromServer.isEnabled) log({ label: '⚡ Socket received response by server', msgs: [e] })
+  //   port.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA, ...e })
+  // })
+  socket.on(NES.Socket.Metrix.EClientIncoming.SP_MX_EV, function (e) {
     _perfInfo.tsList.push({
-      descr: `[sock-cus]<-s: ${NES.Socket.Metrix.EClientIncoming.LAB_TEST}`,
+      descr: `[sock-cus:sp-mx-ev]<-s: ${NES.Socket.Metrix.EClientIncoming.SP_MX_EV}`,
       p: performance.now(),
       ts: new Date().getTime(),
       data: { ...e },
       name: 'Socket получил данные',
     })
     if (dbg.workerEvs.fromServer.isEnabled) log({ label: '⚡ Socket received response by server', msgs: [e] })
-    port.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_SOCKET_DATA, ...e })
+    port.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA, ...e })
   })
   
   socket.on(NES.Socket.ENative.DISCONNECT, function (e) {
@@ -196,7 +208,7 @@ let port // TODO? var ports = new Map()
       name: 'Socket отключен',
     })
     if (dbg.socketState.isEnabled) log({ label: '🔴 Socket disconnected', msgs: [e] })
-    port.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_SOCKET_DISCONNECTED, ...e, })
+    port.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_DISCONN, ...e, })
   })
   // --
 })({ self })

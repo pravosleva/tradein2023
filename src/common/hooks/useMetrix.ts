@@ -13,7 +13,7 @@ type TProps = {
 export const useMetrix = ({ isDebugEnabled }: TProps) => {
   const [store, _setStore] = useStore((store) => store)
 
-  // NOTE: 1. Once
+  // NOTE: 1.1 Use wws.subscribeOnData once only!
   useLayoutEffect(() => {
     wws.subscribeOnData<{
       data: {
@@ -25,7 +25,7 @@ export const useMetrix = ({ isDebugEnabled }: TProps) => {
       wName: 'metrixWorker',
       cb: (e: any) => {
         switch (e.data.__eType) {
-          case NEvents.ECustom.WORKER_TO_CLIENT_SOCKET_DATA:
+          case NEvents.ECustom.WORKER_TO_CLIENT_REMOTE_DATA:
             if (isDebugEnabled) groupLog({
               namespace: `--useMetrix:metrixWorker ✅ OnData [${e.data.__eType}] e.data:`,
               items: [e.data],
@@ -43,8 +43,7 @@ export const useMetrix = ({ isDebugEnabled }: TProps) => {
       },
     })
 
-    // -- NOTE: Additional subscribe for example
-    // (dont use this! cuz callbacks above will be replaced)
+    // -- NOTE: 1.2 Additional subscribe? ⛔ Dont use this! Cuz callbacks above will be replaced
     // wws.subscribeOnData<{
     //   data: {
     //     output: any;
@@ -53,9 +52,7 @@ export const useMetrix = ({ isDebugEnabled }: TProps) => {
     //   };
     // }>({
     //   wName: 'metrixWorker',
-    //   cb: (e: any) => {
-    //     groupLog({ namespace: e.type, items: [ e.data ] })
-    //   },
+    //   cb: (e: any) => { groupLog({ namespace: e.type, items: [ e.data ] }) },
     // })
     // --
 
@@ -113,10 +110,10 @@ export const useMetrix = ({ isDebugEnabled }: TProps) => {
     try {
       if (store.stateValue) sendSnapshot({
         input: {
-          metrixEventType: NEvents.EMetrixClientOutgoing.LAB_TEST,
+          metrixEventType: NEvents.EMetrixClientOutgoing.SP_MX_EV,
           stateValue: String(store.stateValue),
         }
-       })
+      })
     } catch (err) {
       if (isDebugEnabled) groupLog({ namespace: '--useMetrix 🚫 err', items: [err] })
     }

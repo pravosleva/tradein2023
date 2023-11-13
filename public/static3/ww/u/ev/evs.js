@@ -2,13 +2,14 @@ const NES = {
   // NOTE: Should be sync with NEvents.ECustom in ~/types/NEvents.ts
   Custom: {
     EType: {
+      CLIENT_TO_WORKER_RESET_HISTORY: 'c-w:reset-history',
       CLIENT_TO_WORKER_MESSAGE: 'c-w:message',
-      WORKER_TO_CLIENT_SOCKET_DATA: 'w-c:socket-data',
-      WORKER_TO_CLIENT_SOCKET_CONNECTED: 'w-c:socket-connected',
-      WORKER_TO_CLIENT_SOCKET_CONNECTION_ERRORED: 'w-c:socket-connection-errored',
-      WORKER_TO_CLIENT_SOCKET_RECONNECTED: 'w-c:socket-reconnected',
-      WORKER_TO_CLIENT_SOCKET_DISCONNECTED: 'w-c:socket-disconnected',
-      WORKER_TO_CLIENT_SOCKET_TRYING_TO_RECONNECT: 'w-c:socket-trying-to-reconnect',
+      WORKER_TO_CLIENT_REMOTE_DATA: 'w-c:socket-data',
+      WORKER_TO_CLIENT_CONN: 'w-c:socket-connected',
+      WORKER_TO_CLIENT_CONNN_ERR: 'w-c:socket-connection-errored',
+      WORKER_TO_CLIENT_RECONN: 'w-c:socket-reconnected',
+      WORKER_TO_CLIENT_DISCONN: 'w-c:socket-disconnected',
+      WORKER_TO_CLIENT_TRY_TO_RECONN: 'w-c:socket-trying-to-reconnect',
     },
   },
   SharedWorker: {
@@ -39,10 +40,11 @@ const NES = {
     Metrix: {
       // NOTE: Should be sync with NEvents.EMetrixClientOutgoing in ~/types/NEvents.ts
       EClientOutgoing: {
-        LAB_TEST: 'lab:client:tst-action',
+        // LAB_TEST: 'lab:client:tst-action',
       },
       EClientIncoming: {
-        LAB_TEST: 'lab:server:tst-action',
+        // LAB_TEST: 'lab:server:tst-action',
+        SP_MX_EV: 'sp-mx:offline-tradein:s:event',
       },
     },
   },

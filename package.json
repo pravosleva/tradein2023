@@ -1,12 +1,17 @@
 {
-  "name": "mtsmain2023.xstate",
+  "name": "sp.offline-tradein-2023.mtsmain.xstate",
   "private": true,
   "version": "3.0.1-beta",
+  "engines" : { 
+    "npm" : ">=8.19.2",
+    "node" : ">=16.18.0 <17.0.0",
+    "yarn": "1.22.5"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build:prod": "tsc && vite build",
-    "build:staging": "tsc && vite build --mode staging",
+    "build:prod": "tsc && vite build --mode production --emptyOutDir",
+    "build:staging": "tsc && vite build --mode staging --emptyOutDir",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
