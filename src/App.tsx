@@ -622,6 +622,7 @@ function App() {
     state.context.memory.dynamicList,
     state.context.initApp.response,
     state.context.initApp.uiMsg,
+    setStore,
   ])
 
   const stepContentTopRef = useRef<HTMLDivElement>(null)
