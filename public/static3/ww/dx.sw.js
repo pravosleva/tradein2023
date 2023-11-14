@@ -214,7 +214,7 @@ let port // TODO? var ports = new Map()
       data: { ...e },
       name: 'Socket получил данные',
     })
-    if (dbg.workerEvs.fromServer.isEnabled) log({ label: '⚡ Socket received response by server', msgs: [e] })
+    if (dbg.workerEvs.fromServer.isEnabled) log({ label: '⚡ Socket received response from server', msgs: [e] })
     port.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA, ...e })
   })
   
