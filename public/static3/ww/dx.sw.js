@@ -111,6 +111,18 @@ let port // TODO? var ports = new Map()
         case NES.SharedWorker.Custom.EType.CLIENT_TO_WORKER_DIE:
           self.close() // NOTE: terminates ...
           break
+        case NES.Custom.EType.CLIENT_TO_WORKER_RESET_HISTORY:
+          const [loadReort] = _perfInfo.tsList
+          _perfInfo.tsList = [
+            loadReort, {
+              descr: 'c->[sw]: SW history reset',
+              p: performance.now(),
+              ts: new Date().getTime(),
+              name: 'Сброс истории SW',
+            },
+          ]
+          port.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_RESET_HISTORY_OK, data: {  tsList: _perfInfo.tsList } })
+          break
         default: {
           const {
             data: {
@@ -127,8 +139,14 @@ let port // TODO? var ports = new Map()
               data: e.data,
               name: 'SW Получил ивент мертики для отправки на сервер',
             })
-            socket.emit(input.metrixEventType, input, (r) => {
-              log({ label: 'c->[sw:port:listener:metrixEventType]->s: cb', msgs: [r] })
+            
+            socket.emit(input.metrixEventType, {
+              ...input,
+              _wService: {
+                _perfInfo,
+              },
+            }, (r) => {
+              log({ label: 'c->sw:port:listener:metrixEventType->s->[cb]', msgs: [r] })
             })
           }
         }

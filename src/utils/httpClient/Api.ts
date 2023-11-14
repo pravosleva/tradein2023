@@ -47,6 +47,7 @@ export class Api {
 
   universalAxiosResponseHandler(validator: (data: any) => boolean) {
     return (axiosRes: AxiosResponse) => {
+
       try {
         if (!validator(axiosRes)) {
           // console.log('- case 1: axiosRes')
@@ -96,10 +97,12 @@ export class Api {
         if (axios.isCancel(err)) {
           console.log('Request canceled', err.message)
         } else {
-          // console.dir({ err })
+          // console.dir({ config: err?.response?.config })
           switch (true) {
             case err instanceof AxiosError:
-              return { isOk: false, message: err.message, res: { ...(err?.response?.data || { ok: false, message: _msg }) } }
+              // console.log(err?.response)
+              // return { isOk: false, message: err.message, res: err?.response?.data || { ok: false, message: _msg } }
+              return { isOk: false, message: err.message, res: { ok: false, message: err.message, url: err?.response?.config.url } }
             default:
               return { isOk: false, message: err?.message, res: { ok: false, message: err?.message, ...(err || { ok: false, message: _msg }) } }
           }

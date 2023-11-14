@@ -2,6 +2,7 @@
 export namespace NEvents {
   export enum ECustom {
     CLIENT_TO_WORKER_RESET_HISTORY = 'c-w:reset-history',
+    WORKER_TO_CLIENT_RESET_HISTORY_OK = 'w-c:reset-history-ok',
     CLIENT_TO_WORKER_MESSAGE = 'c-w:message',
     WORKER_TO_CLIENT_REMOTE_DATA = 'w-c:socket-data',
     WORKER_TO_CLIENT_CONN = 'w-c:socket-connected',

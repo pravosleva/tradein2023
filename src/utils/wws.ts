@@ -11,6 +11,12 @@ type TProps = {
   noSharedWorkers?: boolean;
   isDebugEnabled?: boolean;
 }
+type TTsListItem = {
+  descr: string;
+  p: number;
+  ts: number;
+  label: string;
+}
 
 class Singleton {
   private static instance: Singleton
@@ -87,7 +93,7 @@ class Singleton {
     }
   }
 
-  public post<T>(e: { wName: string; eType: string; data: T; }) {
+  public post<T>(e: { wName: string; eType: string; data?: T; }) {
     const { wName, eType, data } = e
     // @ts-ignore
     if (!this[wName]) throw new Error(`No worker ${wName} yet #3`)
@@ -128,6 +134,16 @@ class Singleton {
       default:
         break
     }
+  }
+
+  public resetHistory({ wName }: { wName: string; }): void {
+    // @ts-ignore
+    if (!this[wName]) throw new Error(`No worker ${wName} yet #5`)
+
+    this.post<{ tsList: TTsListItem[] }>({
+      wName,
+      eType: NEvents.ECustom.CLIENT_TO_WORKER_RESET_HISTORY,
+    })
   }
 }
 

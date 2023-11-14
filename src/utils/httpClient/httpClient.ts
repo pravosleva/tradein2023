@@ -17,6 +17,7 @@ class Singleton extends Api {
   getPhotoLinkCancelTokenSource: CancelTokenSource
   checkPhotoStateCancelTokenSource: CancelTokenSource
   sendContractCancelTokenSource: CancelTokenSource
+  getUserDataCancelTokenSource: CancelTokenSource
   // axiosInstance: AxiosInstance
 
   private constructor() {
@@ -27,6 +28,7 @@ class Singleton extends Api {
     this.getPhotoLinkCancelTokenSource = axios.CancelToken.source()
     this.checkPhotoStateCancelTokenSource = axios.CancelToken.source()
     this.sendContractCancelTokenSource = axios.CancelToken.source()
+    this.getUserDataCancelTokenSource = axios.CancelToken.source()
   }
   public static getInstance(): Singleton {
     if (!Singleton.instance) Singleton.instance = new Singleton()
@@ -243,6 +245,59 @@ class Singleton extends Api {
         // console.log('-- this case', responseValidator({ res: data }))
         // @ts-ignore
         return responseValidator({ res: data }) ? Promise.resolve(data) : Promise.reject(data)
+      default:
+        return data.ok ? Promise.resolve(data) : Promise.reject(data)
+    }
+  }
+
+  async getUserData({
+    responseValidate,
+  }: {
+    responseValidate?: ({ res }: { res: any }) => ({
+      ok: boolean;
+      message?: string;
+    });
+  }) {
+    this.getUserDataCancelTokenSource.cancel('axios request canceled')
+    this.getUserDataCancelTokenSource = axios.CancelToken.source()
+
+    // TODO:
+    // const inputData: {
+    //   // id: number;
+    //   [key: string]: any;
+    // } = {}
+    // if (isDev) {}
+
+    const data = await this.api({
+      url: '/_tmp/me',
+      method: 'POST',
+      data: {
+        _addData: {
+          user_data : {
+            display_name: 'Developer',
+          },
+          session_data: {
+            tradein_id: 2,
+          },
+          features: {
+            
+          },
+        },
+      },
+      cancelToken: this.getUserDataCancelTokenSource.token
+    })
+      .then((r) => r)
+      .catch((r) => r)
+
+    this.getUserDataCancelTokenSource.cancel('axios request done')
+
+    switch (true) {
+      case !!responseValidate && data?.ok: {
+        // console.log('-- this case', responseValidator({ res: data }))
+        const responseValidateResult = responseValidate({ res: data })
+        // @ts-ignore
+        return responseValidateResult.ok ? Promise.resolve(data) : Promise.reject(responseValidateResult)
+      }
       default:
         return data.ok ? Promise.resolve(data) : Promise.reject(data)
     }

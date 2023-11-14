@@ -127,7 +127,6 @@ export const WaitForUploadPhoto = ({ photoLinkResponse }: TProps) => {
                 variant: 'outlined',
               },
               onClick: () => {
-                console.log('-click')
                 handleCloseModal()
               },
             },

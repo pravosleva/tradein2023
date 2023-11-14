@@ -16,7 +16,7 @@
     cursor: not-allowed;
   }
   &:focus-visible {
-    outline: none;;
+    outline: none;
   }
 
   // &_primary {
@@ -42,4 +42,11 @@
     --tw-ring-color: rgb(0 0 0 / 0.1);
   }
 }
+
+.borderedRed {
+  border: 2px solid $color-red;
+}
+.borderedGreen {
+  border-color: $color-green-dark !important;
+}  
 

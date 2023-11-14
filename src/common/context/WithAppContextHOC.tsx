@@ -9,11 +9,15 @@ export type TAppMicroStore = {
   // isConnected: boolean;
   stateValue: string | null | undefined;
   appVersion: string;
+  auxContractForm: {
+    [key: string]: any;
+  } | null;
 }
 export const initialState = {
   // isConnected: false,
   stateValue: null,
   appVersion: pkg.version,
+  auxContractForm: null,
 }
 const { Provider, useStore } = createFastContext<TAppMicroStore>(initialState);
 

@@ -14,7 +14,7 @@ import { Alert, Menu, Spinner } from '~/common/components/tailwind'
 import { ContentWithControls, ResponsiveBlock } from '~/common/components/sp-custom'
 import { BaseLayout } from '~/common/components/layout/BaseLayout'
 import {
-  InitStep,
+  // InitStep,
   EnterImeiStep,
   PrePriceTableStep,
   UploadPhotoProcessStep,
@@ -26,6 +26,7 @@ import { useStore } from '~/common/context/WithAppContextHOC'
 // import { getTranslatedConditionCode } from '~/common/components/sp-custom/PriceTable/utils'
 import { useMetrix } from '~/common/hooks'
 import { getReadableSnakeCase } from '~/utils/aux-ops'
+import { wws } from '~/utils/wws'
 
 function App() {
   const [_store, setStore] = useStore((store) => store)
@@ -33,8 +34,44 @@ function App() {
   const can = state.can.bind(state)
   const Step = useMemo(() => {
     switch (state.value) {
-      case EStep.Init:
-        return <InitStep onStart={() => send({ type: 'goIMEI' })} />
+      case EStep.AppInit:
+        return (
+          <ContentWithControls
+            header='Подождите...'
+            controls={[]}
+          >
+            {/* <div>{state.context.imei.result.state}</div> */}
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}><Spinner /></div>
+          </ContentWithControls>
+        )
+      case EStep.AppInitErr:
+        return (
+          <ContentWithControls
+            header='Oops...'
+            controls={[
+              {
+                id: '2',
+                label: 'Попробовать еще раз',
+                btn: { variant: 'outlined', color: 'default' },
+                onClick: () => send({ type: 'goPrev' }),
+                // isDisabled: !can({ type: 'goPrev' }),
+              },
+            ]}
+          >
+            <Alert
+              type='danger'
+              header={state.context.initApp.uiMsg || undefined}
+            >
+              {
+                state.context.initApp.response ? (
+                  <pre className={classes.preStyled}>{JSON.stringify(state.context.initApp.response, null, 2)}</pre>
+                ) : (
+                  <div>No state.context.initApp.response</div>
+                )
+              }
+            </Alert>
+          </ContentWithControls>
+        )
       case EStep.EnterImei:
         return (
           <EnterImeiStep
@@ -256,7 +293,11 @@ function App() {
           <ContentWithControls
             header='Подождите...'
             subheader={[
-              state.context.imei.response?.phone.model || '⚠️ Модель устройства не определена',
+              clsx(
+                state.context.imei.response?.phone.model || '⚠️ Модель устройства не определена',
+                getReadableSnakeCase(state.context.imei.response?.phone.color || '') || state.context.color.selectedItem?.label,
+                state.context.imei.response?.phone.memory || state.context.memory.selectedItem?.label,
+              ),
               '/photo/link',
             ]}
             controls={[
@@ -461,6 +502,7 @@ function App() {
           >
             <div className={classes.stack}>
               <ContractStep
+                defaultCountryCode={state.context.baseSessionInfo.defaultCountryCode}
                 onFormReady={({ formState }) => {
                   send({ type: 'SET_CONTRACT_FORM_STATE', value: { state: formState, isReady: true } })
                 }}
@@ -468,7 +510,7 @@ function App() {
                   send({ type: 'SET_CONTRACT_FORM_STATE', value: { state: formState, isReady: false } })
                 }}
               />
-              <pre className={classes.preStyled}>{JSON.stringify(state.context.contract, null, 2)}</pre>
+              {/* <pre className={classes.preStyled}>{JSON.stringify(state.context.contract, null, 2)}</pre> */}
             </div>
           </ContentWithControls>
         )
@@ -514,14 +556,35 @@ function App() {
             controls={[
               {
                 id: '1',
-                label: 'Go Start',
+                label: 'Скачать договор повторно',
                 onClick: () => {
-                  send({ type: 'RESET_ALL_RESPONSES' })
-                  send({ type: 'goStart' })
+                  window.open(`/partner_api/tradein/buyout_doc/i/${state.context.baseSessionInfo.tradeinId}.pdf`, '_blank')
                 },
                 btn: {
                   color: 'primary',
                   variant: 'outlined',
+                },
+              },
+              // {
+              //   id: '2',
+              //   label: 'Изменить данные или согласие клиента',
+              //   onClick: () => send({ type: 'goContract' }),
+              //   btn: {
+              //     color: 'default',
+              //     variant: 'outlined',
+              //   },
+              // },
+              {
+                id: '3',
+                label: 'Клиент подписал договор (завершить)',
+                onClick: () => {
+                  send({ type: 'RESET_ALL_RESPONSES' })
+                  wws.resetHistory({ wName: 'metrixWorker' })
+                  send({ type: 'goStart' })
+                },
+                btn: {
+                  color: 'success',
+                  variant: 'filled',
                 },
               },
             ]}
@@ -554,6 +617,8 @@ function App() {
     state.context.photoStatus.response,
     state.context.contract,
     state.context.memory.dynamicList,
+    state.context.initApp.response,
+    state.context.initApp.uiMsg,
   ])
 
   const stepContentTopRef = useRef<HTMLDivElement>(null)

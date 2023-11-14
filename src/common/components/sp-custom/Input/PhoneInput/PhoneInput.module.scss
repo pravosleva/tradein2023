@@ -1,3 +1,5 @@
+@import '~/scss-vars/colors.scss';
+
 .phoneInputWrapper {
   box-sizing: border-box;
 
@@ -10,9 +12,16 @@
       border: 1px solid red !important;
     }
   }
-  .buttonClass {
-    border: 1px solid black;
+  // .buttonClass {
+  //   border: 1px solid black;
+  // }
+
+  .borderedRed {
+    border-color: $color-red !important;
   }
+  .borderedGreen {
+    border-color: $color-green-dark !important;
+  }  
 
   & input {
     border: 1px solid red;

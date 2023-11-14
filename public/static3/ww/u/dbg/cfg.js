@@ -1,16 +1,16 @@
 const dbg = {
   workerEvs: {
     fromClient: {
-      isEnabled: true,
+      isEnabled: false,
     },
     fromServer: {
-      isEnabled: true,
+      isEnabled: false,
     },
   },
   socketState: {
-    isEnabled: true,
+    isEnabled: false,
   },
   swState: {
-    isEnabled: true,
+    isEnabled: false,
   },
 }

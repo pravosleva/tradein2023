@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // import { stepMachine, EStep } from '~/common/xstate/stepMachine'
 import { memo, useMemo, useRef, useEffect } from 'react'
@@ -64,6 +65,8 @@ export const EnterImeiStep = memo(({
         onKeyDown={(e) => {
           if (e.key === 'Enter' && !isNextBtnDisabled) onSendIMEI()
         }}
+        // @ts-ignore
+        maxLength={15}
       />
     </ContentWithControls>
   )

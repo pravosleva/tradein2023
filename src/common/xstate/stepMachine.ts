@@ -17,7 +17,8 @@ import { httpClient, NSP } from '~/utils/httpClient'
 import { getReadableSnakeCase } from '~/utils/aux-ops'
 
 export enum EStep {
-  Init = 'init',
+  AppInit = 'app-init',
+  AppInitErr = 'app-init-err',
   EnterImei = 'enter-imei',
   SendImei = 'send-imei',
   ImeiErr = 'imei-err',
@@ -41,13 +42,42 @@ enum EErrCode {
   ERR4 = 'ERR4',
   ERR5 = 'ERR5',
   ERR6 = 'ERR6',
-  // ERR7 = 'ERR7',
+  ERR7 = 'initApp error',
+  ERR8 = 'ERR8',
 }
 
 export type TSelectedItem = { value: string; label: string; }
+
+// NOTE: ISO 3166-1 alpha-2 codes
+// See also https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
+export enum ECountryCode {
+  RU = 'RU',
+  KZ = 'KZ',
+  BY = 'BY',
+  // Etc.
+}
+export const phoneValidation: {
+  [key in ECountryCode]: (val: string) => boolean;
+} = {
+   [ECountryCode.RU]: (val: string) => val.length === 11, // NOTE: 79163385212
+   [ECountryCode.KZ]: (val: string) => val.length === 11,
+   [ECountryCode.BY]: (val: string) => val.length === 12,
+   // Etc.
+}
+
 type TState = {
   baseSessionInfo: {
+    // -- TODO: Wich format will be received from backend?
     tradeinId: number | null;
+    defaultCountryCode: ECountryCode;
+    // --
+  },
+  initApp: {
+    response: null | NSP.TUserDataResponse;
+    uiMsg: string | null;
+    result: {
+      state: 'stopped' | 'pending' | 'success' | 'error';
+    };
   },
   imei: {
     value: string;
@@ -56,7 +86,6 @@ type TState = {
     result: {
       state: 'stopped' | 'pending' | 'success' | 'error';
       memoryList: { id: string; value: string; label: string; }[];
-      // fullDiscountTable: any[];
     };
   },
   memory: {
@@ -105,6 +134,14 @@ type TState = {
 const initialContextState: TState = {
   baseSessionInfo: {
     tradeinId: 1,
+    defaultCountryCode: ECountryCode.RU,
+  },
+  initApp: {
+    response: null,
+    uiMsg:null,
+    result: {
+      state: 'stopped',
+    },
   },
   imei: {
     value: '',
@@ -113,7 +150,6 @@ const initialContextState: TState = {
     result: {
       state: 'stopped',
       memoryList: [],
-      // fullDiscountTable: [],
     },
   },
   memory: {
@@ -160,15 +196,45 @@ const initialContextState: TState = {
 
 export const stepMachine = createMachine<TState>(
   {
-    initial: EStep.Init,
+    initial: EStep.AppInit,
     context: initialContextState,
     states: {
-      [EStep.Init]: {
-        on: {
-          goIMEI: {
+      [EStep.AppInit]: {
+        invoke: {
+          src: 'getUserDataMachine',
+          // data: (context) => ({ expText: 'exp text' }),
+          onDone: {
             target: EStep.EnterImei,
+            actions: assign({
+              initApp: (ctx, e) => ({
+                ...ctx.initApp,
+                response: e.data,
+                uiMsg: 'OK',
+              })
+            })
           },
-        }
+          onError: {
+            target: EStep.AppInitErr,
+            actions: assign({
+              initApp: (ctx, e: typeof Error | any) => {
+                // console.warn(e.data)
+                return {
+                  ...ctx.initApp,
+                  // result: { state: 'error' },
+                  response: e?.data || e,
+                  uiMsg: e?.data?.message || `${EErrCode.ERR7}: ${JSON.stringify(e)}`
+                }
+              }
+            })
+          },
+        },
+      },
+      [EStep.AppInitErr]: {
+        on: {
+          goPrev: {
+            target: EStep.AppInit,
+          },
+        },
       },
 
       // NOTE: IMEI Step
@@ -176,10 +242,10 @@ export const stepMachine = createMachine<TState>(
         on: {
           goPrev: {
             cond: (context) => context.imei.result.state !== 'pending',
-            target: EStep.Init,
+            target: EStep.AppInit,
           },
           goNext: {
-            cond: (context) => context.imei.value.length > 5,
+            cond: (context) => context.imei.value.length === 15,
             target: EStep.SendImei,
           },
         },
@@ -445,8 +511,11 @@ export const stepMachine = createMachine<TState>(
       // NOTE: Done.
       [EStep.Final]: {
         on: {
+          goContract: {
+            target: EStep.Contract,
+          },
           goStart: {
-            target: EStep.Init,
+            target: EStep.AppInit,
           },
         },
       },
@@ -699,6 +768,92 @@ export const stepMachine = createMachine<TState>(
 
         // NOTE: Commented cuz it will be set in states[EStep.GetPhotoLink].invoke.onDone
         // context.photoLink.response = res
+        if (res.ok) {
+          context.contract.result.state = 'success'
+          return Promise.resolve(res)
+        }
+
+        context.photoLink.result.state = 'error'
+        return Promise.reject(res)
+      },
+      getUserDataMachine: async (context, _ev, _invMeta) => {
+        const cleanupInitAppStep = () => {
+          context.initApp.response = null
+          context.initApp.uiMsg = null
+          context.initApp.result.state = 'pending'
+        }
+        cleanupInitAppStep()
+        const res = await httpClient.getUserData({
+          // responseValidator: ({ res }) => res.ok === true,
+          responseValidate: ({ res }): { ok: boolean; message?: string; } => {
+            const result: { ok: boolean; message?: string; } = { ok: true }
+            const rules: {
+              [key: string]: {
+                isRequired: boolean;
+                validate: (val: any) => { ok: boolean; message?: string; }
+              };
+            } = {
+              user_data: {
+                isRequired: true,
+                validate: (val: any): { ok: boolean; message?: string; } => {
+                  const requiredFields = ['display_name']
+                  const res: { ok: boolean; message?: string; } = { ok: true }
+                  const msgs = []
+                  for (const key of requiredFields) if (!val?.[key]) msgs.push(`Отсутствует обязательное поле ${key}`)
+
+                  if (msgs.length > 0) {
+                    res.ok = false
+                    res.message = `res.user_data ${msgs.join(', ')}`
+                  }
+                  return res
+                },
+              },
+              session_data: {
+                isRequired: true,
+                validate: (val: any): { ok: boolean; message?: string; } => {
+                  const requiredFields = ['tradein_id']
+                  const res: { ok: boolean; message?: string; } = { ok: true }
+                  const msgs = []
+                  for (const key of requiredFields) if (!val?.[key]) msgs.push(`Отсутствует обязательное поле ${key}`)
+
+                  if (msgs.length > 0) {
+                    res.ok = false
+                    res.message = `res.session_data -> ${msgs.join(', ')}`
+                  }
+                  return res
+                },
+              },
+              features: {
+                isRequired: true,
+                validate: (val: any): { ok: boolean; message?: string; } => {
+                  const res: { ok: boolean; message?: string; } = { ok: true }
+                  const msgs = []
+                  if (!val) msgs.push('Отсутствует обязательное поле res.features')
+                  if (msgs.length > 0) {
+                    res.ok = false
+                    res.message = `res.features -> ${msgs.join(', ')}`
+                  }
+                  return res
+                },
+              },
+            }
+
+            const msgs: string[] = []
+            for (const key in rules) {
+              const validateResult = rules[key].validate(res[key])
+              if (!validateResult.ok) msgs.push(validateResult?.message || 'No message')
+            }
+
+            if (msgs.length > 0) {
+              result.ok = false
+              result.message = `Неожиданный ответ от сервера: ${msgs.join('; ')}`
+            }
+
+            return result
+          }
+        })
+          .catch((err) => err)
+
         if (res.ok) {
           context.contract.result.state = 'success'
           return Promise.resolve(res)

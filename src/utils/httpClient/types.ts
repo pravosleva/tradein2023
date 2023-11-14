@@ -89,4 +89,30 @@ export namespace NSP {
     condition_limit_reason: null | 'no_defects';
     is_condition_limit_violated: boolean;
   };
+
+  // NOTE: https://t.me/c/1615277747/4221
+  export type TUserDataResponse = {
+    ok: boolean;
+    message?: string;
+
+    // NOTE: Данные для отображения в ui:
+    user_data: {
+      partner: string;
+      display_name: string;
+    };
+
+    // NOTE: Данные конкретной сессии:
+    session_data: {
+      tradein_id: number;
+      // Видел в коде, что csrftoken где-то вставляется явно в заголовок,
+      // но в наших флоу такого нет, поэтому он пока не нужен, пусть остается в куках
+    };
+
+    // NOTE: Перечислены достойные внимания фичи (по мере доработки флоу)
+    features: {
+      // smartwatch_allowed: boolean; // [Смартфоны / Планшеты] or [Смарт-часы]
+      // partner_is_sberlike: boolean;
+      // t_require_iin: boolean;
+    }
+  };
 }

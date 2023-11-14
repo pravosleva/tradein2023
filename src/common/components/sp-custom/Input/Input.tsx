@@ -8,19 +8,23 @@ interface IInputProps extends React.ButtonHTMLAttributes<HTMLInputElement> {
   // title: string;
   // showIcon: boolean;
   // color: 'primary' | 'secondary';
+  isErrored?: boolean;
+  isSuccess?: boolean;
 }
 
 // NOTE: See also about forwardRef https://legacy.reactjs.org/docs/forwarding-refs.html
 export const Input = React.forwardRef(({
   children,
   // color,
+  // isErrored,
+  isSuccess,
   ...nativeProps
 }: IInputProps, ref) => {
   return (
     <input
       // @ts-ignore
       ref={ref}
-      className={clsx(classes.spInput)}
+      className={clsx(classes.spInput, { [classes.borderedGreen]: isSuccess })}
       {...nativeProps}
     >
       {children}

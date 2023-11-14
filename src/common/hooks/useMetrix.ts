@@ -27,14 +27,14 @@ export const useMetrix = ({ isDebugEnabled }: TProps) => {
         switch (e.data.__eType) {
           case NEvents.ECustom.WORKER_TO_CLIENT_REMOTE_DATA:
             if (isDebugEnabled) groupLog({
-              namespace: `--useMetrix:metrixWorker ✅ OnData [${e.data.__eType}] e.data:`,
+              namespace: `--useMetrix:by-metrixWorker ✅ (on data) [${e.data.__eType}] e.data:`,
               items: [e.data],
             })
-            // TODO: App logic...
+            // NOTE: App logic?
             break
           default: {
             if (isDebugEnabled) groupLog({
-              namespace: `--useMetrix:metrixWorker ⚠️ OnData UNHANDLED! [${e.data.__eType}] e.data:`,
+              namespace: `--useMetrix:by-metrixWorker ⚠️ (on data) UNHANDLED! [${e.data.__eType}] e.data:`,
               items: [e.data],
             })
             break
