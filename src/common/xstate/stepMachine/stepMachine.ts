@@ -1,18 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  assign,
-  // AnyEventObject,
-  // NonReducibleUnknown,
-  // ParameterizedObject,
-  // ProvidedActor,
-  // TypegenDisabled,
-  createMachine,
-  // AnyActorRef,
-  // spawn,
-  // actions,
-} from 'xstate'
-// import { httpClient } from '~/utils/httpClient'
+import { assign, createMachine } from 'xstate'
 import { getReadableSnakeCase } from '~/utils/aux-ops'
 import { EStep, EErrCode, ECountryCode, TState } from './types'
 import { initialContextState } from './initialState'
@@ -23,9 +11,6 @@ import {
   checkPhoneMachine,
   fetchIMEIMachine,
 } from './services'
-
-// NOTE: ISO 3166-1 alpha-2 codes
-// See also https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
 
 export const phoneValidation: {
   [key in ECountryCode]: (val: string) => boolean;
@@ -104,7 +89,6 @@ export const stepMachine = createMachine<TState>(
             actions: assign({
               imei: (ctx, e) => ({
                 ...ctx.imei,
-                // result: { state: 'success' },
                 response: e.data,
                 uiMsg: 'OK',
               })
@@ -140,7 +124,6 @@ export const stepMachine = createMachine<TState>(
       [EStep.EnterMemoryAndColor]: {
         on: {
           goPrev: {
-            // cond: (ctx) => !!ctx.memory?.selectedItem && !!ctx.color?.selectedItem,
             cond: () => true,
             target: EStep.EnterImei,
           },
@@ -174,7 +157,6 @@ export const stepMachine = createMachine<TState>(
             actions: assign({
               checkPhone: (ctx, e) => ({
                 ...ctx.checkPhone,
-                // result: { state: 'success' },
                 response: e.data,
                 uiMsg: 'OK',
               })
@@ -191,7 +173,6 @@ export const stepMachine = createMachine<TState>(
                 // console.warn(e.data instanceof AxiosError)
                 return {
                   ...ctx.checkPhone,
-                  // result: { state: 'error' },
                   response: e?.data || e,
                   uiMsg: e?.data?.message || `${EErrCode.ERR2}: ${JSON.stringify(e)}`
                 }
@@ -221,7 +202,6 @@ export const stepMachine = createMachine<TState>(
             actions: assign({
               photoLink: (ctx, e) => ({
                 ...ctx.photoLink,
-                // result: { state: 'success' },
                 response: e.data,
                 uiMsg: 'OK',
               })
@@ -310,7 +290,6 @@ export const stepMachine = createMachine<TState>(
             actions: assign({
               contract: (ctx, e) => ({
                 ...ctx.contract,
-                // result: { state: 'success' },
                 response: e.data,
                 uiMsg: 'OK',
               })
@@ -323,7 +302,6 @@ export const stepMachine = createMachine<TState>(
                 // console.warn(e.data instanceof AxiosError)
                 return {
                   ...ctx.contract,
-                  // result: { state: 'error' },
                   response: e?.data || e,
                   uiMsg: e?.data?.message || `${EErrCode.ERR6}: ${JSON.stringify(e)}`
                 }
@@ -416,38 +394,11 @@ export const stepMachine = createMachine<TState>(
           })
         }),
       },
-      // SET_CONTRACT_FORM_IS_READY: {
-      //   actions: assign({
-      //     contract: (ctx, e) => {
-      //       console.log('--SET_CONTRACT_FORM_READY_STATE')
-      //       console.log(e.value)
-      //       console.log('--')
-      //       return {
-      //         ...ctx.contract,
-      //         form: {
-      //           // ...ctx.contract.form,
-      //           state: e.state,
-      //           isReady: e.isReady,
-      //         },
-      //       }
-      //     }
-      //   }),
-      // },
     },
     predictableActionArguments: true,
   },
   {
-    actions: {
-      // imeiSendStart: assign({
-      //   imei: (ctx) => ({ ...ctx.imei, req: { ...ctx.imei.req, state: 'pending' } }),
-      // }),
-      // imeiSendOk: assign({
-      //   imei: (ctx) => ({ ...ctx.imei, req: { ...ctx.imei.req, state: 'success' } }),
-      // }),
-      // imeiSendErr: assign({
-      //   imei: (ctx) => ({ ...ctx.imei, req: { ...ctx.imei.req, state: 'error' } } ),
-      // }),
-    },
+    actions: {},
     services: {
       fetchIMEIMachine,
       checkPhoneMachine,
@@ -455,10 +406,6 @@ export const stepMachine = createMachine<TState>(
       sendContractMachine,
       getUserDataMachine,
     },
-    // guards: {
-    //   "imei.length > 5": (context, event) => false,
-    //   "!!color && !!memory": (context, event) => false,
-    // },
     delays: {},
   },
 )

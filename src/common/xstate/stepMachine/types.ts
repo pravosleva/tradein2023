@@ -31,6 +31,8 @@ export enum EErrCode {
   ERR8 = 'ERR8',
 }
 
+// NOTE: ISO 3166-1 alpha-2 codes
+// See also https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
 export enum ECountryCode {
   RU = 'RU',
   KZ = 'KZ',
