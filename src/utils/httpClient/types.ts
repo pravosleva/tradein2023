@@ -6,6 +6,8 @@
 //   [key: string]: any;
 // }
 
+import { ECountryCode } from '~/common/xstate/stepMachine'
+
 export namespace NSP {
   export type TPhone = {
     vendor?: string;
@@ -110,9 +112,12 @@ export namespace NSP {
 
     // NOTE: Перечислены достойные внимания фичи (по мере доработки флоу)
     features: {
+      country_code: ECountryCode;
       // smartwatch_allowed: boolean; // [Смартфоны / Планшеты] or [Смарт-часы]
       // partner_is_sberlike: boolean;
       // t_require_iin: boolean;
+      // t_direct_buyout_verified_via_api: boolean;
+      // t_offline_buyout_sms: boolean;
     }
   };
 }

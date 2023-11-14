@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
@@ -784,7 +785,7 @@ export const stepMachine = createMachine<TState>(
         }
         cleanupInitAppStep()
         const res = await httpClient.getUserData({
-          // responseValidator: ({ res }) => res.ok === true,
+          // NOTE: Validation by different ways exp
           responseValidate: ({ res }): { ok: boolean; message?: string; } => {
             const result: { ok: boolean; message?: string; } = { ok: true }
             const rules: {
@@ -799,11 +800,12 @@ export const stepMachine = createMachine<TState>(
                   const requiredFields = ['display_name']
                   const res: { ok: boolean; message?: string; } = { ok: true }
                   const msgs = []
-                  for (const key of requiredFields) if (!val?.[key]) msgs.push(`Отсутствует обязательное поле ${key}`)
+
+                  for (const key of requiredFields) if (!val?.[key]) msgs.push(`Не найдено поле ${key}`)
 
                   if (msgs.length > 0) {
                     res.ok = false
-                    res.message = `res.user_data ${msgs.join(', ')}`
+                    res.message = `res.user_data -> ${msgs.join(', ')}`
                   }
                   return res
                 },
@@ -814,7 +816,8 @@ export const stepMachine = createMachine<TState>(
                   const requiredFields = ['tradein_id']
                   const res: { ok: boolean; message?: string; } = { ok: true }
                   const msgs = []
-                  for (const key of requiredFields) if (!val?.[key]) msgs.push(`Отсутствует обязательное поле ${key}`)
+
+                  for (const key of requiredFields) if (!val?.[key]) msgs.push(`Не найдено поле ${key}`)
 
                   if (msgs.length > 0) {
                     res.ok = false
@@ -826,9 +829,28 @@ export const stepMachine = createMachine<TState>(
               features: {
                 isRequired: true,
                 validate: (val: any): { ok: boolean; message?: string; } => {
+                  const requiredFields = ['country_code']
                   const res: { ok: boolean; message?: string; } = { ok: true }
                   const msgs = []
-                  if (!val) msgs.push('Отсутствует обязательное поле res.features')
+
+                  for (const key of requiredFields) {
+                    switch (key) {
+                      case 'country_code':
+                        if (!val?.[key]) msgs.push(`Не найдено поле ${key}`)
+                        else if (typeof val[key] !== 'string') msgs.push(`Поле ${key} лолжно быть строкой (получен тип ${typeof val[key]})`)
+                        else if (!Object.keys(ECountryCode).includes(val?.[key])) {
+                          msgs.push(`Получено нестандартное поле ${key} со значением "${val?.[key]}" (${typeof val?.[key]})`)
+                          msgs.push(`1) Проверьте, соответствует ли код "${val?.[key]}" стандартам ISO 3166-1 alpha-2 https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2`)
+                          msgs.push(`2) Поддерживаемые фронтом ключи: ${Object.values(ECountryCode).join(', ')}`)
+                        }
+                        // @ts-ignore
+                        else if (!phoneValidation[val[key]]) msgs.push(`FRONT WTF! Проверьте поддерживаемые фронтом ключи phoneValidation[${val[key]}]: (val: string) => boolean; для проверки количества символов номера телефона: Не проработан кейс!`)
+                        break
+                      default:
+                        break
+                    }
+                  }
+
                   if (msgs.length > 0) {
                     res.ok = false
                     res.message = `res.features -> ${msgs.join(', ')}`
@@ -840,13 +862,16 @@ export const stepMachine = createMachine<TState>(
 
             const msgs: string[] = []
             for (const key in rules) {
-              const validateResult = rules[key].validate(res[key])
-              if (!validateResult.ok) msgs.push(validateResult?.message || 'No message')
+              if (rules[key].isRequired && !res[key]) msgs.push(`Не найдено обязательное поле ${key} в ответе`)
+              else {
+                const validateResult = rules[key].validate(res[key])
+                if (!validateResult.ok) msgs.push(validateResult?.message || 'No message')
+              }
             }
 
             if (msgs.length > 0) {
               result.ok = false
-              result.message = `Неожиданный ответ от сервера: ${msgs.join('; ')}`
+              result.message = `Неожиданный ответ от сервера: ${msgs.join(' // ')}`
             }
 
             return result

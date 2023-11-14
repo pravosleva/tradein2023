@@ -39,7 +39,7 @@ class Singleton extends Api {
   async sendIMEI({ IMEI, responseValidator }: {
     IMEI: string;
     responseValidator?: ({ res }: { res: any }) => boolean;
-  }): Promise<NSP.TImeiResponse> {
+  }): Promise<NSP.TImeiResponse | { ok: boolean; message?: string; }> {
     if (!IMEI) return Promise.reject({ ok: false, message: 'Заполните IMEI' })
 
     this.sendIMEICancelTokenSource.cancel('axios request canceled')
@@ -75,7 +75,7 @@ class Singleton extends Api {
     memory: string;
     color: string;
     responseValidator?: ({ res }: { res: any }) => boolean;
-  }): Promise<NSP.TCheckPhoneResponse> {
+  }): Promise<NSP.TCheckPhoneResponse | { ok: boolean; message?: string; }> {
     // TODO:
     // if (!IMEI) return Promise.reject({ ok: false, message: 'Заполните IMEI' })
 
@@ -105,7 +105,7 @@ class Singleton extends Api {
   async getPhotoLink({ tradeinId, responseValidator }: {
     tradeinId: number;
     responseValidator?: ({ res }: { res: any }) => boolean;
-  }): Promise<NSP.TPhotoLinkResponse> {
+  }): Promise<NSP.TPhotoLinkResponse | { ok: boolean; message?: string; }> {
     // TODO:
     // if (!IMEI) return Promise.reject({ ok: false, message: 'Заполните IMEI' })
 
@@ -139,7 +139,7 @@ class Singleton extends Api {
   }: {
     tradeinId: number;
     responseValidator?: ({ res }: { res: any }) => boolean;
-  }): Promise<NSP.TPhotoLinkResponse> {
+  }): Promise<NSP.TPhotoLinkResponse | { ok: boolean; message?: string; }> {
     this.checkPhotoStateCancelTokenSource.cancel('axios request canceled')
     this.checkPhotoStateCancelTokenSource = axios.CancelToken.source()
 
@@ -280,7 +280,7 @@ class Singleton extends Api {
             tradein_id: 2,
           },
           features: {
-            
+            country_code: 'RU',
           },
         },
       },
