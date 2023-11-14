@@ -145,6 +145,9 @@ class Singleton {
       eType: NEvents.ECustom.CLIENT_TO_WORKER_RESET_HISTORY,
     })
   }
+  public resetMxHistory() {
+    this.resetHistory({ wName: 'metrixWorker' })
+  }
 }
 
 export const wws = Singleton.getInstance({

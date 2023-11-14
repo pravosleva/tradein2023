@@ -74,6 +74,7 @@ export const PhoneInput = ({
       // fontSize: '16px',
       height: '100%',
       width: '100%',
+      letterSpacing: '0.05em',
     },
     buttonStyle: {
       borderRadius: '8px 0 0 8px',

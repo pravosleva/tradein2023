@@ -1,6 +1,8 @@
 /* eslint-disable no-empty-pattern */
 import { TCfg, TDataCases } from './types'
 import { getTable2017v1Html } from './getTable2017v1Html'
+import baseClasses from '~/App.module.scss'
+import clsx from 'clsx'
 
 export const getPriceTableHtml = ({
   cfg,
@@ -33,19 +35,45 @@ export const getPriceTableHtml = ({
       //     },
       //   },
       // },
+      tablesWrapper: {
+        main: baseClasses.stack4,
+      },
       table: {
-        main: 'w-full text-sm text-left text-gray-500',
+        main: clsx(
+          'w-full',
+          'text-sm',
+          'text-left',
+          'text-gray-500',
+        ),
         thead: {
-          main: 'text-xs text-gray-700 uppercase bg-gray-50',
+          main: clsx(
+            'text-xs',
+            // 'text-gray-700',
+            'text-slate-600',
+            'uppercase',
+            // 'bg-gray-50',
+            'bg-slate-50',
+          ),
           tr: {
-            th: 'px-3 py-3',
+            th: clsx('px-3', 'py-3'),
           },
         },
         tbody: {
           tr: {
-            main: 'bg-white border-b',
-            th: 'px-3 py-2 font-medium text-gray-900 whitespace-nowrap',
-            td: 'px-3 py-2',
+            main: clsx('bg-white', 'border-b'),
+            th: clsx(
+              'px-3',
+              'py-2',
+              'font-medium',
+              'text-gray-900',
+              'whitespace-nowrap',
+            ),
+            td: clsx('px-3', 'py-2'),
+            numCell: clsx(
+              'whitespace-no-wrap',
+              'font-weight-bold',
+              'min-cell',
+            ),
           },
         },
       },

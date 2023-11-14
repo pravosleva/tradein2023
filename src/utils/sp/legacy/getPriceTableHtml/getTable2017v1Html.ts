@@ -1,10 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { TCfg, TDataCases } from './types'
+import clsx from 'clsx'
+import { getFormattedPrice } from '~/utils/aux-ops'
 
 type TProps = {
   // classNameStr: string;
   classNameMap?: {
+    tablesWrapper?: {
+      main: string;
+    };
     table: {
       main: string;
       thead: {
@@ -19,6 +24,7 @@ type TProps = {
           main: string;
           th: string;
           td: string;
+          numCell?: string;
         };
       };
     };
@@ -35,7 +41,7 @@ const getCurrencySymbol = (cur: string) => {
     }
     return mapping[cur]?.value || cur
   }
-  const prettyPrice = (v: number): number => v
+  const prettyPrice = (v: number): string => getFormattedPrice(v, 0, ' ', ' ')
 
 export const getTable2017v1Html = ({ cfg, originalDataCases, classNameMap }: TProps): string => {
   const memory = cfg.memory || 'NO_MEMORY'
@@ -85,13 +91,13 @@ export const getTable2017v1Html = ({ cfg, originalDataCases, classNameMap }: TPr
       <td${classNameMap ? ` class="${classNameMap.table.tbody.tr.td}"` : ''}>
         <b>Цена SmartPrice</b>
       </td>
-      <td${classNameMap ? ` class="${classNameMap.table.tbody.tr.td}"` : ''}>
+      <td${classNameMap ? ` class="${clsx(classNameMap.table.tbody.tr.td, classNameMap.table.tbody.tr.numCell)}"` : ''}>
         ${Object.keys(priceMapping)
           .map(
             (enabledCond) =>
-              `${priceMapping[enabledCond]} ${getCurrencySymbol(cfg.currency)}`
+              `${prettyPrice(priceMapping[enabledCond])} ${getCurrencySymbol(cfg.currency)}`
           )
-          .join(`</td><td${classNameMap ? ` class="${classNameMap.table.tbody.tr.td}"` : ''}>`)}
+          .join(`</td><td${classNameMap ? ` class="${clsx(classNameMap.table.tbody.tr.td, classNameMap.table.tbody.tr.numCell)}"` : ''}>`)}
       </td>
     </tr>
   </tbody>
@@ -136,7 +142,7 @@ export const getTable2017v1Html = ({ cfg, originalDataCases, classNameMap }: TPr
         return `
 <tr${classNameMap ? ` class="${classNameMap.table.tbody.tr.main}"` : ''}>
   <td${classNameMap ? ` class="${classNameMap.table.tbody.tr.td}"` : ''}>${title}</td>
-  <td${classNameMap ? ` class="${classNameMap.table.tbody.tr.td}"` : ''}>
+  <td${classNameMap ? ` class="${clsx(classNameMap.table.tbody.tr.td, classNameMap.table.tbody.tr.numCell)}"` : ''}>
     ${cfg.enabledConditionsCodes
       .map(
         (enabledCond) =>
@@ -145,7 +151,7 @@ export const getTable2017v1Html = ({ cfg, originalDataCases, classNameMap }: TPr
               (originalDataCases.subsidiesStruct.price || priceMapping[enabledCond])
           )} ${getCurrencySymbol(cfg.currency)}`
       )
-      .join(`</td><td${classNameMap ? ` class="${classNameMap.table.tbody.tr.td}"` : ''}>`)}
+      .join(`</td><td${classNameMap ? ` class="${clsx(classNameMap.table.tbody.tr.td, classNameMap.table.tbody.tr.numCell)}"` : ''}>`)}
   </td>
 </tr>`
       })
@@ -194,7 +200,7 @@ export const getTable2017v1Html = ({ cfg, originalDataCases, classNameMap }: TPr
         return `
 <tr${classNameMap ? ` class="${classNameMap.table.tbody.tr.main}"` : ''}>
   <td${classNameMap ? ` class="${classNameMap.table.tbody.tr.td}"` : ''}>${item.title}</td>
-  <td${classNameMap ? ` class="${classNameMap.table.tbody.tr.td}"` : ''}>${
+  <td${classNameMap ? ` class="${clsx(classNameMap.table.tbody.tr.td, classNameMap.table.tbody.tr.numCell)}"` : ''}>${
     cfg.enabledConditionsCodes
       .map(
         (_enabledCond) =>
@@ -202,7 +208,7 @@ export const getTable2017v1Html = ({ cfg, originalDataCases, classNameMap }: TPr
             item.price + (originalDataCases.subsidiesStruct2?.price || 0)
           )} ${getCurrencySymbol(cfg.currency)}`
       )
-      .join(`</td><td${classNameMap ? ` class="${classNameMap.table.tbody.tr.td}"` : ''}>`)}
+      .join(`</td><td${classNameMap ? ` class="${clsx(classNameMap.table.tbody.tr.td, classNameMap.table.tbody.tr.numCell)}"` : ''}>`)}
   </td>
 </tr>`})
       .join('')
@@ -242,7 +248,7 @@ export const getTable2017v1Html = ({ cfg, originalDataCases, classNameMap }: TPr
   <tbody>
     <tr${classNameMap ? ` class="${classNameMap.table.tbody.tr.main}"` : ''}>
       <td${classNameMap ? ` class="${classNameMap.table.tbody.tr.td}"` : ''}>${originalDataCases?.subsidiesStruct3?.modelTitle || 'No subsidy.title'}</td>
-      <td${classNameMap ? ` class="${classNameMap.table.tbody.tr.td}"` : ''}>${prettyPrice(
+      <td${classNameMap ? ` class="${clsx(classNameMap.table.tbody.tr.td, classNameMap.table.tbody.tr.numCell)}"` : ''}>${prettyPrice(
           originalDataCases?.subsidiesStruct3.price
         )} ${getCurrencySymbol(cfg.currency)}
       </td>
@@ -251,5 +257,5 @@ export const getTable2017v1Html = ({ cfg, originalDataCases, classNameMap }: TPr
 </table>`
   }
 
-  return html
+  return classNameMap?.tablesWrapper?.main ? `<div class="${classNameMap?.tablesWrapper?.main}">${html}</div>` : html
 }

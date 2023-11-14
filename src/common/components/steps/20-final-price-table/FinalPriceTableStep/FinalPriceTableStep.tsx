@@ -6,7 +6,8 @@ import {
   getTranslatedDefectReasonCode,
 } from "~/common/components/sp-custom/PriceTable/utils"
 import baseClasses from '~/App.module.scss'
-import { NSP } from "~/utils/httpClient"
+import { NSP } from '~/utils/httpClient'
+import { getCapitalizedFirstLetter } from '~/utils/aux-ops'
 
 type TFinalPriceTableProps = (TPriceTableProps & { photoStatusResponse?: NSP.TPhotoStatusResponse | null })
 
@@ -22,13 +23,14 @@ export const FinalPriceTableStep = (props: TFinalPriceTableProps) => {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            color: 'gray',
           }}
+          // NOTE: See also https://tailwindcss.com/docs/customizing-colors
+          className='text-slate-400'
         >
           {
             !!props.checkPhoneResponse?.condition && (
-              <b>Состояние: {
-                getTranslatedConditionCode(props.checkPhoneResponse.condition)
+              <b>Состояние – {
+                getCapitalizedFirstLetter(getTranslatedConditionCode(props.checkPhoneResponse.condition))
               }{
                 props.photoStatusResponse?.condition_limit_reason
                   ? ` ${getTranslatedConditionSuffixCode({ suffixCode: props.photoStatusResponse.condition_limit_reason })}`
@@ -38,10 +40,10 @@ export const FinalPriceTableStep = (props: TFinalPriceTableProps) => {
           }
           {
             !!props?.photoStatusResponse?.condition_limit_reason && (
-              <b>Дефекты: {getTranslatedDefectReasonCode({
+              <b>{getCapitalizedFirstLetter(getTranslatedDefectReasonCode({
                 deviceType: props.imeiResponse.phone.type || 'NO DEVICE TYPE',
                 defectCode: props.photoStatusResponse.condition_limit_reason,
-              })}</b>
+              }))}</b>
             )
           }
           {/* <pre>{JSON.stringify(props.photoStatusResponse, null, 2)}</pre> */}

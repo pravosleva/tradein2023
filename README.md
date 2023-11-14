@@ -44,9 +44,9 @@ VITE_BASE_API_URL=https://smartprice.ru
 [See also about Vite envs](https://vitejs.dev/guide/env-and-mode.html)
 
 ```bash
-.env                # ⛔ Dont touch. Loaded in all cases
-.env.local          # ⛔ Dont touch. Loaded in all cases, ignored by git
-.env.[mode]         # ⛔ Dont touch. Only loaded in specified mode
+.env                # ⛔ Dont touch! Loaded in all cases
+.env.local          # ✅ Could be modified. Loaded in all cases, ignored by git
+.env.[mode]         # ⛔ Dont touch! Only loaded in specified mode
 .env.[mode].local   # ✅ Could be modified. Only loaded in specified mode, ignored by git
 ```
 

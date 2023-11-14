@@ -120,3 +120,14 @@ table > tbody > tr > td:first-child {
 /* .react-phone-input-2_dropdownClass {
   border: 1px solid red;
 } */
+
+.whitespace-no-wrap {
+  white-space: nowrap;
+}
+.font-weight-bold {
+  font-weight: bold;
+}
+.min-cell {
+  /* border: 1px solid red; */
+  min-width: 80px;
+}

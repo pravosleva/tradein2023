@@ -38,6 +38,7 @@ class Singleton extends Api {
 
   async sendIMEI({ IMEI, responseValidator }: {
     IMEI: string;
+    kz_2022?: boolean;
     responseValidator?: ({ res }: { res: any }) => boolean;
   }): Promise<NSP.TImeiResponse | { ok: boolean; message?: string; }> {
     if (!IMEI) return Promise.reject({ ok: false, message: 'Заполните IMEI' })
@@ -45,7 +46,7 @@ class Singleton extends Api {
     this.sendIMEICancelTokenSource.cancel('axios request canceled')
     this.sendIMEICancelTokenSource = axios.CancelToken.source()
 
-    const postData = { IMEI }
+    const postData = { IMEI, kz_2022: true }
     // @ts-ignore
     // if (isDev) postData._add_data = {}
 

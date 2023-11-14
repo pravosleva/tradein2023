@@ -22,7 +22,7 @@ import {
   ContractStep,
 } from '~/common/components/steps'
 import clsx from 'clsx'
-import { useStore } from '~/common/context/WithAppContextHOC'
+import { useStore, initialState } from '~/common/context/WithAppContextHOC'
 // import { getTranslatedConditionCode } from '~/common/components/sp-custom/PriceTable/utils'
 import { useMetrix } from '~/common/hooks'
 import { getReadableSnakeCase } from '~/utils/aux-ops'
@@ -40,7 +40,6 @@ function App() {
             header='Подождите...'
             controls={[]}
           >
-            {/* <div>{state.context.imei.result.state}</div> */}
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}><Spinner /></div>
           </ContentWithControls>
         )
@@ -260,13 +259,13 @@ function App() {
               '/phone/check',
             ]}
             controls={[
-              {
-                id: '2',
-                label: 'Prev (dev)',
-                btn: { variant: 'outlined', color: 'default' },
-                onClick: () => send({ type: 'goPrev' }),
-                isDisabled: !can({ type: 'goPrev' }),
-              },
+              // {
+              //   id: '2',
+              //   label: 'Назад',
+              //   btn: { variant: 'outlined', color: 'default' },
+              //   onClick: () => send({ type: 'goPrev' }),
+              //   isDisabled: !can({ type: 'goPrev' }),
+              // },
             ]}
           >
             {
@@ -301,13 +300,13 @@ function App() {
               '/photo/link',
             ]}
             controls={[
-              {
-                id: '2',
-                label: 'Prev (dev)',
-                btn: { variant: 'outlined', color: 'default' },
-                onClick: () => send({ type: 'goPrev' }),
-                isDisabled: !can({ type: 'goPrev' }),
-              },
+              // {
+              //   id: '2',
+              //   label: 'Назад',
+              //   btn: { variant: 'outlined', color: 'default' },
+              //   onClick: () => send({ type: 'goPrev' }),
+              //   isDisabled: !can({ type: 'goPrev' }),
+              // },
             ]}
           >
             {
@@ -414,7 +413,6 @@ function App() {
               getReadableSnakeCase(state.context.imei.response?.phone.color || '') || state.context.color.selectedItem?.label,
               state.context.imei.response?.phone.memory || state.context.memory.selectedItem?.label,
             )}
-            // subheaderJsx={}
             controls={[
               {
                 id: '1',
@@ -583,7 +581,8 @@ function App() {
                 label: 'Клиент подписал договор (завершить)',
                 onClick: () => {
                   send({ type: 'RESET_ALL_RESPONSES' })
-                  wws.resetHistory({ wName: 'metrixWorker' })
+                  setStore({ auxContractForm: initialState.auxContractForm }) // NOTE: Reset aux contract form
+                  wws.resetMxHistory()
                   send({ type: 'goStart' })
                 },
                 btn: {
@@ -628,9 +627,10 @@ function App() {
   const stepContentTopRef = useRef<HTMLDivElement>(null)
   useLayoutEffect(() => {
     if (state.value) setStore({ stateValue: String(state.value) })
-
     if (stepContentTopRef.current) window.scrollTo({ top: stepContentTopRef.current.offsetTop, behavior: 'smooth'})
   }, [state.value, setStore])
+
+  // NOTE: ⛔ Dont touch!
   useMetrix({ isDebugEnabled: false })
 
   return (
