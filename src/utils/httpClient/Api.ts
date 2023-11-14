@@ -23,15 +23,15 @@ export class Api {
     // @ts-ignore
     axiosInstance.defaults.raxConfig = {
       instance: axiosInstance,
-      // You can set the backoff type.
+      // NOTE: You can set the backoff type.
       // options are 'exponential' (default), 'static' or 'linear'
       backoffType: 'exponential',
-      // Retry 5 times on requests that return a response (500, etc) before giving up. Defaults to 3.
+      // NOTE: Retry 5 times on requests that return a response (500, etc) before giving up. Defaults to 3.
       retry: 5,
-      // Retry twice on errors that don't return a response (ENOTFOUND, ETIMEDOUT, etc).
+      // NOTE: Retry twice on errors that don't return a response (ENOTFOUND, ETIMEDOUT, etc).
       noResponseRetries: 5,
       httpMethodsToRetry: ['GET', 'OPTIONS', 'POST'],
-      // You can detect when a retry is happening, and figure out how many
+      // NOTE: You can detect when a retry is happening, and figure out how many
       // retry attempts have been made
       onRetryAttempt: (err: any) => {
         const cfg: any = rax.getConfig(err)

@@ -5,7 +5,7 @@
 // import viteLogo from '/vite.svg'
 import classes from '~/App.module.scss'
 // import { pageMachine } from './xstate/pageMachine'
-import { stepMachine, EStep } from '~/common/xstate/stepMachine'
+import { stepMachine, EStep, ECountryCode } from '~/common/xstate/stepMachine'
 // import { actions } from 'xstate'
 import { useMachine } from '@xstate/react'
 import { useLayoutEffect, useMemo, useRef } from 'react'
@@ -502,7 +502,9 @@ function App() {
           >
             <div className={classes.stack}>
               <ContractStep
-                defaultCountryCode={state.context.baseSessionInfo.defaultCountryCode}
+                // NOTE: Корректный features.country_code будет в любом случае,
+                // иначе пользователь не продвинулся бы далее EStep.AppInit
+                defaultCountryCode={state.context.initApp.response?.features.country_code || ECountryCode.RU}
                 onFormReady={({ formState }) => {
                   send({ type: 'SET_CONTRACT_FORM_STATE', value: { state: formState, isReady: true } })
                 }}
@@ -558,6 +560,8 @@ function App() {
                 id: '1',
                 label: 'Скачать договор повторно',
                 onClick: () => {
+                  // TODO: state.context.baseSessionInfo.tradeinId
+                  // should be moved to state.context.initApp.response?.session_data.tradein_id
                   window.open(`/partner_api/tradein/buyout_doc/i/${state.context.baseSessionInfo.tradeinId}.pdf`, '_blank')
                 },
                 btn: {
