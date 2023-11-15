@@ -40,7 +40,7 @@ class Singleton extends Api {
     IMEI: string;
     kz_2022?: boolean;
     responseValidator?: ({ res }: { res: any }) => boolean;
-  }): Promise<NSP.TImeiResponse | { ok: boolean; message?: string; }> {
+  }): Promise<NSP.TImeiResponse | NSP.TStandartMinimalResponse> {
     if (!IMEI) return Promise.reject({ ok: false, message: 'Заполните IMEI' })
 
     this.sendIMEICancelTokenSource.cancel('axios request canceled')
@@ -76,7 +76,7 @@ class Singleton extends Api {
     memory: string;
     color: string;
     responseValidator?: ({ res }: { res: any }) => boolean;
-  }): Promise<NSP.TCheckPhoneResponse | { ok: boolean; message?: string; }> {
+  }): Promise<NSP.TCheckPhoneResponse | NSP.TStandartMinimalResponse> {
     // TODO:
     // if (!IMEI) return Promise.reject({ ok: false, message: 'Заполните IMEI' })
 
@@ -106,7 +106,7 @@ class Singleton extends Api {
   async getPhotoLink({ tradeinId, responseValidator }: {
     tradeinId: number;
     responseValidator?: ({ res }: { res: any }) => boolean;
-  }): Promise<NSP.TPhotoLinkResponse | { ok: boolean; message?: string; }> {
+  }): Promise<NSP.TPhotoLinkResponse | NSP.TStandartMinimalResponse> {
     // TODO:
     // if (!IMEI) return Promise.reject({ ok: false, message: 'Заполните IMEI' })
 
@@ -126,7 +126,6 @@ class Singleton extends Api {
 
     switch (true) {
       case !!responseValidator:
-        // console.log('-- this case', responseValidator({ res: data }))
         // @ts-ignore
         return responseValidator({ res: data }) ? Promise.resolve(data) : Promise.reject(data)
       default:
@@ -140,7 +139,7 @@ class Singleton extends Api {
   }: {
     tradeinId: number;
     responseValidator?: ({ res }: { res: any }) => boolean;
-  }): Promise<NSP.TPhotoLinkResponse | { ok: boolean; message?: string; }> {
+  }): Promise<NSP.TPhotoLinkResponse | NSP.TStandartMinimalResponse> {
     this.checkPhotoStateCancelTokenSource.cancel('axios request canceled')
     this.checkPhotoStateCancelTokenSource = axios.CancelToken.source()
 
@@ -201,7 +200,6 @@ class Singleton extends Api {
 
     switch (true) {
       case !!responseValidator:
-        // console.log('-- this case', responseValidator({ res: data }))
         // @ts-ignore
         return responseValidator({ res: data }) ? Promise.resolve(data) : Promise.reject(data)
       default:
@@ -219,16 +217,9 @@ class Singleton extends Api {
       [key: string]: any;
     };
     responseValidator?: ({ res }: { res: any }) => boolean;
-  }) {
+  }): Promise<NSP.TStandartMinimalResponse> {
     this.sendContractCancelTokenSource.cancel('axios request canceled')
     this.sendContractCancelTokenSource = axios.CancelToken.source()
-
-    // TODO:
-    // const inputData: {
-    //   // id: number;
-    //   [key: string]: any;
-    // } = {}
-    // if (isDev) {}
 
     const data = await this.api({
       url: '/partner_api/tradein/client/data',
@@ -243,7 +234,6 @@ class Singleton extends Api {
 
     switch (true) {
       case !!responseValidator:
-        // console.log('-- this case', responseValidator({ res: data }))
         // @ts-ignore
         return responseValidator({ res: data }) ? Promise.resolve(data) : Promise.reject(data)
       default:
@@ -258,16 +248,9 @@ class Singleton extends Api {
       ok: boolean;
       message?: string;
     });
-  }) {
+  }): Promise<NSP.TUserDataResponse | NSP.TStandartMinimalResponse> {
     this.getUserDataCancelTokenSource.cancel('axios request canceled')
     this.getUserDataCancelTokenSource = axios.CancelToken.source()
-
-    // TODO:
-    // const inputData: {
-    //   // id: number;
-    //   [key: string]: any;
-    // } = {}
-    // if (isDev) {}
 
     const data = await this.api({
       url: '/_tmp/me',
@@ -294,7 +277,6 @@ class Singleton extends Api {
 
     switch (true) {
       case !!responseValidate && data?.ok: {
-        // console.log('-- this case', responseValidator({ res: data }))
         const responseValidateResult = responseValidate({ res: data })
         // @ts-ignore
         return responseValidateResult.ok ? Promise.resolve(data) : Promise.reject(responseValidateResult)

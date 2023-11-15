@@ -1,14 +1,13 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// export type TStandartData = {
-//   ok: boolean;
-//   message?: string;
-//   [key: string]: any;
-// }
-
 import { ECountryCode } from '~/common/xstate/stepMachine'
 
 export namespace NSP {
+  export type TStandartMinimalResponse = {
+    ok: boolean;
+    message?: string;
+  };
+
   export type TPhone = {
     vendor?: string;
     type?: string;
@@ -34,7 +33,7 @@ export namespace NSP {
     model: string;
     title: string;
     default_variant_id?: number;
-  }
+  };
 
   export type TImeiResponse = {
     ok: boolean;
@@ -45,8 +44,8 @@ export namespace NSP {
       [key: string]: {
         [key: string]: {
           [key: string]: number;
-        }
-      }
+        };
+      };
     };
     possible_subsidies: TSubcidy[];
     photo?: string | null;
@@ -54,7 +53,7 @@ export namespace NSP {
     show_warning: boolean;
     raw_data:string;
     analytics_session_id: number;
-    seconds_since_analytics_session_started: string; // "2022-09-15T13:06+03:00",
+    seconds_since_analytics_session_started: string; // '2022-09-15T13:06+03:00'
   };
   export type TCheckPhoneResponse = {
     ok: boolean;
@@ -112,8 +111,12 @@ export namespace NSP {
 
     // NOTE: Перечислены достойные внимания фичи (по мере доработки флоу)
     features: {
+      // NOTE: Phone number mask
       country_code: ECountryCode;
-      // smartwatch_allowed: boolean; // [Смартфоны / Планшеты] or [Смарт-часы]
+
+      // NOTE: Выбор типа устройства [Смартфоны / Планшеты] or [Смарт-часы]
+      // smartwatch_allowed: boolean;
+
       // partner_is_sberlike: boolean;
       // t_require_iin: boolean;
       // t_direct_buyout_verified_via_api: boolean;

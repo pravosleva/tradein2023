@@ -2,8 +2,11 @@
 import { ResponsiveBlock } from '~/common/components/sp-custom'
 import classes from './BaseLayout.module.scss'
 import clsx from 'clsx'
+import { useMemo } from 'react'
 
 export const BaseLayout: React.FC<any> = ({ children }) => {
+  const fullyear = useMemo(() => new Date().getFullYear(), [])
+
   return (
     <div className={classes.appWrapper}>
       <div
@@ -49,12 +52,12 @@ export const BaseLayout: React.FC<any> = ({ children }) => {
               justifyContent: 'flex-start',
               alignItems: 'center',
               flexWrap: 'wrap',
-              gap: '16px',
+              gap: '8px',
               minHeight: '50px',
             }}
           >
             <div>
-              2023
+              2017 – {fullyear}
             </div>
             <div>
               SmartPrice
