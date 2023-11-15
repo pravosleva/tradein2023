@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 import { visualizer } from 'rollup-plugin-visualizer'
+import pkg from './package.json'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -13,7 +14,7 @@ export default defineConfig({
     // NOTE: Last one
     // See also https://www.npmjs.com/package/rollup-plugin-visualizer
     visualizer({
-      title: 'Stats | Trade-In v3',
+      title: `Stats | Trade-In v${pkg.version}`,
       template: 'sunburst', // sunburst, treemap, network
       emitFile: true,
       filename: 'stats.html',
