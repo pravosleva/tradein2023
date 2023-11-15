@@ -18,6 +18,8 @@ export default defineConfig({
       template: 'sunburst', // sunburst, treemap, network
       emitFile: true,
       filename: 'stats.html',
+      gzipSize: true,
+      brotliSize: true,
     }),
   ],
   resolve: {
