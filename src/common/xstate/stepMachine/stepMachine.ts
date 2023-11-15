@@ -95,7 +95,7 @@ export const stepMachine = createMachine<TStepMachineContextFormat>(
             })
           },
           onError: {
-            target: EStep.ImeiErr,
+            target: EStep.SendImeiErr,
             actions: assign({
               imei: (ctx, e: typeof Error | any) => {
                 // console.warn(e.data)
@@ -110,7 +110,7 @@ export const stepMachine = createMachine<TStepMachineContextFormat>(
           },
         },
       },
-      [EStep.ImeiErr]: {
+      [EStep.SendImeiErr]: {
         on: {
           prevStep: {
             cond: () => true,

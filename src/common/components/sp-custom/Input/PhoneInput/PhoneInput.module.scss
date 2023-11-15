@@ -16,6 +16,9 @@
   //   border: 1px solid black;
   // }
 
+  .borderedGray {
+    border-color: $color-tw-slate-300 !important;
+  }  
   .borderedRed {
     border-color: $color-red !important;
   }
@@ -25,6 +28,7 @@
 
   & input {
     border: 1px solid red;
+    // border-color: $color-tw-slate-300;
   }
   // & > div > * {
   //   border: 1px solid red !important;

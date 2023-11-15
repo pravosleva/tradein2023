@@ -4,6 +4,7 @@ import { Fragment } from 'react'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { Button } from '~/common/components/sp-custom'
 import clsx from 'clsx'
+import classes from './Menu.module.scss'
 
 type TItem = {
   id: string;
@@ -14,7 +15,7 @@ type TSention = {
   id: string;
   items: (TItem)[];
 }
-type TMenuProps = {
+export type TMenuProps = {
   label: string;
   sections: TSention[];
   selectedId?: string;
@@ -73,6 +74,7 @@ const Section = ({ items, onSelect, selectedId }: { items: TItem[]; onSelect: ({
                 onClick={() => {
                   onSelect({ item })
                 }}
+                // disabled={}
               >
                 {/* active ? (
                   <EditActiveIcon
@@ -122,11 +124,16 @@ export const Menu = memo(({
             'py-2.5',
             'focus:outline-none',
             'font-medium',
+            classes.customHover,
             {
               'cursor-not-allowed': isDisabled,
-              ['bg-gradient-to-br from-green-400 to-blue-600 hover:bg-gradient-to-bl']: !shoudHaveAttention,
+              ['bg-gradient-to-br from-green-400 to-blue-500 hover:bg-gradient-to-bl']: !shoudHaveAttention,
+              [classes.customHover_ok]: !shoudHaveAttention,
+
               ['bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-pink-200 dark:focus:ring-pink-800']: shoudHaveAttention,
+              [classes.customHover_notOk]: shoudHaveAttention,
             },
+            'disabled:opacity-50',
           )}
           disabled={isDisabled}
         >

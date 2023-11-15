@@ -57,7 +57,7 @@ export const UploadPhotoProcessStep = memo(({
     }
   }, [state?.started, photoLinkResponse])
 
-  // -- NOTE: !state?.started -> Фото не загружены -> Проверка устройства не начала
+  // -- NOTE: !state?.started -> Фото не загружены -> Проверка устройства не начата
   const header = useMemo(() => {
     return !state?.started ? initHeader : 'Подождите...'
   }, [state?.started, initHeader])

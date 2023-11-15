@@ -10,12 +10,13 @@ import { stepMachine, EStep, ECountryCode } from '~/common/xstate/stepMachine'
 import { useMachine } from '@xstate/react'
 import { useLayoutEffect, useMemo, useRef } from 'react'
 // import {} from '@headlessui/react'
-import { Alert, Menu, Spinner } from '~/common/components/tailwind'
+import { Alert, Spinner } from '~/common/components/tailwind'
 import { ContentWithControls, ResponsiveBlock } from '~/common/components/sp-custom'
 import { BaseLayout } from '~/common/components/layout/BaseLayout'
 import {
   // InitStep,
   EnterImeiStep,
+  EnterMemoryAndColorStep,
   PrePriceTableStep,
   UploadPhotoProcessStep,
   FinalPriceTableStep,
@@ -36,6 +37,10 @@ import { vi } from '~/common/vi'
 function App() {
   const [state, send] = useMachine(stepMachine)
   const can = state.can.bind(state)
+  const colorAndMemoryHasDetectedOnServer = useMemo(() => !!state.context.imei.response?.phone.memory && !!state.context.imei.response?.phone.color, [
+    state.context.imei.response?.phone.memory,
+    state.context.imei.response?.phone.color,
+  ])
   const Step = useMemo(() => {
     switch (state.value) {
       case EStep.AppInit:
@@ -99,7 +104,7 @@ function App() {
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}><Spinner /></div>
           </ContentWithControls>
         )
-      case EStep.ImeiErr:
+      case EStep.SendImeiErr:
         return (
           <ContentWithControls
             header='Oops...'
@@ -129,70 +134,65 @@ function App() {
         )
       case EStep.EnterMemoryAndColor:
         return (
-          <ContentWithControls
+          <EnterMemoryAndColorStep
+            skipStepSettings={{
+              doIt: colorAndMemoryHasDetectedOnServer,
+              cb: () => send({ type: 'goNext' }),
+            }}
             header={state.context.imei.response?.phone.model || '⚠️ Модель устройства не определена'}
             subheader={clsx(
               !(!!state.context.imei.response?.phone.color || !!state.context.color.selectedItem || state.context.imei.response?.phone.memory || !!state.context.memory.selectedItem) && 'Выберите параметры',
               getReadableSnakeCase(state.context.imei.response?.phone.color || '') || state.context.color.selectedItem?.label,
               state.context.imei.response?.phone.memory || state.context.memory.selectedItem?.label,
             )}
-            controls={[
+            nextBtn={{
+              id: '1',
+              label: 'Дальше',
+              btn: { variant: 'filled', color: 'primary' },
+              onClick: () => send({ type: 'goNext' }),
+              isDisabled: !can({ type: 'goNext' }),
+            }}
+            prevBtn={{
+              id: '2',
+              label: 'Назад',
+              btn: { variant: 'outlined', color: 'default' },
+              onClick: () => send({ type: 'goPrev' }),
+              isDisabled: !can({ type: 'goPrev' }),
+            }}
+            menus={[
               {
-                id: '1',
-                label: 'Дальше',
-                btn: { variant: 'filled', color: 'primary' },
-                onClick: () => send({ type: 'goNext' }),
-                isDisabled: !can({ type: 'goNext' }),
+                isEnabled: !state.context.imei.response?.phone.memory,
+                selectedId: state.context.memory.selectedItem?.value,
+                onItemSelect: ({ item }) => send({ type: 'SET_MEMORY', value: item }),
+                sections: [
+                  {
+                    id: 'mem',
+                    items: state.context.memory.dynamicList.length > 0
+                      ? state.context.memory.dynamicList
+                      : state.context.imei.result.memoryList
+                  }
+                ],
+                label: !state.context.memory.selectedItem ? 'Выберите Память' : state.context.memory.selectedItem.label,
+                isDisabled: state.context.memory.dynamicList.length === 0 && state.context.imei.result.memoryList.length === 0,
+                shoudHaveAttention: !state.context.memory.selectedItem,
               },
               {
-                id: '2',
-                label: 'Назад',
-                btn: { variant: 'outlined', color: 'default' },
-                onClick: () => send({ type: 'goPrev' }),
-                isDisabled: !can({ type: 'goPrev' }),
-              },
+                isEnabled: !state.context.imei.response?.phone.color,
+                selectedId: state.context.color.selectedItem?.value,
+                onItemSelect: ({ item }) => send({ type: 'SET_COLOR', value: item }),
+                sections: [
+                  {
+                    id: 'col',
+                    items: state.context.color.dynamicList,
+                  }
+                ],
+                label: !state.context.color.selectedItem ? 'Выберите Цвет' : state.context.color.selectedItem.label,
+                isDisabled: state.context.imei.response?.phone.memory ? state.context.color.dynamicList.length === 0 : !state.context.memory.selectedItem,
+                shoudHaveAttention: !state.context.color.selectedItem,
+              }
             ]}
-          >
-            <div className={clsx(classes.specialActionsGrid)}>
-              {
-                !state.context.imei.response?.phone.memory && (
-                  <Menu
-                    selectedId={state.context.memory.selectedItem?.value}
-                    onItemSelect={({ item }) => send({ type: 'SET_MEMORY', value: item })}
-                    sections={[
-                      {
-                        id: 'mem',
-                        items: state.context.memory.dynamicList.length > 0
-                          ? state.context.memory.dynamicList
-                          : state.context.imei.result.memoryList
-                      }
-                    ]}
-                    label={!state.context.memory.selectedItem ? 'Выберите Память' : state.context.memory.selectedItem.label}
-                    isDisabled={state.context.memory.dynamicList.length === 0 && state.context.imei.result.memoryList.length === 0}
-                    shoudHaveAttention={!state.context.memory.selectedItem}
-                  />
-                )
-              }
-              {
-                !state.context.imei.response?.phone.color && (
-                  <Menu
-                    selectedId={state.context.color.selectedItem?.value}
-                    onItemSelect={({ item }) => send({ type: 'SET_COLOR', value: item })}
-                    sections={[
-                      {
-                        id: 'col',
-                        items: state.context.color.dynamicList,
-                      }
-                    ]}
-                    label={!state.context.color.selectedItem ? 'Выберите Цвет' : state.context.color.selectedItem.label}
-                    isDisabled={state.context.imei.response?.phone.memory ? state.context.color.dynamicList.length === 0 : !state.context.memory.selectedItem}
-                    shoudHaveAttention={!state.context.color.selectedItem}
-                  />
-                )
-              }
-            </div>
-            {/* <pre className={classes.preStyled}>{JSON.stringify(state.context.imei.response, null, 2)}</pre> */}
-          </ContentWithControls>
+            // imeiResponse={state.context.imei.response}
+          />
         )
       case EStep.PrePriceTable:
         return (
@@ -217,7 +217,7 @@ function App() {
                 label: 'Назад',
                 btn: { variant: 'outlined', color: 'default' },
                 onClick: () => send({ type: 'goPrev' }),
-                // isDisabled: !can({ type: 'goPrev' }),
+                isDisabled: colorAndMemoryHasDetectedOnServer, // !can({ type: 'goPrev' }),
               },
             ]}
           >
@@ -656,6 +656,7 @@ function App() {
     state.context.memory.dynamicList,
     state.context.initApp.response,
     state.context.initApp.uiMsg,
+    colorAndMemoryHasDetectedOnServer,
   ])
 
   // NOTE: ⛔ Dont touch!

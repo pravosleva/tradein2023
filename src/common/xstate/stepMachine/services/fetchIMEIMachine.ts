@@ -6,7 +6,11 @@ import { EErrCode, TStepMachineContextFormat } from '~/common/xstate/stepMachine
 import { getReadableSnakeCase } from '~/utils/aux-ops'
 import { httpClient } from '~/utils/httpClient'
 
-export const fetchIMEIMachine = async (context: TStepMachineContextFormat, _ev: AnyEventObject, _invMeta: InvokeMeta): Promise<any> => {
+export const fetchIMEIMachine = async (context: TStepMachineContextFormat, _ev: AnyEventObject, _invMeta: InvokeMeta): Promise<{
+  ok: boolean;
+  message?: string;
+  _originalResponse?: any;
+}> => {
   // NOTE: thats received data from states[EStep.SendImei].invoke.data (for example)
   // console.log(_invMeta.data)
   const cleanupImeiStep = () => {
@@ -23,7 +27,17 @@ export const fetchIMEIMachine = async (context: TStepMachineContextFormat, _ev: 
 
   const res = await httpClient.sendIMEI({
     IMEI: context.imei.value,
-    responseValidator: ({ res }) => res.ok && !!res?.phone?.color_choices
+    responseValidate: ({ res }): { ok: boolean; message?: string; _originalResponse?: any; } => {
+      const result: { ok: boolean; message?: string; _originalResponse?: any; } = { ok: true }
+      // -- NOTE: Exp
+      if (!res.ok) {
+        result.ok = false
+        result.message = res.message || 'Неуспешный ответ. Текст ошибки не получен с сервера'
+        result._originalResponse = res
+      }
+      // --
+      return result
+    }
   })
     .catch((err) => {
       return { ok: false, ...(err || { ok: false, message: err?.message || EErrCode.ERR4 }) }
@@ -52,18 +66,30 @@ export const fetchIMEIMachine = async (context: TStepMachineContextFormat, _ev: 
     // TODO: Обработка ошибочных кейсов
     // 3.1 Память определена: Формируем список выбора цветов
     if (res.phone.memory) {
-      if (!res.phone.color_choices[res.phone.memory]) return Promise.reject({ ok: false, message: `Неконсистентный ответ: нет выбора цвета для памяти ${res.phone.memory}` })
+      if (!res.phone.color_choices[res.phone.memory]) return Promise.reject({
+        ok: false,
+        message: `Неконсистентный ответ: нет выбора цвета для памяти ${res.phone.memory}`,
+        _originalResponse: res,
+      })
       context.color.dynamicList = res.phone.color_choices[res.phone.memory].map((value: string) => ({ id: value, label: getReadableSnakeCase(value), value }))
     }
     // 3.2 Цвет определен, память - нет: Формируем выбор памяти
     if (res.phone.color && !res.phone.memory) {
-      if (!res.phone.memory_choices) return Promise.reject({ ok: false, message: 'Неконсистентный ответ: нет выбора памяти' })
+      if (!res.phone.memory_choices) return Promise.reject({
+        ok: false,
+        message: 'Неконсистентный ответ: нет выбора памяти',
+        _originalResponse: res,
+      })
       const memoryDynamicList = []
       for (const memory in res.phone.color_choices) {
         const _list = res.phone.color_choices[memory]
         if (_list.includes(res.phone.color)) memoryDynamicList.push({ id: memory, value: memory, label: memory.toUpperCase() })
       }
-      if (memoryDynamicList.length === 0) return Promise.reject({ ok: false, message: `Неконсистентный ответ: не удалось сформировать список выбора памяти для цвета ${res.phone.color}` })
+      if (memoryDynamicList.length === 0) return Promise.reject({
+        ok: false,
+        message: `Неконсистентный ответ: не удалось сформировать список выбора памяти для цвета ${res.phone.color}`,
+        _originalResponse: res,
+      })
       context.memory.dynamicList = memoryDynamicList
     }
     // ---

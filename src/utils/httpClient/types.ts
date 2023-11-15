@@ -6,6 +6,7 @@ export namespace NSP {
   export type TStandartMinimalResponse = {
     ok: boolean;
     message?: string;
+    _originalResponse?: any;
   };
 
   export type TPhone = {

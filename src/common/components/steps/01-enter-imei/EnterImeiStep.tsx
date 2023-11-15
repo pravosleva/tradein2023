@@ -59,6 +59,7 @@ export const EnterImeiStep = memo(({
       controls={controls}
     >
       <Input
+        isSuccess={!isNextBtnDisabled}
         ref={inputRef}
         value={value}
         onChange={onChangeIMEI}

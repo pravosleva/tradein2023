@@ -31,8 +31,10 @@ export const PhoneInput = ({
       'react-phone-input-2_inputClass',
       inputClasses.spInput,
       {
+        // borderColor: '#cbd5e1', // stale-300
         // [classes.borderedRed]: isErrored,
         [classes.borderedGreen]: isSuccess,
+        [classes.borderedGray]: !isSuccess,
       },
     ),
     buttonClass: clsx(
@@ -40,6 +42,7 @@ export const PhoneInput = ({
       {
         // [classes.borderedRed]: isErrored,
         [classes.borderedGreen]: isSuccess,
+        [classes.borderedGray]: !isSuccess,
       },
     ),
     searchClass: 'react-phone-input-2_searchClass',
@@ -68,6 +71,7 @@ export const PhoneInput = ({
     },
     inputStyle: {
       borderWidth: '2px',
+      borderColor: '#cbd5e1', // stale-300
       // padding: '1px',
       // border: '2px solid lightgray',
       // padding: '5px 10px',
@@ -79,6 +83,7 @@ export const PhoneInput = ({
     buttonStyle: {
       borderRadius: '8px 0 0 8px',
       borderWidth: '2px',
+      // borderColor: '#cbd5e1', // stale-300
     },
     dropdownStyle: {
       // border: '2px solid lightgray',

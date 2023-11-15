@@ -24,7 +24,21 @@ export const Input = React.forwardRef(({
     <input
       // @ts-ignore
       ref={ref}
-      className={clsx(classes.spInput, { [classes.borderedGreen]: isSuccess })}
+      className={
+        clsx(
+          // 'focus:outline-none',
+          // // 'focus:outline-offset-4',
+          // 'focus:outline-2',
+          // 'focus:ring',
+          // 'focus:ring-slate-300',
+
+          // 'caret-blue-400',
+          classes.spInput,
+          {
+            [classes.borderedGreen]: isSuccess,
+          }
+        )
+      }
       {...nativeProps}
     >
       {children}

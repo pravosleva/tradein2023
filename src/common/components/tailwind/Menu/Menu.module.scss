@@ -1,0 +1,11 @@
+.customHover {
+  transition: all 0.3s linear, box-shadow 0.3s linear;
+  &_notOk:hover {
+    box-shadow: none;
+    // box-shadow: 0px 14px 30px -8px #fb923c; // orange-400
+  }
+  &_ok:hover {
+    box-shadow: none;
+    // box-shadow: 0px 14px 30px -8px #3b82f6; // blue-500
+  }
+}

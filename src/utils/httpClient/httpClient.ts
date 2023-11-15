@@ -36,10 +36,14 @@ class Singleton extends Api {
     return Singleton.instance
   }
 
-  async sendIMEI({ IMEI, responseValidator }: {
+  async sendIMEI({ IMEI, responseValidate }: {
     IMEI: string;
     kz_2022?: boolean;
-    responseValidator?: ({ res }: { res: any }) => boolean;
+    // responseValidator?: ({ res }: { res: any }) => boolean;
+    responseValidate?: ({ res }: { res: any }) => ({
+      ok: boolean;
+      message?: string;
+    });
   }): Promise<NSP.TImeiResponse | NSP.TStandartMinimalResponse> {
     if (!IMEI) return Promise.reject({ ok: false, message: 'Заполните IMEI' })
 
@@ -48,7 +52,12 @@ class Singleton extends Api {
 
     const postData = { IMEI, kz_2022: true }
     // @ts-ignore
-    // if (isDev) postData._add_data = {}
+    // if (isDev) postData._add_data = {
+    //   phone: {
+    //     color: 'cardinal_red',
+    //     memory: '512 GB',
+    //   },
+    // }
 
     const data = await this.api({
       url: '/partner_api/tradein/imei',
@@ -61,11 +70,21 @@ class Singleton extends Api {
 
     this.sendIMEICancelTokenSource.cancel('axios request done')
 
+    // switch (true) {
+    //   case !!responseValidator:
+    //     // console.log('-- this case', responseValidator({ res: data }))
+    //     // @ts-ignore
+    //     return responseValidator({ res: data }) ? Promise.resolve(data || altResult) : Promise.reject(data)
+    //   default:
+    //     return data.ok ? Promise.resolve(data) : Promise.reject(data)
+    // }
+
     switch (true) {
-      case !!responseValidator:
-        // console.log('-- this case', responseValidator({ res: data }))
+      case !!responseValidate && data?.ok: {
+        const responseValidateResult = responseValidate({ res: data })
         // @ts-ignore
-        return responseValidator({ res: data }) ? Promise.resolve(data || altResult) : Promise.reject(data)
+        return responseValidateResult.ok ? Promise.resolve(data) : Promise.reject(responseValidateResult)
+      }
       default:
         return data.ok ? Promise.resolve(data) : Promise.reject(data)
     }

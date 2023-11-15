@@ -19,7 +19,7 @@ const NES = {
         AppInitErr: 'stepMachine:app-init-err',
         EnterImei: 'stepMachine:enter-imei',
         SendImei: 'stepMachine:send-imei',
-        ImeiErr: 'stepMachine:imei-err',
+        SendImeiErr: 'stepMachine:send-imei-err',
         EnterMemoryAndColor: 'stepMachine:enter-memory-and-color',
         PrePriceTable: 'stepMachine:pre-price-table',
         CheckPhone: 'stepMachine:check-phone',

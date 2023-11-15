@@ -102,12 +102,34 @@ export class Api {
             case err instanceof AxiosError:
               // console.log(err?.response)
               // return { isOk: false, message: err.message, res: err?.response?.data || { ok: false, message: _msg } }
-              return { isOk: false, message: err.message, res: { ok: false, message: err.message, url: err?.response?.config.url } }
+              return {
+                isOk: false,
+                message: err.message,
+                res: {
+                  ok: false,
+                  message: err.message,
+                  url: err?.response?.config.url,
+                },
+              }
             default:
-              return { isOk: false, message: err?.message, res: { ok: false, message: err?.message, ...(err || { ok: false, message: _msg }) } }
+              return {
+                isOk: false,
+                message: err?.message,
+                res: {
+                  ok: false,
+                  message: err?.message,
+                  ...(err || { ok: false, message: _msg }),
+                },
+              }
           }
         }
-        return { isOk: false, message: err.message || 'No err.message', res: { ...(err || { ok: false, message: _msg }) } }
+        return {
+          isOk: false,
+          message: err.message || 'No err.message',
+          res: {
+            ...(err || { ok: false, message: _msg }),
+          },
+        }
       })
 
     // console.log(result) // { isOk: true, res: { ok: true, _originalBody: { username: 'pravosleva', chatId: 432590698 } } }
