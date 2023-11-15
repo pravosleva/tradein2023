@@ -1,6 +1,6 @@
-import { TState } from './types'
+import { TStepMachineContextFormat } from '~/common/xstate/stepMachine/types'
 
-export const initialContextState: TState = {
+export const initialStepMachineContextFormat: TStepMachineContextFormat = {
   baseSessionInfo: {
     tradeinId: 1,
   },

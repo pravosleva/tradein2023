@@ -81,8 +81,9 @@ export const ContentWithControls = ({
                           key={`${str}-${i}`}
                           style={{
                             fontWeight: 'bold',
-                            color: 'gray',
+                            // color: 'gray',
                           }}
+                          className='text-slate-400'
                         >{str}</div>
                       )
                   }

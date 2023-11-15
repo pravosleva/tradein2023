@@ -2,11 +2,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { AnyEventObject, InvokeMeta } from 'xstate'
-import { EErrCode, TState } from '~/common/xstate/stepMachine'
+import { EErrCode, TStepMachineContextFormat } from '~/common/xstate/stepMachine'
 import { getReadableSnakeCase } from '~/utils/aux-ops'
 import { httpClient } from '~/utils/httpClient'
 
-export const fetchIMEIMachine = async (context: TState, _ev: AnyEventObject, _invMeta: InvokeMeta): Promise<any> => {
+export const fetchIMEIMachine = async (context: TStepMachineContextFormat, _ev: AnyEventObject, _invMeta: InvokeMeta): Promise<any> => {
   // NOTE: thats received data from states[EStep.SendImei].invoke.data (for example)
   // console.log(_invMeta.data)
   const cleanupImeiStep = () => {

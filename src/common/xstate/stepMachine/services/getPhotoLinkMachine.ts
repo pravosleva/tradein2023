@@ -2,10 +2,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { AnyEventObject, InvokeMeta } from 'xstate'
-import { TState } from '~/common/xstate/stepMachine'
+import { TStepMachineContextFormat } from '~/common/xstate/stepMachine'
 import { httpClient } from '~/utils/httpClient'
 
-export const getPhotoLinkMachine = async (context: TState, _ev: AnyEventObject, _invMeta: InvokeMeta): Promise<any> => {
+export const getPhotoLinkMachine = async (context: TStepMachineContextFormat, _ev: AnyEventObject, _invMeta: InvokeMeta): Promise<any> => {
   const cleanupPhotoLinkStep = () => {
     context.photoLink.response = null
     context.photoLink.uiMsg = null

@@ -2,8 +2,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { assign, createMachine } from 'xstate'
 import { getReadableSnakeCase } from '~/utils/aux-ops'
-import { EStep, EErrCode, ECountryCode, TState } from './types'
-import { initialContextState } from './initialState'
+import { EStep, EErrCode, ECountryCode, TStepMachineContextFormat } from './types'
+import { initialStepMachineContextFormat } from './initialState/initialStepMachineContextFormat'
 import {
   getUserDataMachine,
   sendContractMachine,
@@ -21,10 +21,10 @@ export const phoneValidation: {
    // Etc.
 }
 
-export const stepMachine = createMachine<TState>(
+export const stepMachine = createMachine<TStepMachineContextFormat>(
   {
     initial: EStep.AppInit,
-    context: initialContextState,
+    context: initialStepMachineContextFormat,
     states: {
       [EStep.AppInit]: {
         invoke: {
@@ -128,7 +128,7 @@ export const stepMachine = createMachine<TState>(
             target: EStep.EnterImei,
           },
           goNext: {
-            cond: (ctx) => !!(ctx.imei.response?.phone.memory || !!ctx.memory?.selectedItem) && !!(ctx.imei.response?.phone.color || !!ctx.color?.selectedItem),
+            cond: (ctx) => !!(ctx.imei.response?.phone?.memory || !!ctx.memory?.selectedItem) && !!(ctx.imei.response?.phone.color || !!ctx.color?.selectedItem),
             target: EStep.PrePriceTable,
           },
         },
@@ -372,13 +372,13 @@ export const stepMachine = createMachine<TState>(
       },
       RESET_ALL_RESPONSES: {
         actions: assign({
-          imei: (_ctx, _e) => ({ ...initialContextState.imei }),
-          memory: (_ctx, _e) => ({ ...initialContextState.memory }),
-          color: (_ctx, _e) => ({ ...initialContextState.color }),
-          checkPhone: (_ctx, _e) => ({ ...initialContextState.checkPhone }),
-          photoLink: (_ctx, _e) => ({ ...initialContextState.photoLink }),
-          photoStatus: (_ctx, _e) => ({ ...initialContextState.photoStatus }),
-          initApp: (_ctx, _e) => ({ ...initialContextState.initApp }),
+          imei: (_ctx, _e) => ({ ...initialStepMachineContextFormat.imei }),
+          memory: (_ctx, _e) => ({ ...initialStepMachineContextFormat.memory }),
+          color: (_ctx, _e) => ({ ...initialStepMachineContextFormat.color }),
+          checkPhone: (_ctx, _e) => ({ ...initialStepMachineContextFormat.checkPhone }),
+          photoLink: (_ctx, _e) => ({ ...initialStepMachineContextFormat.photoLink }),
+          photoStatus: (_ctx, _e) => ({ ...initialStepMachineContextFormat.photoStatus }),
+          initApp: (_ctx, _e) => ({ ...initialStepMachineContextFormat.initApp }),
           // NOTE: Etc.
         }),
       },

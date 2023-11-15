@@ -3,10 +3,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Form } from '~/common/components/sp-custom'
 import baseClasses from '~/App.module.scss'
-import { useStore } from '~/common/context/WithAppContextHOC';
-import { useCallback } from 'react';
-import { useCompare } from '~/common/hooks/useDeepEffect';
-import { ECountryCode, phoneValidation } from '~/common/xstate/stepMachine';
+import { useCallback } from 'react'
+import { ECountryCode, phoneValidation } from '~/common/xstate/stepMachine'
+import { vi } from '~/common/vi'
 
 type TProps = {
   defaultCountryCode: ECountryCode;
@@ -20,13 +19,9 @@ export const ContractStep = ({
   onFormReady,
   onFormNotReady,
 }: TProps) => {
-  // : [{ [key: string]: any } | null, (data: any) => void]
-  const [auxContractForm, setStore] = useStore((store) => store.auxContractForm)
   const handleSetExternalStore = useCallback(({ name, value }: { name: string; value: any; }) => {
-    // console.log(name, value)
-    setStore({ auxContractForm: { ...auxContractForm, [name]: value } })
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setStore, useCompare([auxContractForm])])
+    vi.contractForm[name] = value
+  }, [])
 
   return (
     <div className={baseClasses.stack}>
@@ -59,7 +54,7 @@ export const ContractStep = ({
               return res
             },
             isRequired: true,
-            initValue: auxContractForm?.['lastName'] || undefined,
+            initValue: vi.contractForm.lastName || undefined,
           },
           name: {
             type: 'text',
@@ -77,7 +72,7 @@ export const ContractStep = ({
               return res
             },
             isRequired: true,
-            initValue: auxContractForm?.['name'] || undefined,
+            initValue: vi.contractForm.name || undefined,
           },
           middleName: {
             type: 'text',
@@ -95,13 +90,11 @@ export const ContractStep = ({
               return res
             },
             isRequired: true,
-            initValue: auxContractForm?.['middleName'] || undefined,
+            initValue: vi.contractForm.middleName || undefined,
           },
           phone: {
             type: 'tel',
             label: 'Телефон',
-
-            // -- TODO? Validation for other countries
             validate: ({ value, options }) => {
               const res: TValiateResult = { ok: true }
 
@@ -109,35 +102,19 @@ export const ContractStep = ({
                 const _selectedCountryCode = options?.currentCountryInfo?.countryCode // NOTE: 'ru' for example
                 // @ts-ignore
                 const codeInUi: ECountryCode = _selectedCountryCode ? _selectedCountryCode.toUpperCase() : defaultCountryCode
-
                 if (typeof phoneValidation[codeInUi] === 'function') {
                   res.ok = phoneValidation[codeInUi](value)
                   if (!res.ok) res.reason = 'Неверный формат'
-                } else throw new Error(`Не удалось проверить номер телефона для ${codeInUi}. Проверьте, соответствует ли код стандартам ISO 3166-1 alpha-2 https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2`)
+                } else throw new Error(`Не удалось проверить номер телефона для "${codeInUi}". Проверьте, соответствует ли код стандартам ISO 3166-1 alpha-2 https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2`)
 
               } catch (err: any) {
                 res.ok = false
-                res.reason = err?.message || 'ContractStep err120'
+                res.reason = err?.message || 'ContractStep err115'
               }
-
-              // switch (true) {
-              //   case value.length !== 11:
-
-              //     // TODO: countryCode
-
-              //     res.ok = false
-              //     res.reason = 'Заполните это поле корректно'
-              //     break
-              //   default:
-              //     break
-              // }
               return res
             },
-            // NOTE: For example (ru) 79163385212
-            // -- 
-            
             isRequired: true,
-            initValue: auxContractForm?.['phone'] || undefined,
+            initValue: vi.contractForm.phone || undefined,
           },
         }}
       />

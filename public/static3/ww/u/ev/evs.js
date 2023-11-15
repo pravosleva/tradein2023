@@ -12,6 +12,27 @@ const NES = {
       WORKER_TO_CLIENT_DISCONN: 'w-c:socket-disconnected',
       WORKER_TO_CLIENT_TRY_TO_RECONN: 'w-c:socket-trying-to-reconnect',
     },
+    Client: {
+      // NOTE: Should be sync with EStep in ~/common/xstate/stepMachine/types.ts
+      EStepMachine: {
+        AppInit: 'stepMachine:app-init',
+        AppInitErr: 'stepMachine:app-init-err',
+        EnterImei: 'stepMachine:enter-imei',
+        SendImei: 'stepMachine:send-imei',
+        ImeiErr: 'stepMachine:imei-err',
+        EnterMemoryAndColor: 'stepMachine:enter-memory-and-color',
+        PrePriceTable: 'stepMachine:pre-price-table',
+        CheckPhone: 'stepMachine:check-phone',
+        GetPhotoLink: 'stepMachine:get-photo-link',
+        UploadPhotoInProgress: 'stepMachine:upload-photo:in-progress',
+        UploadPhotoResultInNotOk: 'stepMachine:upload-photo:result-is-not-ok',
+        FinalPriceTable: 'stepMachine:final-price-table',
+        Contract: 'stepMachine:contract',
+        ContractSending: 'stepMachine:contract-sending',
+        ContractError: 'stepMachine:contract-error',
+        Final: 'stepMachine:final',
+      }
+    }
   },
   SharedWorker: {
     Native: {
@@ -42,6 +63,7 @@ const NES = {
       // NOTE: Should be sync with NEvents.EMetrixClientOutgoing in ~/types/NEvents.ts
       EClientOutgoing: {
         // LAB_TEST: 'lab:client:tst-action',
+        SP_MX_EV: 'sp-mx:offline-tradein:c:event',
       },
       EClientIncoming: {
         // LAB_TEST: 'lab:server:tst-action',

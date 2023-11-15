@@ -22,14 +22,18 @@ import {
   ContractStep,
 } from '~/common/components/steps'
 import clsx from 'clsx'
-import { useStore, initialState } from '~/common/context/WithAppContextHOC'
-// import { getTranslatedConditionCode } from '~/common/components/sp-custom/PriceTable/utils'
+import {
+  getTranslatedConditionCode,
+  getTranslatedConditionSuffixCode,
+  getTranslatedDefectReasonCode,
+} from '~/common/components/sp-custom/PriceTable/utils'
+import { getCapitalizedFirstLetter } from '~/utils/aux-ops'
 import { useMetrix } from '~/common/hooks'
 import { getReadableSnakeCase } from '~/utils/aux-ops'
 import { wws } from '~/utils/wws'
+import { vi } from '~/common/vi'
 
 function App() {
-  const [_store, setStore] = useStore((store) => store)
   const [state, send] = useMachine(stepMachine)
   const can = state.can.bind(state)
   const Step = useMemo(() => {
@@ -75,10 +79,13 @@ function App() {
         return (
           <EnterImeiStep
             value={state.context.imei.value}
-            onChangeIMEI={(e: React.FormEvent<HTMLInputElement>) => send({ type: 'SET_IMEI', value: e.currentTarget.value })}
+            onChangeIMEI={(e: React.FormEvent<HTMLInputElement>) => {
+              send({ type: 'SET_IMEI', value: e.currentTarget.value })
+              vi.smState.imei.value = e.currentTarget.value
+            }}
             onSendIMEI={() => send({ type: 'goNext' })}
             isNextBtnDisabled={!can({ type: 'goNext' })}
-            onPrev={() => send({ type: 'goPrev' })}
+            // onPrev={() => send({ type: 'goPrev' })}
             isPrevBtnDisabled={!can({ type: 'goPrev' })}
           />
         )
@@ -408,11 +415,38 @@ function App() {
           <ContentWithControls
             hasChildrenFreeWidth
             header='Итоговая сумма скидки'
-            subheader={clsx(
-              state.context.imei.response?.phone.model || '⚠️ Модель устройства не определена',
-              getReadableSnakeCase(state.context.imei.response?.phone.color || '') || state.context.color.selectedItem?.label,
-              state.context.imei.response?.phone.memory || state.context.memory.selectedItem?.label,
-            )}
+            subheader={[
+              clsx(
+                state.context.imei.response?.phone.model || '⚠️ Модель устройства не определена',
+                getReadableSnakeCase(state.context.imei.response?.phone.color || '') || state.context.color.selectedItem?.label,
+                state.context.imei.response?.phone.memory || state.context.memory.selectedItem?.label,
+              ),
+              clsx(
+                state.context.checkPhone.response?.condition
+                ? `Состояние – ${getCapitalizedFirstLetter(getTranslatedConditionCode(
+                  state.context.checkPhone.response?.condition,
+                  ))}${
+                    state.context.photoStatus.response?.condition_limit_reason
+                      ? ` ${getTranslatedConditionSuffixCode({ suffixCode: state.context.photoStatus.response.condition_limit_reason })}`
+                      : ''
+                  }`
+                : undefined,
+                state.context.photoStatus.response?.condition_limit_reason
+                ? `/ ${getCapitalizedFirstLetter(getTranslatedDefectReasonCode({
+                  deviceType: state.context.imei.response?.phone.type || 'NO DEVICE TYPE in imei.response!',
+                  defectCode: state.context.photoStatus.response.condition_limit_reason,
+                }))}`
+                : undefined
+              ),
+              // clsx(
+              //   state.context.photoStatus.response?.condition_limit_reason
+              //     ? getCapitalizedFirstLetter(getTranslatedDefectReasonCode({
+              //       deviceType: state.context.imei.response?.phone.type || 'NO DEVICE TYPE in imei.response!',
+              //       defectCode: state.context.photoStatus.response.condition_limit_reason,
+              //     }))
+              //     : undefined
+              // )
+            ]}
             controls={[
               {
                 id: '1',
@@ -567,21 +601,21 @@ function App() {
                   variant: 'outlined',
                 },
               },
-              // {
-              //   id: '2',
-              //   label: 'Изменить данные или согласие клиента',
-              //   onClick: () => send({ type: 'goContract' }),
-              //   btn: {
-              //     color: 'default',
-              //     variant: 'outlined',
-              //   },
-              // },
+              {
+                id: '2',
+                label: 'Изменить данные или согласие клиента',
+                onClick: () => send({ type: 'goContract' }),
+                btn: {
+                  color: 'default',
+                  variant: 'outlined',
+                },
+              },
               {
                 id: '3',
                 label: 'Клиент подписал договор (завершить)',
                 onClick: () => {
                   send({ type: 'RESET_ALL_RESPONSES' })
-                  setStore({ auxContractForm: initialState.auxContractForm }) // NOTE: Reset aux contract form
+                  for (const key in vi.contractForm) delete vi.contractForm[key] // NOTE: Reset aux contract form
                   wws.resetMxHistory()
                   send({ type: 'goStart' })
                 },
@@ -622,17 +656,19 @@ function App() {
     state.context.memory.dynamicList,
     state.context.initApp.response,
     state.context.initApp.uiMsg,
-    setStore,
   ])
-
-  const stepContentTopRef = useRef<HTMLDivElement>(null)
-  useLayoutEffect(() => {
-    if (state.value) setStore({ stateValue: String(state.value) })
-    if (stepContentTopRef.current) window.scrollTo({ top: stepContentTopRef.current.offsetTop, behavior: 'smooth'})
-  }, [state.value, setStore])
 
   // NOTE: ⛔ Dont touch!
   useMetrix({ isDebugEnabled: false })
+
+  const stepContentTopRef = useRef<HTMLDivElement>(null)
+  useLayoutEffect(() => {
+    // @ts-ignore
+    if (state.value) vi.common.stateValue = String(state.value)
+    else vi.common.stateValue = EStep.AppInit
+
+    if (stepContentTopRef.current) window.scrollTo({ top: stepContentTopRef.current.offsetTop, behavior: 'smooth'})
+  }, [state.value])
 
   return (
     <>

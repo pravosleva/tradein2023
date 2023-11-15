@@ -3,6 +3,7 @@ import { ResponsiveBlock } from '~/common/components/sp-custom'
 import classes from './BaseLayout.module.scss'
 import clsx from 'clsx'
 import { useMemo } from 'react'
+import { vi } from '~/common/vi'
 
 export const BaseLayout: React.FC<any> = ({ children }) => {
   const fullyear = useMemo(() => new Date().getFullYear(), [])
@@ -34,7 +35,11 @@ export const BaseLayout: React.FC<any> = ({ children }) => {
                 marginLeft: 'auto',
               }}
             >
-              <div>display_name</div>
+              {
+                !!vi.smState.initApp.response?.user_data.display_name && (
+                  <div>{vi.smState.initApp.response?.user_data.display_name}</div>
+                )
+              }
             </div>
             
           </div>

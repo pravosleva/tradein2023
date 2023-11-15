@@ -1,9 +1,8 @@
 // NOTE: Attention!
-// _perfInfo, _isDebugEnabled is global for this.
+// _perfInfo is global for this.
 
 var log = ({ label, msgs }) => {
   switch (true) {
-    case !_isDebugEnabled: // NOTE: На случай, если вызван не по условию
     case !label:
       return
     case !!msgs && Array.isArray(msgs) && msgs.length > 0:

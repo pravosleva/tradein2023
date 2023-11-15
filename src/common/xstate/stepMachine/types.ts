@@ -2,23 +2,22 @@
 import { NSP } from '~/utils/httpClient'
 
 export enum EStep {
-  AppInit = 'app-init',
-  AppInitErr = 'app-init-err',
-  EnterImei = 'enter-imei',
-  SendImei = 'send-imei',
-  ImeiErr = 'imei-err',
-  EnterMemoryAndColor = 'enter-memory-and-color',
-  PrePriceTable = 'pre-price-table',
-  CheckPhone = 'check-phone',
-  GetPhotoLink = 'get-photo-link',
-  UploadPhotoInProgress = 'upload-photo:in-progress',
-  UploadPhotoResultInNotOk = 'upload-photo:result-is-not-ok',
-  FinalPriceTable = 'final-price-table',
-  Contract = 'contract',
-  ContractSending = 'contract-sending',
-  ContractError = 'contract-error',
-
-  Final = 'final',
+  AppInit = 'stepMachine:app-init',
+  AppInitErr = 'stepMachine:app-init-err',
+  EnterImei = 'stepMachine:enter-imei',
+  SendImei = 'stepMachine:send-imei',
+  ImeiErr = 'stepMachine:imei-err',
+  EnterMemoryAndColor = 'stepMachine:enter-memory-and-color',
+  PrePriceTable = 'stepMachine:pre-price-table',
+  CheckPhone = 'stepMachine:check-phone',
+  GetPhotoLink = 'stepMachine:get-photo-link',
+  UploadPhotoInProgress = 'stepMachine:upload-photo:in-progress',
+  UploadPhotoResultInNotOk = 'stepMachine:upload-photo:result-is-not-ok',
+  FinalPriceTable = 'stepMachine:final-price-table',
+  Contract = 'stepMachine:contract',
+  ContractSending = 'stepMachine:contract-sending',
+  ContractError = 'stepMachine:contract-error',
+  Final = 'stepMachine:final',
 }
 export enum EErrCode {
   ERR1 = 'ERR1',
@@ -41,7 +40,7 @@ export enum ECountryCode {
 }
 
 export type TSelectedItem = { value: string; label: string; }
-export type TState = {
+export type TStepMachineContextFormat = {
   baseSessionInfo: {
     // -- TODO: Wich format will be received from backend?
     tradeinId: number | null;
@@ -93,7 +92,7 @@ export type TState = {
     };
   };
   contract: {
-    response: any;
+    response: null | NSP.TStandartMinimalResponse;
     uiMsg: string | null;
     result: {
       state: 'stopped' | 'pending' | 'success' | 'error';
@@ -104,5 +103,13 @@ export type TState = {
       };
       isReady: boolean;
     };
-  },
+  };
+}
+
+export type TContractForm = {
+  lastName?: string;
+  name?: string;
+  middlename?: string;
+  phone?: string;
+  [key: string]: any;
 }

@@ -1,19 +1,20 @@
 import { ResponsiveBlock } from "~/common/components/sp-custom"
 import { PriceTable, TPriceTableProps } from '~/common/components/sp-custom'
-import {
-  getTranslatedConditionCode,
-  getTranslatedConditionSuffixCode,
-  getTranslatedDefectReasonCode,
-} from "~/common/components/sp-custom/PriceTable/utils"
+// import {
+//   getTranslatedConditionCode,
+//   getTranslatedConditionSuffixCode,
+//   getTranslatedDefectReasonCode,
+// } from '~/common/components/sp-custom/PriceTable/utils'
 import baseClasses from '~/App.module.scss'
 import { NSP } from '~/utils/httpClient'
-import { getCapitalizedFirstLetter } from '~/utils/aux-ops'
+// import { getCapitalizedFirstLetter } from '~/utils/aux-ops'
 
 type TFinalPriceTableProps = (TPriceTableProps & { photoStatusResponse?: NSP.TPhotoStatusResponse | null })
 
 export const FinalPriceTableStep = (props: TFinalPriceTableProps) => {
   return (
     <div className={baseClasses.stack7}>
+      {/*
       <ResponsiveBlock
         isPaddedMobile
         isLimitedForDesktop
@@ -46,9 +47,8 @@ export const FinalPriceTableStep = (props: TFinalPriceTableProps) => {
               }))}</b>
             )
           }
-          {/* <pre>{JSON.stringify(props.photoStatusResponse, null, 2)}</pre> */}
         </div>
-      </ResponsiveBlock>
+      </ResponsiveBlock> */}
 
       <ResponsiveBlock
         isPaddedMobile

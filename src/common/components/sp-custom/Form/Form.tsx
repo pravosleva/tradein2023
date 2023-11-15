@@ -9,7 +9,6 @@ import clsx from 'clsx'
 import { PhoneInput } from '~/common/components/sp-custom'
 import { CountryData as ICountryEvent } from 'react-phone-input-2'
 import { ECountryCode } from '~/common/xstate/stepMachine'
-// import { useCompare } from '~/common/hooks/useDeepEffect'
 
 type TFieldType = 'text' | 'number' | 'tel'
 type TField = {
@@ -76,18 +75,18 @@ export const Form = memo(({
       return acc
     }, {})
   })
-  const [auxState, setAuxState] = useState<{[key: string]: any}>({
+  const [__auxState, __setAuxState] = useState<{[key: string]: any}>({
     phone: '',
   })
   const setAuxStateValue = useCallback((fn: string, val: any) => {
-    setAuxState((s) => ({ ...s, [fn]: val }))
-  }, [setAuxState])
+    __setAuxState((s) => ({ ...s, [fn]: val }))
+  }, [__setAuxState])
 
-  const [_errsState, _setErrsState] = useState<{[key: string]: any}>({})
+  const [__errsState, __setErrsState] = useState<{[key: string]: any}>({})
   // const _setErrValue = useCallback((fn: string, val: any) => {
-  //   _setErrsState((s) => ({ ...s, [fn]: val }))
-  // }, [_setErrsState])
-  const [_okState, _setOkState] = useState<{[key: string]: any}>({})
+  //   __setErrsState((s) => ({ ...s, [fn]: val }))
+  // }, [__setErrsState])
+  const [__okState, __setOkState] = useState<{[key: string]: any}>({})
 
   const rendersCounterRef = useRef<number>(0)
   useLayoutEffect(() => {
@@ -97,9 +96,9 @@ export const Form = memo(({
         return acc
       }, [])
     
-      const isAusStateInitNeeded = fieldsToInit.length > 0
-      if (isAusStateInitNeeded) {
-        setAuxState((s) => ({
+      const isAuxStateInitNeeded = fieldsToInit.length > 0
+      if (isAuxStateInitNeeded) {
+        __setAuxState((s) => ({
           ...s,
           ...fieldsToInit.reduce((acc: {[key: string]: any}, key: string) => { acc[key] = schema[key]?.initValue; return acc; } ,{}),
         }))
@@ -107,7 +106,7 @@ export const Form = memo(({
     }
 
     rendersCounterRef.current += 1
-  }, [setAuxState, schema])
+  }, [__setAuxState, schema])
 
   // NOTE: Callback version of watch. It's your responsibility to unsubscribe when done.
   
@@ -148,14 +147,14 @@ export const Form = memo(({
         }
       }
       // NOTE: _setErrValue(key, null) -> errsObj
-      _setErrsState(errsObj)
-      _setOkState(okObj)
+      __setErrsState(errsObj)
+      __setOkState(okObj)
 
       if (Object.keys(errsObj).length === 0) onFormReady({ state })
       else onFormNotReady({ state })
     })
     return () => subscription.unsubscribe()
-  }, [watch, schema, onFormReady, onFormNotReady, onChangeField, _setErrsState, _setOkState])
+  }, [watch, schema, onFormReady, onFormNotReady, onChangeField, __setErrsState, __setOkState])
 
   // const tst = () => {
   //   const values = getValues()
@@ -193,7 +192,8 @@ export const Form = memo(({
           'grid',
           'gap-3',
           'mb-6',
-          'md:grid-cols-1',
+          'grid-cols-1',
+          // 'md:grid-cols-1',
         )}
       >
         {
@@ -213,9 +213,9 @@ export const Form = memo(({
                         // ruOnly
                         defaultCountryCode={defaultCountryCode}
                         // key={key}
-                        // isErrored={!!_errsState[key]}
-                        isSuccess={_okState[key] === true}
-                        value={auxState.phone}
+                        // isErrored={!!__errsState[key]}
+                        isSuccess={__okState[key] === true}
+                        value={__auxState.phone}
                         // @ts-ignore
                         onChange={(val: string, _countryEvent: TCountryEvent) => {
                           // console.log('--')
@@ -240,8 +240,8 @@ export const Form = memo(({
                           setValue('phone', val)
                         }}
                       />
-                      {/* !!_errsState[key] && (
-                        <span>{_errsState[key]}</span>
+                      {/* !!__errsState[key] && (
+                        <span>{__errsState[key]}</span>
                       ) */}
                     </div>
                   </Fragment>
@@ -256,8 +256,8 @@ export const Form = memo(({
                       {/* <label htmlFor={key}>{schema[key].label}</label> */}
                       <Input
                         style={{ width: '100%' }}
-                        // isErrored={!!_errsState[key]}
-                        isSuccess={_okState[key] === true}
+                        // isErrored={!!__errsState[key]}
+                        isSuccess={__okState[key] === true}
                         id={key}
                         // aria-invalid={errors[key] ? 'true' : 'false'}
                         placeholder={schema[key].label}
@@ -270,8 +270,8 @@ export const Form = memo(({
                       {errors.name && errors.name.type === "maxLength" && (
                         <span role="alert">Max length exceeded</span>
                       )} */}
-                      {/* !!_errsState[key] && (
-                        <span>{_errsState[key]}</span>
+                      {/* !!__errsState[key] && (
+                        <span>{__errsState[key]}</span>
                       ) */}
                     </div>
                   </Fragment>
@@ -281,7 +281,7 @@ export const Form = memo(({
         }
         {/* <Input type="submit" /> */}
       </div>
-      {/* <pre>{JSON.stringify(_errsState, null, 2)}</pre> */}
+      {/* <pre>{JSON.stringify(__errsState, null, 2)}</pre> */}
       {/* <button onClick={tst}>tst</button> */}
     </>
   )

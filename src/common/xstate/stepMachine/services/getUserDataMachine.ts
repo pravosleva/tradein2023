@@ -2,10 +2,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { AnyEventObject, InvokeMeta } from 'xstate'
-import { ECountryCode, TState, phoneValidation } from '~/common/xstate/stepMachine'
+import { ECountryCode, TStepMachineContextFormat, phoneValidation } from '~/common/xstate/stepMachine'
 import { httpClient } from '~/utils/httpClient'
+import { vi } from '~/common/vi'
 
-export const getUserDataMachine = async (context: TState, _ev: AnyEventObject, _invMeta: InvokeMeta): Promise<any> => {
+export const getUserDataMachine = async (context: TStepMachineContextFormat, _ev: AnyEventObject, _invMeta: InvokeMeta): Promise<any> => {
   const cleanupInitAppStep = () => {
     context.initApp.response = null
     context.initApp.uiMsg = null
@@ -106,6 +107,8 @@ export const getUserDataMachine = async (context: TState, _ev: AnyEventObject, _
     }
   })
     .catch((err: any) => err)
+
+  vi.setUserDataResponse(res)
 
   if (res.ok) {
     context.contract.result.state = 'success'

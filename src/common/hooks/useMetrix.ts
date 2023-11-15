@@ -2,17 +2,16 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useLayoutEffect, useCallback } from 'react'
-import { useStore } from '~/common/context/WithAppContextHOC'
 import { groupLog, wws } from '~/utils'
 import { NEvents } from '~/types'
+import { vi } from '~/common/vi'
+import { subscribeKey } from 'valtio/utils'
 
 type TProps = {
   isDebugEnabled?: boolean;
 }
 
 export const useMetrix = ({ isDebugEnabled }: TProps) => {
-  const [store, _setStore] = useStore((store) => store)
-
   // NOTE: 1.1 Use wws.subscribeOnData once only!
   useLayoutEffect(() => {
     wws.subscribeOnData<{
@@ -79,7 +78,7 @@ export const useMetrix = ({ isDebugEnabled }: TProps) => {
     }
   }, [isDebugEnabled])
 
-  const sendSnapshot = useCallback(({
+  const sendSnapshotToWorker = useCallback(({
     input,
   }: {
     input: {
@@ -98,24 +97,29 @@ export const useMetrix = ({ isDebugEnabled }: TProps) => {
       eType: NEvents.ECustom.CLIENT_TO_WORKER_MESSAGE,
       data: {
         input: {
-          appVersion: store.appVersion,
+          appVersion: vi.common.appVersion,
           ...input,
         },
       },
     })
-  }, [store.appVersion])
+  }, [])
 
   // NOTE: 2. Send event for each change
   useLayoutEffect(() => {
-    try {
-      if (store.stateValue) sendSnapshot({
+    // NOTE: See also https://valtio.pmnd.rs/docs/api/utils/subscribeKey
+    // Subscribe to all changes to the state proxy (and its child proxies)
+    const unsubscribe = subscribeKey(vi.common, 'stateValue', (val) => {
+      if (typeof val === 'string') sendSnapshotToWorker({
         input: {
           metrixEventType: NEvents.EMetrixClientOutgoing.SP_MX_EV,
-          stateValue: String(store.stateValue),
+          // @ts-ignore
+          stateValue: vi.common.stateValue,
         }
       })
-    } catch (err) {
-      if (isDebugEnabled) groupLog({ namespace: '--useMetrix 🚫 err', items: [err] })
+    })
+    return () => {
+      // Unsubscribe by calling the result
+      unsubscribe()
     }
-  }, [store.stateValue, store.appVersion, isDebugEnabled, sendSnapshot])
+  }, [isDebugEnabled, sendSnapshotToWorker])
 }
