@@ -81,7 +81,7 @@ class Singleton extends Api {
 
     switch (true) {
       case !!responseValidate && data?.ok: {
-        const responseValidateResult = responseValidate({ res: data })
+        const responseValidateResult = responseValidate?.({ res: data })
         // @ts-ignore
         return responseValidateResult.ok ? Promise.resolve(data) : Promise.reject(responseValidateResult)
       }
@@ -296,7 +296,7 @@ class Singleton extends Api {
 
     switch (true) {
       case !!responseValidate && data?.ok: {
-        const responseValidateResult = responseValidate({ res: data })
+        const responseValidateResult = responseValidate?.({ res: data })
         // @ts-ignore
         return responseValidateResult.ok ? Promise.resolve(data) : Promise.reject(responseValidateResult)
       }

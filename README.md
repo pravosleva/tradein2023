@@ -25,6 +25,7 @@ sp.offline-tradein-2023.mtsmain.xstate/
 │  ├─ assets/
 │  ├─ static3/
 │  ├─ index.html
+│  ├─ stats.html
 # ---
 
 ├─ src/
@@ -49,6 +50,16 @@ VITE_BASE_API_URL=https://smartprice.ru
 .env.[mode]         # ⛔ Dont touch! Only loaded in specified mode
 .env.[mode].local   # ✅ Could be modified. Only loaded in specified mode, ignored by git
 ```
+
+## Bundle analyzer
+
+Output file will be put to `./dist/stats.html`
+
+[img](/_samples/analyzer/treemap.png)
+[img](/_samples/analyzer/network.png)
+[img](/_samples/analyzer/sunbust.png)
+
+See also [about vite-bundle-visualizer](https://www.npmjs.com/package/vite-bundle-visualizer)
 
 # Original template notes
 

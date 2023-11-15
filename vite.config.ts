@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
+import { visualizer } from 'rollup-plugin-visualizer'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -8,6 +9,15 @@ export default defineConfig({
   // preview: { port: 2023 },
   plugins: [
     react(),
+
+    // NOTE: Last one
+    // See also https://www.npmjs.com/package/rollup-plugin-visualizer
+    visualizer({
+      title: 'Stats | Trade-In v3',
+      template: 'sunburst', // sunburst, treemap, network
+      emitFile: true,
+      filename: 'stats.html',
+    }),
   ],
   resolve: {
     alias: {
