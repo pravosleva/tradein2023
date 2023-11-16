@@ -130,7 +130,8 @@ export const Menu = memo(({
               ['bg-gradient-to-br from-green-400 to-blue-500 hover:bg-gradient-to-bl']: !shoudHaveAttention,
               [classes.customHover_ok]: !shoudHaveAttention,
 
-              ['bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-pink-200 dark:focus:ring-pink-800']: shoudHaveAttention,
+              // ['bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-pink-200 dark:focus:ring-pink-800']: shoudHaveAttention,
+              ['bg-gradient-to-br from-red-400 to-red-400 hover:bg-gradient-to-bl']: shoudHaveAttention,
               [classes.customHover_notOk]: shoudHaveAttention,
             },
             'disabled:opacity-50',

@@ -4,12 +4,9 @@
 // import reactLogo from '~/assets/react.svg'
 // import viteLogo from '/vite.svg'
 import classes from '~/App.module.scss'
-// import { pageMachine } from './xstate/pageMachine'
 import { stepMachine, EStep, ECountryCode } from '~/common/xstate/stepMachine'
-// import { actions } from 'xstate'
 import { useMachine } from '@xstate/react'
 import { useLayoutEffect, useMemo, useRef } from 'react'
-// import {} from '@headlessui/react'
 import { Alert, Spinner } from '~/common/components/tailwind'
 import { ContentWithControls, ResponsiveBlock } from '~/common/components/sp-custom'
 import { BaseLayout } from '~/common/components/layout/BaseLayout'
@@ -92,6 +89,7 @@ function App() {
             isNextBtnDisabled={!can({ type: 'goNext' })}
             // onPrev={() => send({ type: 'goPrev' })}
             isPrevBtnDisabled={!can({ type: 'goPrev' })}
+            makeAutofocusOnComplete
           />
         )
       case EStep.SendImei:
@@ -151,6 +149,7 @@ function App() {
               btn: { variant: 'filled', color: 'primary' },
               onClick: () => send({ type: 'goNext' }),
               isDisabled: !can({ type: 'goNext' }),
+              allowDefaultEnabledEndIconArrowRight: true,
             }}
             prevBtn={{
               id: '2',
@@ -159,39 +158,26 @@ function App() {
               onClick: () => send({ type: 'goPrev' }),
               isDisabled: !can({ type: 'goPrev' }),
             }}
-            menus={[
+            listboxes={[
               {
+                placeholder: 'Выберите память',
                 isEnabled: !state.context.imei.response?.phone.memory,
                 selectedId: state.context.memory.selectedItem?.value,
                 onItemSelect: ({ item }) => send({ type: 'SET_MEMORY', value: item }),
-                sections: [
-                  {
-                    id: 'mem',
-                    items: state.context.memory.dynamicList.length > 0
-                      ? state.context.memory.dynamicList
-                      : state.context.imei.result.memoryList
-                  }
-                ],
-                label: !state.context.memory.selectedItem ? 'Выберите Память' : state.context.memory.selectedItem.label,
+                items: state.context.memory.dynamicList.length > 0
+                  ? state.context.memory.dynamicList
+                  : state.context.imei.result.memoryList,
                 isDisabled: state.context.memory.dynamicList.length === 0 && state.context.imei.result.memoryList.length === 0,
-                shoudHaveAttention: !state.context.memory.selectedItem,
               },
               {
+                placeholder: 'Выберите цвет',
                 isEnabled: !state.context.imei.response?.phone.color,
                 selectedId: state.context.color.selectedItem?.value,
                 onItemSelect: ({ item }) => send({ type: 'SET_COLOR', value: item }),
-                sections: [
-                  {
-                    id: 'col',
-                    items: state.context.color.dynamicList,
-                  }
-                ],
-                label: !state.context.color.selectedItem ? 'Выберите Цвет' : state.context.color.selectedItem.label,
+                items: state.context.color.dynamicList,
                 isDisabled: state.context.imei.response?.phone.memory ? state.context.color.dynamicList.length === 0 : !state.context.memory.selectedItem,
-                shoudHaveAttention: !state.context.color.selectedItem,
-              }
+              },
             ]}
-            // imeiResponse={state.context.imei.response}
           />
         )
       case EStep.PrePriceTable:
@@ -211,6 +197,7 @@ function App() {
                 btn: { variant: 'filled', color: 'success' },
                 onClick: () => send({ type: 'goNext' }),
                 // isDisabled: !can({ type: 'goNext' }),
+                allowDefaultEnabledEndIconCheck: true,
               },
               {
                 id: '2',
@@ -456,6 +443,7 @@ function App() {
                   color: 'success',
                   variant: 'filled',
                 },
+                allowDefaultEnabledEndIconCheck: true,
               },
             ]}
           >
@@ -504,6 +492,7 @@ function App() {
       case EStep.Contract:
         return (
           <ContentWithControls
+            autofocusBtnId={can({ type: 'goNext' }) ? '1' : undefined}
             header='Договор'
             controls={[
               {
@@ -517,6 +506,7 @@ function App() {
                   variant: 'filled',
                 },
                 isDisabled: !can({ type: 'goNext' }),
+                allowDefaultEnabledEndIconCheck: true,
               },
               {
                 id: '2',

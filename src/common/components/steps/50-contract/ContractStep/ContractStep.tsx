@@ -26,6 +26,7 @@ export const ContractStep = ({
   return (
     <div className={baseClasses.stack}>
       <Form
+        makeFocusOnFirstInput
         defaultCountryCode={defaultCountryCode}
         onChangeField={handleSetExternalStore}
         getValues={(vals) => {

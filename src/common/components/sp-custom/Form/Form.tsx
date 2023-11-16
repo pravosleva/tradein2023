@@ -9,6 +9,7 @@ import clsx from 'clsx'
 import { PhoneInput } from '~/common/components/sp-custom'
 import { CountryData as ICountryEvent } from 'react-phone-input-2'
 import { ECountryCode } from '~/common/xstate/stepMachine'
+// import useDynamicRefs from 'use-dynamic-refs'
 
 type TFieldType = 'text' | 'number' | 'tel'
 type TField = {
@@ -37,6 +38,7 @@ type TProps = {
   onFormNotReady: ({ state }: { state: any; }) => void;
   getValues: (data: any) => any;
   defaultCountryCode: ECountryCode;
+  makeFocusOnFirstInput?: boolean;
 }
 
 export const Form = memo(({
@@ -47,8 +49,28 @@ export const Form = memo(({
   onFormReady,
   onFormNotReady,
   defaultCountryCode,
+  // makeFocusOnFirstInput,
 }: TProps) => {
   const currentCountryInfoRef = useRef<ICountryEvent | undefined>(undefined)
+
+  // const [getRef, setRef] = useDynamicRefs()
+  // useEffect(() => {
+  //   if (makeFocusOnFirstInput) {
+  //     const focusedInput = getRef('lastName')
+  //     console.log(focusedInput?.current)
+  //     try {
+  //       // @ts-ignore
+  //       focusedInput?.current?.focus()
+  //     } catch (err) {
+  //       console.warn(err)
+  //     }
+  //   }
+  // }, [makeFocusOnFirstInput, getRef, schema])
+  const lastNameRef = useRef<HTMLInputElement>(null)
+  useLayoutEffect(() => {
+    if (lastNameRef?.current) lastNameRef?.current?.focus()
+    else console.warn(lastNameRef?.current)
+  }, [])
 
   const {
     register,
@@ -210,6 +232,8 @@ export const Form = memo(({
                         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                       >{schema[key].label}</label> */}
                       <PhoneInput
+                        // @ts-ignore
+                        // ref={setRef(key)}
                         // ruOnly
                         defaultCountryCode={defaultCountryCode}
                         // key={key}
@@ -247,7 +271,8 @@ export const Form = memo(({
                   </Fragment>
                 )
               case 'text':
-              default:
+              default: {
+                const { ref, ...rest } = register(key, { required: schema[key].isRequired, maxLength: 30, minLength: 3 })
                 return (
                   <Fragment key={key}>
                     <div
@@ -255,13 +280,19 @@ export const Form = memo(({
                     >
                       {/* <label htmlFor={key}>{schema[key].label}</label> */}
                       <Input
+                        // @ts-ignore
+                        ref={(e) => {
+                          ref(e)
+                          // @ts-ignore
+                          if (key === 'lastName') lastNameRef.current = e // you can still assign to ref
+                        }}
                         style={{ width: '100%' }}
                         // isErrored={!!__errsState[key]}
                         isSuccess={__okState[key] === true}
                         id={key}
                         // aria-invalid={errors[key] ? 'true' : 'false'}
                         placeholder={schema[key].label}
-                        {...register(key, { required: schema[key].isRequired, maxLength: 30, minLength: 3 })}
+                        {...rest}
                       />
                       {/* use role="alert" to announce the error message */}
                       {/* {errors.name && errors.name.type === "required" && (
@@ -276,6 +307,7 @@ export const Form = memo(({
                     </div>
                   </Fragment>
                 )
+              }
             }
           })
         }

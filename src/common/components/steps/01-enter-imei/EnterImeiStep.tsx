@@ -13,6 +13,7 @@ type TProps = {
   isNextBtnDisabled: boolean;
   onPrev?: () => void;
   isPrevBtnDisabled: boolean;
+  makeAutofocusOnComplete?: boolean;
 }
 
 export const EnterImeiStep = memo(({
@@ -22,6 +23,7 @@ export const EnterImeiStep = memo(({
   isNextBtnDisabled,
   onPrev,
   isPrevBtnDisabled,
+  makeAutofocusOnComplete,
 }: TProps) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const controls = useMemo<TControlBtn[]>(() => {
@@ -35,6 +37,7 @@ export const EnterImeiStep = memo(({
           variant: 'filled',
           color: 'primary',
         },
+        allowDefaultEnabledEndIconArrowRight: true,
       }
     ]
     if (onPrev) btns.push({
@@ -50,13 +53,14 @@ export const EnterImeiStep = memo(({
     return btns
   }, [isNextBtnDisabled, onSendIMEI, onPrev, isPrevBtnDisabled])
   useEffect(() => {
-    if (inputRef.current) inputRef.current.focus()
-  }, [])
+    if (inputRef.current && isNextBtnDisabled) inputRef.current.focus()
+  }, [isNextBtnDisabled])
 
   return (
     <ContentWithControls
       header='Введите IMEI'
       controls={controls}
+      autofocusBtnId={makeAutofocusOnComplete ? (isNextBtnDisabled ? undefined : '1') : undefined}
     >
       <Input
         isSuccess={!isNextBtnDisabled}

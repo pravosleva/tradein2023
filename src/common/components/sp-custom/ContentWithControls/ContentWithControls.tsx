@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import baseClasses from '~/App.module.scss'
 import { Button, ResponsiveBlock, TColor, TVariant } from '~/common/components/sp-custom'
 import clsx from 'clsx'
 import { ErrorBoundary } from '~/common/components/tools'
 import classes from './ContentWithControls.module.scss'
+import useDynamicRefs from 'use-dynamic-refs'
+import { useLayoutEffect } from 'react'
 
 export type TControlBtn = {
   id: string;
@@ -13,6 +16,9 @@ export type TControlBtn = {
   },
   onClick: () => void;
   isDisabled?: boolean;
+  EnabledEndIcon?: React.ReactNode;
+  allowDefaultEnabledEndIconArrowRight?: boolean;
+  allowDefaultEnabledEndIconCheck?: boolean;
 }
 type TProps = {
   header: string;
@@ -22,6 +28,7 @@ type TProps = {
   controls: TControlBtn[];
   controlsAsGrid?: boolean;
   hasChildrenFreeWidth?: boolean;
+  autofocusBtnId?: string;
 }
 
 export const ContentWithControls = ({
@@ -32,7 +39,21 @@ export const ContentWithControls = ({
   controls,
   controlsAsGrid,
   hasChildrenFreeWidth,
+  autofocusBtnId,
 }: TProps) => {
+  const [getRef, setRef] =  useDynamicRefs()
+  useLayoutEffect(() => {
+    if (autofocusBtnId) {
+      const focusedBtn = getRef(autofocusBtnId)
+      try {
+        // @ts-ignore
+        focusedBtn?.current.focus()
+      } catch (err) {
+        console.warn(err)
+      }
+    }
+  }, [autofocusBtnId, getRef])
+
   return (
     <ErrorBoundary>
       <div className={baseClasses.stack4}>
@@ -119,7 +140,6 @@ export const ContentWithControls = ({
             <>
               <ResponsiveBlock
                 style={{
-                  // border: '1px dashed red',
                   padding: '16px 0 16px 0',
                   position: 'sticky',
                   bottom: 0,
@@ -136,12 +156,26 @@ export const ContentWithControls = ({
                       [baseClasses.stack]: !controlsAsGrid,
                     })}>
                   {
-                    controls.map(({ id, label, onClick, isDisabled, btn }) => (
+                    controls.map(({
+                      id,
+                      label,
+                      onClick,
+                      isDisabled,
+                      btn,
+                      EnabledEndIcon,
+                      allowDefaultEnabledEndIconArrowRight,
+                      allowDefaultEnabledEndIconCheck,
+                    }) => (
                       <Button
+                        // @ts-ignore
+                        ref={setRef(id)}
                         key={id}
                         {...btn}
                         onClick={onClick}
                         disabled={isDisabled}
+                        EnabledEndIcon={EnabledEndIcon}
+                        allowDefaultEnabledEndIconArrowRight={allowDefaultEnabledEndIconArrowRight}
+                        allowDefaultEnabledEndIconCheck={allowDefaultEnabledEndIconCheck}
                       >
                         {label}
                       </Button>

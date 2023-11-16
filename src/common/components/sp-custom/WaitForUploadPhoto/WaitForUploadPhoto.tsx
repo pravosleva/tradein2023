@@ -89,10 +89,10 @@ export const WaitForUploadPhoto = ({ photoLinkResponse }: TProps) => {
               </div>
               <div className={classes.centeredText}>
                 <span className={classes.desktopOnly}>
-                  Перейдите по <a href={photoLinkResponse?.qr_url} className={baseClasses.link} target="_blank">прямой ссылке</a>
+                  Перейдите по <a href={photoLinkResponse?.qr_url} className={clsx(baseClasses.link, 'text-spBlueMain')} target="_blank">прямой ссылке</a>
                 </span>
                 <span className={classes.mobileOnly}>
-                  Перейдите по <a href={photoLinkResponse?.qr_url} className={baseClasses.link} target="_blank">прямой ссылке</a>
+                  Перейдите по <a href={photoLinkResponse?.qr_url} className={clsx(baseClasses.link, 'text-spBlueMain')} target="_blank">прямой ссылке</a>
                 </span>
               </div>
 

@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import * as React from 'react'
 import clsx from 'clsx';
 import _PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css'
@@ -16,7 +18,7 @@ interface IProps {
   ruOnly?: boolean;
 }
 
-export const PhoneInput = ({
+export const PhoneInput = React.forwardRef(({
   defaultCountryCode,
   // isErrored,
   isSuccess,
@@ -24,7 +26,7 @@ export const PhoneInput = ({
   value,
   // className,
   ruOnly,
-}: IProps) => {
+}: IProps, ref) => {
   const customizedOriginalProps = {
     containerClass: 'react-phone-input-2_containerClass',
     inputClass: clsx(
@@ -78,7 +80,7 @@ export const PhoneInput = ({
       // fontSize: '16px',
       height: '100%',
       width: '100%',
-      letterSpacing: '0.05em',
+      // letterSpacing: '0.05em',
     },
     buttonStyle: {
       borderRadius: '8px 0 0 8px',
@@ -98,6 +100,8 @@ export const PhoneInput = ({
       className={classes.phoneInputWrapper}
     >
       <_PhoneInput
+        // @ts-ignore
+        ref={ref}
         // className={className}
         country={defaultCountryCode?.toLowerCase() || 'ru'}
         onlyCountries={ruOnly ? ['ru'] : ['ru', 'by', 'kz']}
@@ -109,4 +113,4 @@ export const PhoneInput = ({
       />
     </div>
   )
-}
+})

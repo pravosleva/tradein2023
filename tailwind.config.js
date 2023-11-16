@@ -31,7 +31,16 @@ export default {
       // },
       // width: {
       //   '110': '110px',
-      // }
+      // },
+      colors: {
+        transparent: 'transparent',
+        current: 'currentColor',
+        'white': '#ffffff',
+        'spBlueMain': '#3882c4',
+        'spBlue2': '#6ea0eb',
+        'spGreenDark': '#168f48',
+        'spGreen': '#71bc81',
+      },
     },
   },
   plugins: [],
