@@ -5,6 +5,7 @@ import path from 'path'
 import { visualizer } from 'rollup-plugin-visualizer'
 import pkg from './package.json'
 import { splitVendorChunkPlugin } from 'vite'
+import browserslistToEsbuild from 'browserslist-to-esbuild'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -41,6 +42,8 @@ export default defineConfig({
     ]
   },
   build: {
+    // NOTE: See also https://github.com/marcofugaro/browserslist-to-esbuild/blob/main/test/test.js
+    target: browserslistToEsbuild(),
     outDir: 'dist',
     rollupOptions: {
       output: {
