@@ -1,4 +1,4 @@
-import { Fragment, useState, useCallback, useLayoutEffect } from 'react'
+import { Fragment, useState, useCallback, useLayoutEffect, useRef } from 'react'
 import { Listbox as ListboxHui, Transition } from '@headlessui/react'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 import clsx from 'clsx'
@@ -16,6 +16,7 @@ export type TListboxProps = {
   onItemSelect: ({ item }: { item: TItem }) => void;
   isDisabled?: boolean;
   // shoudHaveAttention?: boolean;
+  makeAutofocus?: boolean;
 }
 
 // const people = [
@@ -34,12 +35,18 @@ export const Listbox = ({
   onItemSelect,
   isDisabled,
   // shoudHaveAttention,
+  makeAutofocus,
 }: TListboxProps) => {
   const [selected, setSelected] = useState<TItem | null>(selectedId ? (items.find(({ id }) => selectedId === id) || null): null)
 
   useLayoutEffect(() => {
     if (!selectedId) setSelected(null)
   }, [selectedId])
+
+  const btnRef = useRef<HTMLButtonElement>(null)
+  useLayoutEffect(() => {
+    if (makeAutofocus && !!btnRef.current) btnRef.current.focus() 
+  }, [makeAutofocus])
 
   const handleChange = useCallback((item: TItem) => {
     setSelected(item)
@@ -53,7 +60,6 @@ export const Listbox = ({
         // 'top-16',
         // 'w-72'
         'w-full',
-        
       )}
       style={{
         // zIndex: 1,
@@ -65,6 +71,7 @@ export const Listbox = ({
       >
         <div className='relative'>
           <ListboxHui.Button
+            ref={btnRef}
             aria-disabled={isDisabled}
             // disabled={isDisabled}
             className={clsx(

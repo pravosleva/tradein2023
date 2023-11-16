@@ -158,8 +158,20 @@ function App() {
               onClick: () => send({ type: 'goPrev' }),
               isDisabled: !can({ type: 'goPrev' }),
             }}
+            defaultAutofocusId={
+              !!state.context.imei.response?.phone.memory && !!state.context.imei.response?.phone.color
+              ? undefined
+              : (
+                !!state.context.imei.response?.phone.memory && !state.context.imei.response?.phone.color
+                ? 'col'
+                : !state.context.imei.response?.phone.memory
+                  ? 'mem'
+                  : undefined
+              )
+            }
             listboxes={[
               {
+                id: 'mem',
                 placeholder: 'Выберите память',
                 isEnabled: !state.context.imei.response?.phone.memory,
                 selectedId: state.context.memory.selectedItem?.value,
@@ -170,6 +182,7 @@ function App() {
                 isDisabled: state.context.memory.dynamicList.length === 0 && state.context.imei.result.memoryList.length === 0,
               },
               {
+                id: 'col',
                 placeholder: 'Выберите цвет',
                 isEnabled: !state.context.imei.response?.phone.color,
                 selectedId: state.context.color.selectedItem?.value,

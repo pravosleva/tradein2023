@@ -13,7 +13,8 @@ type TProps = {
   };
   nextBtn: TControlBtn;
   prevBtn: TControlBtn;
-  listboxes: (TListboxProps & { isEnabled: boolean; })[];
+  listboxes: (TListboxProps & { isEnabled: boolean; id: string; })[];
+  defaultAutofocusId?: string;
 }
 
 export const EnterMemoryAndColorStep = ({
@@ -23,6 +24,7 @@ export const EnterMemoryAndColorStep = ({
   nextBtn,
   prevBtn,
   listboxes,
+  defaultAutofocusId,
 }: TProps) => {
   useLayoutEffect(() => {
     if (skipStepSettings?.doIt) skipStepSettings.cb()
@@ -38,9 +40,9 @@ export const EnterMemoryAndColorStep = ({
     >
       <div className={clsx(baseClasses.specialActionsGrid)}>
         {
-          listboxes.map(({ isEnabled, ...menuProps }, i) => {
+          listboxes.map(({ isEnabled, id, ...menuProps }, i) => {
             if (!isEnabled) return null
-            return <Listbox {...menuProps} key={`${menuProps.placeholder}-${i}`} />
+            return <Listbox makeAutofocus={defaultAutofocusId ? defaultAutofocusId === id : false} {...menuProps} key={`${menuProps.placeholder}-${i}`} />
           })
         }
       </div>
