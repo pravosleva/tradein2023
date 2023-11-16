@@ -9,11 +9,11 @@
   },
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "build:prod": "tsc && VITE_APP_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g') VITE_GIT_SHA1=$(git show --format=\"%h\" --no-patch) vite build --mode production --emptyOutDir",
     "build:staging": "tsc && VITE_APP_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g') VITE_GIT_SHA1=$(git show --format=\"%h\" --no-patch) vite build --mode staging --emptyOutDir",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview --host"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.17",

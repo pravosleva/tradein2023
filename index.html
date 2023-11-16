@@ -3,8 +3,58 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/static3/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SP | Offline Trade-In %VITE_APP_VERSION% %VITE_GIT_SHA1%</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <meta name="theme-color" content="#000000" />
+    <script defer type="text/javascript" src="/static3/custom.eruda.js"></script>
+    <script defer type="text/javascript">
+      const initDevToggler = ({ querySelector, oddLimit, resetTimeout, targetAction }) => {
+        let counter = 0
+        const elm = document.querySelector(querySelector)
+        const _resetCounter = () => {
+          console.log('RESET')
+          counter = 0
+        }
+
+        elm.onclick = function () {
+          if (counter === 0) setTimeout(_resetCounter, resetTimeout)
+          counter += 1
+          // console.log(counter)
+          if (counter % oddLimit === 0) {
+            switch (true) {
+              case !!targetAction:
+                targetAction()
+                break
+              default:
+                try {
+                  window.proxiedState.devtool.devMenuChoisementIndicatorCounter += 1
+                } catch (err) {
+                  console.warn(err)
+                }
+                break
+            }
+          }
+        }
+      }
+      window.initDevToggler = initDevToggler
+      const onReady = () => {
+        try {
+          if (!!window.initDevToggler)
+            window.initDevToggler({
+              querySelector: '#footer-compary',
+              oddLimit: 12,
+              resetTimeout: 5000,
+              targetAction: () => {
+                customEruda.initIfNecessary()
+              },
+            })
+          else throw new Error(`window.initDevToggler is ${typeof window.initDevToggler}`)
+        } catch (err) {
+          console.warn(err)
+        }
+      }
+      document.addEventListener('DOMContentLoaded', onReady)
+    </script>
   </head>
   <body>
     <div id="root"></div>

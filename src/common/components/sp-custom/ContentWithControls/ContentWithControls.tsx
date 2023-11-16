@@ -115,7 +115,7 @@ export const ContentWithControls = ({
           </ResponsiveBlock>
           
         </ResponsiveBlock>
-        
+
         {
           !!children && (
             hasChildrenFreeWidth ? (
@@ -134,7 +134,7 @@ export const ContentWithControls = ({
             )
           )
         }
-
+ 
         {
           controls.length > 0 && (
             <>

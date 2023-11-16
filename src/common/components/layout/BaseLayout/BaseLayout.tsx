@@ -64,7 +64,7 @@ export const BaseLayout: React.FC<any> = ({ children }) => {
             <div>
               2017 – {fullyear}
             </div>
-            <div>
+            <div id='footer-compary'>
               SmartPrice
             </div>
           </div>
