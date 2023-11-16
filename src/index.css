@@ -131,3 +131,10 @@ table > tbody > tr > td:first-child {
   /* border: 1px solid red; */
   min-width: 80px;
 }
+.text-right {
+  text-align: right;
+}
+.menu-box-shadow {
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+  /*box-shadow: 0 15px 30px rgba(56, 130, 196, 0.3); spBlueMain */
+}

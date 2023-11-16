@@ -72,6 +72,9 @@ export const EnterImeiStep = memo(({
         }}
         // @ts-ignore
         maxLength={15}
+        style={{
+          letterSpacing: '0.15em',
+        }}
       />
     </ContentWithControls>
   )

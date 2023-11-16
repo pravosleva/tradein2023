@@ -73,6 +73,7 @@ export const getPriceTableHtml = ({
               'whitespace-no-wrap',
               'font-weight-bold',
               'min-cell',
+              'text-right',
             ),
           },
         },
