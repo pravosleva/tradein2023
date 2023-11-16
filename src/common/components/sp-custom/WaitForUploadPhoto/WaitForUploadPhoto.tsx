@@ -31,7 +31,11 @@ export const WaitForUploadPhoto = ({ photoLinkResponse }: TProps) => {
           <div className={clsx(classes.box1, 'drop-shadow-xl')}>
             <div className={classes.subboxTop}>
 
-              <div className={classes.flexStartRow}>
+              <div
+                className={classes.flexStartRow}
+                // NOTE: tmp 2/2
+                style={{ marginBottom: '0px' }}
+              >
                 <img
                   src='/static3/img/samples/sample-phone.svg'
                   alt='img'
@@ -42,14 +46,15 @@ export const WaitForUploadPhoto = ({ photoLinkResponse }: TProps) => {
                   <span className={classes.mobileOnly}>Если загружаете с телефона</span>
                 </div>
               </div>
-              <div className={classes.centeredText}>
+              {/* NOTE: tmp 1/2 */}
+              {/* <div className={classes.centeredText}>
                 <span className={classes.desktopOnly}>
                   Введите в браузере своего телефона ссылку <b><code className={baseClasses.inlineCode}>spkx.ru</code></b><br />и код <b><code className={baseClasses.inlineCode}>tradeinId</code></b>
                 </span>
                 <span className={classes.mobileOnly}>
                   Введите в браузере ссылку <b><code className={baseClasses.inlineCode}>spkx.ru</code></b> и код <b><code className={baseClasses.inlineCode}>tradeinId</code></b>
                 </span>
-              </div>
+              </div> */}
 
             </div>
 

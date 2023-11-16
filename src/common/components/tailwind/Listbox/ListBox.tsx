@@ -134,6 +134,8 @@ export const Listbox = ({
                 // 'ring-black/5',
                 'focus:outline-none',
                 // 'sm:text-sm',
+                // 'divide-y',
+                // 'divide-slate-200',
               )}
               style={{
                 zIndex: 1,
