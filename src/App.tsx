@@ -111,8 +111,8 @@ function App() {
                 id: '2',
                 label: 'Назад',
                 btn: { variant: 'outlined', color: 'default' },
-                onClick: () => send({ type: 'prevStep' }),
-                isDisabled: !can({ type: 'prevStep' }),
+                onClick: () => send({ type: 'goPrev' }),
+                isDisabled: !can({ type: 'goPrev' }),
               },
             ]}
           >

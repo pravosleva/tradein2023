@@ -112,7 +112,7 @@ export const stepMachine = createMachine<TStepMachineContextFormat>(
       },
       [EStep.SendImeiErr]: {
         on: {
-          prevStep: {
+          goPrev: {
             cond: () => true,
             target: EStep.EnterImei,
           },
@@ -312,7 +312,7 @@ export const stepMachine = createMachine<TStepMachineContextFormat>(
         on: {
           goPrev: {
             cond: (context) => context.photoLink?.result.state !== 'pending',
-            target: EStep.PrePriceTable,
+            target: EStep.FinalPriceTable,
           },
           goNext: {
             cond: (context) => context.photoLink?.response?.ok === true,

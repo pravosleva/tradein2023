@@ -118,9 +118,16 @@ export namespace NSP {
       // NOTE: Выбор типа устройства [Смартфоны / Планшеты] or [Смарт-часы]
       // smartwatch_allowed: boolean;
 
+      // NOTE: IS_TRYING_ADD_CARD_FEATURE_ENABLED
       // partner_is_sberlike: boolean;
+
+      // NOTE: IS_PARTNER_KZLIKE -(не важно)
       // t_require_iin: boolean;
+
+      // NOTE: IS_DIRECT_BUYOUT_VERIFIED
       // t_direct_buyout_verified_via_api: boolean;
+
+      // NOTE: IS_OFFLINE_BUYOUT_SMS_ENABLED
       // t_offline_buyout_sms: boolean;
     }
   };
