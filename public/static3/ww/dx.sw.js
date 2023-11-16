@@ -96,7 +96,7 @@ let port // TODO? var ports = new Map()
       })
       if (!validationResult.ok) {
         if (dbg.workerEvs.fromClient.isEnabled) log({
-          label: `⛔ Event ${e.__eType} blocked |${!!validationResult.reason ? ` ${validationResult.reason} |` : ''} socket.connected: ${socket.connected}`,
+          label: `⛔ Event ${e.__eType} blocked |${!!validationResult.reason ? ` ${validationResult.reason}` : ''} ${socket.connected ? '✅' : '⭕'}`,
           msgs: [e.input, validationResult],
         })
         return
@@ -104,7 +104,7 @@ let port // TODO? var ports = new Map()
       // --
 
       if (dbg.workerEvs.fromClient.isEnabled) log({
-        label: `message received SharedWorker receive evt by client | socket.connected: ${socket.connected}`,
+        label: `message received SharedWorker receive evt by client ${socket.connected ? '✅' : '⭕'}`,
         msgs: [e.data],
       })
 
@@ -153,7 +153,7 @@ let port // TODO? var ports = new Map()
       }
     }, false)
   
-    port.start();
+    port.start()
     // NOTE: https://developer.mozilla.org/ru/docs/Web/API/SharedWorker
     // необходимо при добавлении обработчиков с помощью addEventListener.
     // При использовании сеттера port.onmessage, данный метод вызывается автоматически, неявно
@@ -214,11 +214,24 @@ let port // TODO? var ports = new Map()
       //   port.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA, ...e })
       // },
       [NES.Socket.Metrix.EClientIncoming.SP_MX_EV]: function (e) {
+        const {
+          yourData: {
+            _wService,
+            ...restYourData
+          },
+          ...rest
+        } = e
+        const dataForMemory = {
+          yourData: {
+            ...restYourData
+          },
+          ...rest
+        }
         _perfInfo.tsList.push({
           descr: `[sock-cus:sp-mx-ev]<-s: ${NES.Socket.Metrix.EClientIncoming.SP_MX_EV}`,
           p: performance.now(),
           ts: new Date().getTime(),
-          data: { ...e },
+          data: dataForMemory,
           name: 'Socket получил данные',
         })
         if (dbg.workerEvs.fromServer.isEnabled) log({ label: '⚡ Socket received response from server', msgs: [e] })

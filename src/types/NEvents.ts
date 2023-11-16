@@ -18,6 +18,9 @@ export namespace NEvents {
   export enum ESharedWorkerCustom {
     CLIENT_TO_WORKER_DIE = 'die',
   }
+  // export enum EWorkerCustom {
+  //   CLIENT_TO_WORKER_DIE = 'die',
+  // }
   export enum ESharedWorkerNative {
     // CLIENT_TO_WORKER_MESSAGE = 'message',
   }

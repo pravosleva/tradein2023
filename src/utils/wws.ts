@@ -102,7 +102,7 @@ class Singleton {
       // @ts-ignore
       case this[wName] instanceof Worker:
         // @ts-ignore
-        this[wName].post({ __eType: eType, ...data })
+        this[wName].postMessage({ __eType: eType, ...data })
         break
       // @ts-ignore
       case this[wName] instanceof SharedWorker:

@@ -51,6 +51,17 @@ const NES = {
       },
     },
   },
+  Worker: {
+    ENative: {
+      MESSAGE: 'message',
+    },
+    Custom: {
+      // NOTE: Should be sync with NEvents.EWorkerCustom in ~/types/NEvents.ts
+      EType: {
+        CLIENT_TO_WORKER_DIE: 'die',
+      },
+    },
+  },
   Socket: {
     ENative: {
       CONNECT: 'connect',
