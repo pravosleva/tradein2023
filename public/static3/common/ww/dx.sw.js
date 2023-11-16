@@ -18,6 +18,7 @@ importScripts('./u/ev/evs.js')
 importScripts('./u/ev/val.js')
 importScripts('./u/dbg/cfg.js')
 importScripts('./u/dbg/log.js')
+// importScripts('./u/dbg/debug.js')
 importScripts('./u/s-tools/rootSubscribers.js')
 importScripts('./u/s-tools/mws/withCustomEmitters.js')
 importScripts('./u/s-tools/socket.io-client@4.7.2.min.js')
@@ -174,7 +175,7 @@ let port // TODO? var ports = new Map()
     options: {
       [NES.Socket.ENative.CONNECT]: function () {
         _perfInfo.tsList.push({ descr: `[sock-nat]: ${NES.Socket.ENative.CONNECT}`, p: performance.now(), ts: new Date().getTime(), name: 'Socket подключен' })
-        if (dbg.socketState.isEnabled) log({ label: '🟢 Socket connected' })
+        if (dbg.socketState.isEnabled) log({ label: '🟢 Socket connected', msgs: ['no event'] })
         port.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_CONN })
       },
       [NES.Socket.ENative.CONNECT_ERROR]: function (e) {

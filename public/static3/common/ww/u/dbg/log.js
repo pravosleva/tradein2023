@@ -6,10 +6,10 @@ var log = ({ label, msgs }) => {
     case !label:
       return
     case !!msgs && Array.isArray(msgs) && msgs.length > 0:
-    case _perfInfo.tsList.length > 0:
-      console.groupCollapsed(`---/ww/dx.sw: ${label}`)
+    // case _perfInfo.tsList.length > 0:
+      console.groupCollapsed(label)
       if (!!msgs) for (const msg of msgs) console.log(msg)
-      console.log(_perfInfo)
+      // console.log(_perfInfo)
       console.groupEnd()
       break
     default:
