@@ -2,17 +2,21 @@
 
 ## ⚠️ Сборка
 
-### На [test.smartprice.ru](https://test.smartprice.ru/tradein)
+<details>
+<summary markdown="span">На [test.smartprice.ru](https://test.smartprice.ru/tradein)</summary>
 
 ```bash
 yarn build:staging
 ```
+</details>
 
-### На продакшен [smartprice.ru/tradein](https://smartprice.ru/tradein)
+<details>
+<summary markdown="span">На продакшен [smartprice.ru/tradein](https://smartprice.ru/tradein)</summary>
 
 ```bash
 yarn build:prod
 ```
+</details>
 
 ### Build product structure
 
@@ -51,7 +55,7 @@ VITE_BASE_API_URL=https://smartprice.ru
 .env.[mode].local   # ✅ Could be modified. Only loaded in specified mode, ignored by git
 ```
 
-## State machine
+## Buisness logic
 
 ![User flow](/_etc/docs/studio-f4ab287d-d1a6-4a2f-b0b5-25f6a0d3f4af-dark.png "User flow")
 
