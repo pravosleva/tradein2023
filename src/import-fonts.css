@@ -1,0 +1,55 @@
+body {
+  -webkit-tap-highlight-color: transparent; /* for removing the highlight */
+}
+
+/* Fira Sans */
+@font-face {
+  font-family: 'Fira Sans';
+  src: local('Fira Sans SemiBold'), local('FiraSans-SemiBold'),
+    url('/static3/fonts/firasans/Firasanssemibold.woff2') format('woff2'),
+    url('/static3/fonts/firasans/Firasanssemibold.woff') format('woff'),
+    url('/static3/fonts/firasans/Firasanssemibold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: auto;
+}
+@font-face {
+  font-family: 'Fira Sans';
+  src: local('Fira Sans Medium'), local('FiraSans-Medium'),
+    url('/static3/fonts/firasans/Firasansmedium.woff2') format('woff2'),
+    url('/static3/fonts/firasans/Firasansmedium.woff') format('woff'),
+    url('/static3/fonts/firasans/Firasansmedium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: auto;
+}
+@font-face {
+  font-family: 'Fira Sans';
+  src: local('Fira Sans Medium Italic'), local('FiraSans-MediumItalic'),
+    url('/static3/fonts/firasans/Firasansmediumitalic.woff2') format('woff2'),
+    url('/static3/fonts/firasans/Firasansmediumitalic.woff') format('woff'),
+    url('/static3/fonts/firasans/Firasansmediumitalic.ttf') format('truetype');
+  font-weight: 500;
+  font-style: italic;
+  font-display: auto;
+}
+@font-face {
+  font-family: 'Fira Sans';
+  src: local('Fira Sans Italic'), local('FiraSans-Italic'),
+    url('/static3/fonts/firasans/Firasansitalic.woff2') format('woff2'),
+    url('/static3/fonts/firasans/Firasansitalic.woff') format('woff'),
+    url('/static3/fonts/firasans/Firasansitalic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: auto;
+}
+@font-face {
+  font-family: 'Fira Sans';
+  src: local('Fira Sans Regular'), local('FiraSans-Regular'),
+    url('/static3/fonts/firasans/Firasansregular.woff2') format('woff2'),
+    url('/static3/fonts/firasans/Firasansregular.woff') format('woff'),
+    url('/static3/fonts/firasans/Firasansregular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: auto;
+}

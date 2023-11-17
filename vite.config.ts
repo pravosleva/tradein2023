@@ -6,6 +6,25 @@ import { visualizer } from 'rollup-plugin-visualizer'
 import pkg from './package.json'
 import { splitVendorChunkPlugin } from 'vite'
 import browserslistToEsbuild from 'browserslist-to-esbuild'
+import slugify from 'slugify'
+import preload from 'vite-plugin-preload'
+
+slugify.extend({ '/': '_' })
+
+function* Counter(initValue: number = 0) {
+  let count = initValue
+  while (true) yield count++
+}
+const chuncksCounter = Counter(0)
+const modulesToSeparate = [
+  'retry-axios',
+  'use-dynamic-refs',
+  'react-hook-form',
+  '@headlessui/react',
+  '@xstate/react',
+  '@heroicons/react',
+]
+const _chunksMap = new Map()
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -15,6 +34,7 @@ export default defineConfig({
     react(),
     splitVendorChunkPlugin(),
 
+    preload(),
     // NOTE: Last one
     // See also https://www.npmjs.com/package/rollup-plugin-visualizer
     visualizer({
@@ -47,24 +67,19 @@ export default defineConfig({
     outDir: 'dist',
     rollupOptions: {
       output: {
-        manualChunks(id: string) {
-          // NOTE: Reducing the vendor chunk size
-          // See also https://dev.to/tassiofront/splitting-vendor-chunk-with-vite-and-loading-them-async-15o3
-          switch (true) {
-            case id.includes('retry-axios'):
-              return '~retry-axios'
-            case id.includes('use-dynamic-refs'):
-              return '~use-dynamic-refs'
-            case id.includes('react-hook-form'):
-              return '~react-hook-form'
-            case id.includes('@headlessui/react'):
-              return '~@headlessui/react'
-            case id.includes('@xstate/react'):
-              return '~@xstate/react'
-            case id.includes('@heroicons/react'):
-              return '~@heroicons/react'
-            default:
-              break
+        manualChunks(id: string, _manualChunkMeta) {
+          for (const moduleSubstr of modulesToSeparate) {
+            // NOTE: Reducing the vendor chunk size
+            // See also https://dev.to/tassiofront/splitting-vendor-chunk-with-vite-and-loading-them-async-15o3
+            if (id.includes(moduleSubstr)) {
+              const normalizedModuleSubstr = slugify(moduleSubstr)
+              const fromMap = _chunksMap.get(normalizedModuleSubstr)
+              if (!fromMap) {
+                const chunkName = `chunk.${normalizedModuleSubstr}.${chuncksCounter.next().value}`
+                _chunksMap.set(normalizedModuleSubstr, chunkName)
+                return chunkName
+              } else return _chunksMap.get(normalizedModuleSubstr)
+            }
           }
         },
       },

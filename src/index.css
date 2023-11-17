@@ -4,6 +4,9 @@
 
 * {
   box-sizing: border-box;
+  font-family: Fira Sans, system-ui;
+  font-style: normal;
+  letter-spacing: .03em;
 
   /* --std-m-1: 16px;
   --std-m-2: 32px;
