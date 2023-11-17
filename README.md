@@ -3,7 +3,7 @@
 ## ⚠️ Сборка
 
 <details>
-<summary markdown="span">**На [test.smartprice.ru](https://test.smartprice.ru/tradein)**</summary>
+<summary markdown="b">На [test.smartprice.ru](https://test.smartprice.ru/tradein)</summary>
 
 ```bash
 yarn build:staging
@@ -11,7 +11,7 @@ yarn build:staging
 </details>
 
 <details>
-<summary markdown="span">**На продакшен [smartprice.ru/tradein](https://smartprice.ru/tradein)**</summary>
+<summary markdown="b">На продакшен [smartprice.ru/tradein](https://smartprice.ru/tradein)</summary>
 
 ```bash
 yarn build:prod
