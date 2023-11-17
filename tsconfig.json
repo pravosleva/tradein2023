@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "typeRoots": ["node_modules/@types", "src/types"],
+    "typeRoots": ["node_modules/@types", "src/types", "src/common/xstate/stepMachine/types.ts"],
     "target": "ES2020",
     "useDefineForClassFields": true,
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
