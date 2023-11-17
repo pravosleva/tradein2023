@@ -75,7 +75,7 @@ export default defineConfig({
               const normalizedModuleSubstr = slugify(moduleSubstr)
               const fromMap = _chunksMap.get(normalizedModuleSubstr)
               if (!fromMap) {
-                const chunkName = `chunk.${normalizedModuleSubstr}.${chuncksCounter.next().value}`
+                const chunkName = `chunk.${chuncksCounter.next().value}.${normalizedModuleSubstr}`
                 _chunksMap.set(normalizedModuleSubstr, chunkName)
                 return chunkName
               } else return _chunksMap.get(normalizedModuleSubstr)
