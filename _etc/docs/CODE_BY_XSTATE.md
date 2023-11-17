@@ -120,7 +120,7 @@ export const machine = createMachine(
             target: "PrePriceTable",
           },
           goErr: {
-            target: "UploadPhotoResultInNotOk",
+            target: "UploadPhotoResultIsFuckup",
           },
         },
       },
@@ -132,7 +132,7 @@ export const machine = createMachine(
           },
         },
       },
-      UploadPhotoResultInNotOk: {
+      UploadPhotoResultIsFuckup: {
         on: {
           goPrev: {
             target: "PrePriceTable",

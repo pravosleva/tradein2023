@@ -25,7 +25,7 @@ const NES = {
         CheckPhone: 'stepMachine:check-phone',
         GetPhotoLink: 'stepMachine:get-photo-link',
         UploadPhotoInProgress: 'stepMachine:upload-photo:in-progress',
-        UploadPhotoResultInNotOk: 'stepMachine:upload-photo:result-is-not-ok',
+        UploadPhotoResultIsFuckup: 'stepMachine:upload-photo:result-is-not-ok',
         FinalPriceTable: 'stepMachine:final-price-table',
         Contract: 'stepMachine:contract',
         ContractSending: 'stepMachine:contract-sending',

@@ -365,7 +365,7 @@ function App() {
                   switch (value.status) {
                     case 'fake':
                     case 'bad_quality':
-                      send({ type: 'goUploadPhotoResultInNotOk' })
+                      send({ type: 'goErr' })
                       break
                     case 'ok':
                       send({ type: 'goNext' })
@@ -380,7 +380,7 @@ function App() {
             )}
           </>
         )
-      case EStep.UploadPhotoResultInNotOk:
+      case EStep.UploadPhotoResultIsFuckup:
         return (
           <ContentWithControls
             header='📵 Что-то пошло не так'

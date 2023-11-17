@@ -29,6 +29,7 @@ export const stepMachine = createMachine<TStepMachineContextFormat>(
       [EStep.AppInit]: {
         invoke: {
           src: 'getUserDataMachine',
+          id: '/_tmp/me',
           // data: (context) => ({ expText: 'exp text' }),
           onDone: {
             target: EStep.EnterImei,
@@ -80,6 +81,7 @@ export const stepMachine = createMachine<TStepMachineContextFormat>(
       [EStep.SendImei]: {
         invoke: {
           src: 'fetchIMEIMachine',
+          id: '/partner_api/tradein/imei',
           data: (context) => ({
             imei: context.imei,
             expText: 'exp text',
@@ -150,6 +152,7 @@ export const stepMachine = createMachine<TStepMachineContextFormat>(
       [EStep.CheckPhone]: {
         invoke: {
           src: 'checkPhoneMachine',
+          id: '/partner_api/tradein/phone/check',
           // data: (context) => ({}),
           onDone: {
             // NOTE: Uncomment for go automatically
@@ -195,6 +198,7 @@ export const stepMachine = createMachine<TStepMachineContextFormat>(
       [EStep.GetPhotoLink]: {
         invoke: {
           src: 'getPhotoLinkMachine',
+          id: '/partner_api/photo/link',
           // data: (context) => ({}),
           onDone: {
             // NOTE: Uncomment for go automatically
@@ -245,12 +249,12 @@ export const stepMachine = createMachine<TStepMachineContextFormat>(
           goPrev: {
             target: EStep.PrePriceTable,
           },
-          goUploadPhotoResultInNotOk: {
-            target: EStep.UploadPhotoResultInNotOk,
+          goErr: {
+            target: EStep.UploadPhotoResultIsFuckup,
           },
         },
       },
-      [EStep.UploadPhotoResultInNotOk]: {
+      [EStep.UploadPhotoResultIsFuckup]: {
         on: {
           goPrev: {
             target: EStep.PrePriceTable,
@@ -283,6 +287,7 @@ export const stepMachine = createMachine<TStepMachineContextFormat>(
       [EStep.ContractSending]: {
         invoke: {
           src: 'sendContractMachine',
+          id: '/partner_api/tradein/client/data',
           // data: (context) => ({}),
           onDone: {
             // NOTE: Uncomment for go automatically
