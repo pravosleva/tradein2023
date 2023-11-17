@@ -3,7 +3,7 @@
 ## ⚠️ Сборка
 
 <details>
-<summary markdown="span">На [test.smartprice.ru](https://test.smartprice.ru/tradein)</summary>
+<summary markdown="span">**На [test.smartprice.ru](https://test.smartprice.ru/tradein)**</summary>
 
 ```bash
 yarn build:staging
@@ -11,14 +11,15 @@ yarn build:staging
 </details>
 
 <details>
-<summary markdown="span">На продакшен [smartprice.ru/tradein](https://smartprice.ru/tradein)</summary>
+<summary markdown="span">**На продакшен [smartprice.ru/tradein](https://smartprice.ru/tradein)**</summary>
 
 ```bash
 yarn build:prod
 ```
 </details>
 
-### Build product structure
+<details>
+<summary markdown="span">Build product structure</summary>
 
 ```bash
 sp.offline-tradein-2023.mtsmain.xstate/
@@ -39,8 +40,12 @@ sp.offline-tradein-2023.mtsmain.xstate/
 ├─ ...
 ├─ package.json
 ```
+</details>
 
 ## 🧪 Envs
+
+<details>
+<summary markdown="span">How to use</summary>
 
 ```bash
 VITE_BASE_API_URL=https://smartprice.ru
@@ -54,6 +59,7 @@ VITE_BASE_API_URL=https://smartprice.ru
 .env.[mode]         # ⛔ Dont touch! Only loaded in specified mode
 .env.[mode].local   # ✅ Could be modified. Only loaded in specified mode, ignored by git
 ```
+</details>
 
 ## Buisness logic
 
@@ -61,11 +67,13 @@ VITE_BASE_API_URL=https://smartprice.ru
 
 ## Bundle analyzer
 
-Output file will be put to `./dist/stats.html`
+<details>
+<summary markdown="span">Output file will be put to `./dist/stats.html`</summary>
 
 ![Treemap](/_etc/analyzer/treemap.png "Treemap")
 ![Network](/_etc/analyzer/network.png "Network")
 ![Sunbust](/_etc/analyzer/sunbust.png "Sunbust")
+</details>
 
 See also [about vite-bundle-visualizer](https://www.npmjs.com/package/vite-bundle-visualizer)
 
