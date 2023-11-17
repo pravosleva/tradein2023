@@ -63,7 +63,11 @@ VITE_BASE_API_URL=https://smartprice.ru
 
 ## Buisness logic
 
+<details>
+<summary markdown="span">stepMachine</summary>
+
 ![User flow](/_etc/docs/studio-f4ab287d-d1a6-4a2f-b0b5-25f6a0d3f4af-dark.png "User flow")
+</details>
 
 ## Bundle analyzer
 
