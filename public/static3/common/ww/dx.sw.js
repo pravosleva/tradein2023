@@ -215,19 +215,8 @@ let port // TODO? var ports = new Map()
       //   port.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA, ...e })
       // },
       [NES.Socket.Metrix.EClientIncoming.SP_MX_EV]: function (e) {
-        const {
-          yourData: {
-            _wService,
-            ...restYourData
-          },
-          ...rest
-        } = e
-        const dataForMemory = {
-          yourData: {
-            ...restYourData
-          },
-          ...rest
-        }
+        const { yourData: { _wService, ...restYourData }, ...rest } = e
+        const dataForMemory = { yourData: restYourData, ...rest }
         _perfInfo.tsList.push({
           descr: `[sock-cus:sp-mx-ev]<-s: ${NES.Socket.Metrix.EClientIncoming.SP_MX_EV}`,
           p: performance.now(),
@@ -235,8 +224,21 @@ let port // TODO? var ports = new Map()
           data: dataForMemory,
           name: 'Socket получил данные',
         })
-        if (dbg.workerEvs.fromServer.isEnabled) log({ label: '⚡ Socket received response from server', msgs: [e] })
+        if (dbg.workerEvs.fromServer.isEnabled) log({ label: '⚡ Socket receive sp-mx event from server', msgs: [e] })
         port.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA, ...e })
+      },
+      [NES.Socket.ECustom.DONT_RECONNECT]: function(e) {
+        const { yourData: { _wService, ...restYourData }, ...rest } = e
+        const dataForMemory = { yourData: restYourData, ...rest }
+        _perfInfo.tsList.push({
+          descr: `[sock-cus:dont-reconn]<-s: ${NES.Socket.ECustom.DONT_RECONNECT}`,
+          p: performance.now(),
+          ts: new Date().getTime(),
+          data: dataForMemory,
+          name: 'Socket will not be reconnected',
+        })
+        if (dbg.workerEvs.fromServer.isEnabled) log({ label: '🚫 Socket receive custom decline event from server', msgs: [e] })
+        socket.io.reconnectionAttempts(0)
       },
     },
   })

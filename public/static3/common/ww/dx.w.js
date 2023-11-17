@@ -197,6 +197,19 @@ let connectionsCounter = 0;
         if (dbg.workerEvs.fromServer.isEnabled) log({ label: '⚡ Socket received response from server', msgs: [e] })
         self.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA, ...e })
       },
+      [NES.Socket.ECustom.DONT_RECONNECT]: function(e) {
+        const { yourData: { _wService, ...restYourData }, ...rest } = e
+        const dataForMemory = { yourData: restYourData, ...rest }
+        _perfInfo.tsList.push({
+          descr: `[sock-cus:dont-reconn]<-s: ${NES.Socket.ECustom.DONT_RECONNECT}`,
+          p: performance.now(),
+          ts: new Date().getTime(),
+          data: dataForMemory,
+          name: 'Socket will not be reconnected',
+        })
+        if (dbg.workerEvs.fromServer.isEnabled) log({ label: '🚫 Socket receive custom decline event from server', msgs: [e] })
+        socket.io.reconnectionAttempts(0)
+      },
     },
   })
 })({ self })

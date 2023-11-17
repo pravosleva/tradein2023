@@ -70,6 +70,9 @@ const NES = {
       RECONNECT_ATTEMPT: 'reconnect_attempt',
       DISCONNECT: 'disconnect',
     },
+    ECustom: {
+      DONT_RECONNECT: 'custom:dont-reconnect',
+    },
     Metrix: {
       // NOTE: Should be sync with NEvents.EMetrixClientOutgoing in ~/types/NEvents.ts
       EClientOutgoing: {
