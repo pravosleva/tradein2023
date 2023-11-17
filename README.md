@@ -53,15 +53,15 @@ VITE_BASE_API_URL=https://smartprice.ru
 
 ## State machine
 
-[img](./_etc/docs/studio-f4ab287d-d1a6-4a2f-b0b5-25f6a0d3f4af-dark.png)
+![User flow](/_etc/docs/studio-f4ab287d-d1a6-4a2f-b0b5-25f6a0d3f4af-dark.png "User flow")
 
 ## Bundle analyzer
 
 Output file will be put to `./dist/stats.html`
 
-[img](./_etc/analyzer/treemap.png)
-[img](./_etc/analyzer/network.png)
-[img](./_etc/analyzer/sunbust.png)
+![Treemap](/_etc/analyzer/treemap.png "Treemap")
+![Network](/_etc/analyzer/network.png "Network")
+![Sunbust](/_etc/analyzer/sunbust.png "Sunbust")
 
 See also [about vite-bundle-visualizer](https://www.npmjs.com/package/vite-bundle-visualizer)
 
