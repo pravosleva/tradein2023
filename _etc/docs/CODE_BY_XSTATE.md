@@ -14,7 +14,7 @@ export const machine = createMachine(
       AppInit: {
         invoke: {
           src: "getUserDataMachine",
-          id: "getUserData",
+          id: "/_tmp/me",
           onDone: [
             {
               target: "EnterImei",
@@ -38,7 +38,7 @@ export const machine = createMachine(
       SendImei: {
         invoke: {
           src: "fetchIMEIMachine",
-          id: "sendImei",
+          id: "/partner_api/tradein/imei",
           onDone: [
             {
               target: "EnterMemoryAndColor",
@@ -81,7 +81,7 @@ export const machine = createMachine(
       CheckPhone: {
         invoke: {
           src: "checkPhoneMachine",
-          id: "checkPhone",
+          id: "/partner_api/tradein/phone/check",
           onDone: [
             {
               target: "GetPhotoLink",
@@ -97,7 +97,7 @@ export const machine = createMachine(
       GetPhotoLink: {
         invoke: {
           src: "getPhotoLinkMachine",
-          id: "getPhotoLink",
+          id: "/partner_api/photo/link",
           onDone: [
             {
               target: "UploadPhotoInProgress",
@@ -119,7 +119,7 @@ export const machine = createMachine(
           goPrev: {
             target: "PrePriceTable",
           },
-          goUploadPhotoResultInNotOk: {
+          goErr: {
             target: "UploadPhotoResultInNotOk",
           },
         },
@@ -152,7 +152,7 @@ export const machine = createMachine(
       ContractSending: {
         invoke: {
           src: "sendContractMachine",
-          id: "sendContract",
+          id: "/partner_api/tradein/client/data",
           onDone: [
             {
               target: "Final",
@@ -187,9 +187,9 @@ export const machine = createMachine(
       events: {} as
         | { type: "goNext" }
         | { type: "goPrev" }
-        | { type: "goUploadPhotoResultInNotOk" }
+        | { type: "goStart" }
         | { type: "goContract" }
-        | { type: "goStart" },
+        | { type: "goErr" },
       context: {} as { imei: string; color: string; memory: string },
     },
     predictableActionArguments: true,
