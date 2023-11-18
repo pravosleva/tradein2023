@@ -45,7 +45,7 @@ export const Listbox = ({
 
   const btnRef = useRef<HTMLButtonElement>(null)
   useLayoutEffect(() => {
-    if (makeAutofocus && !!btnRef.current) btnRef.current.focus() 
+    if (makeAutofocus && !!btnRef.current) btnRef.current.focus()
   }, [makeAutofocus])
 
   const handleChange = useCallback((item: TItem) => {

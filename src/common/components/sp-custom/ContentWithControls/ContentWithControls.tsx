@@ -45,15 +45,18 @@ export const ContentWithControls = ({
 }: TProps) => {
   const [getRef, setRef] =  useDynamicRefs()
   useLayoutEffect(() => {
-    if (autofocusBtnId) {
-      const focusedBtn = getRef(autofocusBtnId)
-      try {
-        // @ts-ignore
-        focusedBtn?.current.focus()
-      } catch (err) {
-        console.warn(err)
+    const makeControlBtnAutofocusIfNecessary = () => {
+      if (autofocusBtnId) {
+        const focusedBtn = getRef(autofocusBtnId)
+        try {
+          // @ts-ignore
+          focusedBtn?.current.focus()
+        } catch (err) {
+          console.warn(err)
+        }
       }
     }
+    setTimeout(makeControlBtnAutofocusIfNecessary, 0)
   }, [autofocusBtnId, getRef])
 
   return (
@@ -143,7 +146,6 @@ export const ContentWithControls = ({
               <ResponsiveBlock
                 style={{
                   padding: '16px 0 16px 0',
-                  
                 }}
                 className={clsx(
                   'backdrop-blur--lite',

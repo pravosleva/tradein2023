@@ -8,6 +8,9 @@ class Singleton {
   private static instance: Singleton
   private _stepMachineState: TStepMachineContextFormat
   private _contractFormState: TContractForm
+  private _contractFormLastEditedFieldInfo: {
+    name: string | null;
+  }
   private _common: {
     stateValue: EStep | null;
     appVersion: string;
@@ -17,6 +20,9 @@ class Singleton {
   private constructor() {
     this._stepMachineState = proxy(initialStepMachineContextFormat)
     this._contractFormState = proxy(initialContractFormState)
+    this._contractFormLastEditedFieldInfo = proxy({
+      name: null,
+    })
     this._common = proxy({
       stateValue: null,
       appVersion: pkg.version,
@@ -37,6 +43,9 @@ class Singleton {
   }
   get contractForm() {
     return this._contractFormState
+  }
+  get contractFormLastEditedFieldInfo() {
+    return this._contractFormLastEditedFieldInfo
   }
   get common() {
     return this._common

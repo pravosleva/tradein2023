@@ -21,6 +21,7 @@ export const ContractStep = ({
 }: TProps) => {
   const handleSetExternalStore = useCallback(({ name, value }: { name: string; value: any; }) => {
     vi.contractForm[name] = value
+    vi.contractFormLastEditedFieldInfo.name = name
   }, [])
 
   return (

@@ -148,7 +148,7 @@ function App() {
               state.context.imei.response?.phone.memory || state.context.memory.selectedItem?.label,
             )}
             nextBtn={{
-              id: '1',
+              id: 'next',
               label: 'Дальше',
               btn: { variant: 'filled', color: 'primary' },
               onClick: () => send({ type: 'goNext' }),
@@ -156,22 +156,24 @@ function App() {
               allowDefaultEnabledEndIconArrowRight: true,
             }}
             prevBtn={{
-              id: '2',
+              id: 'prev',
               label: 'Назад',
               btn: { variant: 'outlined', color: 'default' },
               onClick: () => send({ type: 'goPrev' }),
               isDisabled: !can({ type: 'goPrev' }),
             }}
             defaultAutofocusId={
-              !!state.context.imei.response?.phone.memory && !!state.context.imei.response?.phone.color
+              can({ type: 'goNext' })
               ? undefined
-              : (
-                !!state.context.imei.response?.phone.memory && !state.context.imei.response?.phone.color
-                ? 'col'
-                : !state.context.imei.response?.phone.memory
-                  ? 'mem'
-                  : undefined
-              )
+              : !!state.context.imei.response?.phone.memory && !!state.context.imei.response?.phone.color
+                ? undefined
+                : (
+                  !!state.context.imei.response?.phone.memory && !state.context.imei.response?.phone.color
+                  ? 'col'
+                  : !state.context.imei.response?.phone.memory
+                    ? 'mem'
+                    : undefined
+                  )
             }
             listboxes={[
               {
@@ -195,6 +197,9 @@ function App() {
                 isDisabled: state.context.imei.response?.phone.memory ? state.context.color.dynamicList.length === 0 : !state.context.memory.selectedItem,
               },
             ]}
+            autofocusControlBtnId={
+              can({ type: 'goNext' }) ? 'next' : undefined
+            }
           />
         )
       case EStep.PrePriceTable:
@@ -514,7 +519,13 @@ function App() {
       case EStep.Contract:
         return (
           <ContentWithControls
-            autofocusBtnId={can({ type: 'goNext' }) ? '1' : undefined}
+            autofocusBtnId={
+              can({ type: 'goNext' })
+              ? vi.contractFormLastEditedFieldInfo.name === 'phone'
+                ? '1'
+                : undefined
+              : undefined
+            }
             header='Договор'
             controls={[
               {
