@@ -29,6 +29,7 @@ type TProps = {
   controlsAsGrid?: boolean;
   hasChildrenFreeWidth?: boolean;
   autofocusBtnId?: string;
+  isStickyBottomControls?: boolean;
 }
 
 export const ContentWithControls = ({
@@ -40,6 +41,7 @@ export const ContentWithControls = ({
   controlsAsGrid,
   hasChildrenFreeWidth,
   autofocusBtnId,
+  isStickyBottomControls,
 }: TProps) => {
   const [getRef, setRef] =  useDynamicRefs()
   useLayoutEffect(() => {
@@ -58,7 +60,7 @@ export const ContentWithControls = ({
     <ErrorBoundary>
       <div className={baseClasses.stack4}>
         <ResponsiveBlock
-          className={clsx(classes.stickyHeader, 'backdrop-blur--lite')}
+          className={clsx(classes.stickyTopHeader, 'backdrop-blur--lite')}
         >
           <ResponsiveBlock
             isPaddedMobile
@@ -141,10 +143,14 @@ export const ContentWithControls = ({
               <ResponsiveBlock
                 style={{
                   padding: '16px 0 16px 0',
-                  position: 'sticky',
-                  bottom: 0,
+                  
                 }}
-                className='backdrop-blur--lite'
+                className={clsx(
+                  'backdrop-blur--lite',
+                  {
+                    [classes.stickyBottomControls]: isStickyBottomControls,
+                  },
+                )}
               >
                 <ResponsiveBlock
                   isPaddedMobile

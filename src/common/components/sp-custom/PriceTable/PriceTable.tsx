@@ -110,7 +110,11 @@ export const PriceTable = ({
   })
   return (
     <div
-      style={{ minWidth: '100%' }}
+      style={{
+        minWidth: '100%',
+        overflowX: 'auto',
+        boxSizing: 'border-box',
+      }}
       dangerouslySetInnerHTML={{
         __html: html,
       }}

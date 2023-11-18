@@ -45,6 +45,7 @@ function App() {
           <ContentWithControls
             header='Подождите...'
             controls={[]}
+            isStickyBottomControls
           >
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}><Spinner /></div>
           </ContentWithControls>
@@ -62,6 +63,7 @@ function App() {
                 // isDisabled: !can({ type: 'goPrev' }),
               },
             ]}
+            isStickyBottomControls
           >
             <Alert
               type='danger'
@@ -97,6 +99,7 @@ function App() {
           <ContentWithControls
             header='Подождите...'
             controls={[]}
+            isStickyBottomControls
           >
             {/* <div>{state.context.imei.result.state}</div> */}
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}><Spinner /></div>
@@ -115,6 +118,7 @@ function App() {
                 isDisabled: !can({ type: 'goPrev' }),
               },
             ]}
+            isStickyBottomControls
           >
             <Alert
               type='danger'
@@ -220,6 +224,7 @@ function App() {
                 isDisabled: colorAndMemoryHasDetectedOnServer, // !can({ type: 'goPrev' }),
               },
             ]}
+            // isStickyBottomControls
           >
             {
               state.context.imei.response ? (
@@ -274,6 +279,7 @@ function App() {
               //   isDisabled: !can({ type: 'goPrev' }),
               // },
             ]}
+            // isStickyBottomControls
           >
             {
               state.context.checkPhone.result.state === 'pending' ? (
@@ -315,6 +321,7 @@ function App() {
               //   isDisabled: !can({ type: 'goPrev' }),
               // },
             ]}
+            // isStickyBottomControls
           >
             {
               state.context.photoLink.result.state === 'pending' ? (
@@ -395,6 +402,7 @@ function App() {
                 },
               },
             ]}
+            // isStickyBottomControls
           >
             <Alert
               type='danger'
@@ -459,6 +467,7 @@ function App() {
                 allowDefaultEnabledEndIconCheck: true,
               },
             ]}
+            isStickyBottomControls
           >
             {
               state.context.imei.response && state.context.checkPhone.response ? (
@@ -534,6 +543,7 @@ function App() {
                 isDisabled: !can({ type: 'goPrev' }),
               },
             ]}
+            isStickyBottomControls
           >
             <div className={classes.stack}>
               <ContractStep
@@ -556,6 +566,7 @@ function App() {
           <ContentWithControls
             header='Подождите...'
             controls={[]}
+            // isStickyBottomControls
           >
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}><Spinner /></div>
           </ContentWithControls>
@@ -575,6 +586,7 @@ function App() {
                 },
               },
             ]}
+            isStickyBottomControls
           >
             <Alert
               type='danger'
@@ -628,6 +640,7 @@ function App() {
                 },
               },
             ]}
+            isStickyBottomControls
           >
             {null}
           </ContentWithControls>
@@ -637,6 +650,7 @@ function App() {
           <ContentWithControls
             header={`Unknown step: ${String(state.value)}`}
             controls={[]}
+            isStickyBottomControls
           >
             {null}
           </ContentWithControls>

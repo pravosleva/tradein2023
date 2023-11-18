@@ -37,6 +37,7 @@ export const EnterMemoryAndColorStep = ({
         nextBtn,
         prevBtn,
       ]}
+      isStickyBottomControls
     >
       <div className={clsx(baseClasses.specialActionsGrid)}>
         {

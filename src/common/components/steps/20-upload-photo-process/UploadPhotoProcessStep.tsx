@@ -71,6 +71,7 @@ export const UploadPhotoProcessStep = memo(({
       header={header}
       subheader={subheader}
       controls={controls}
+      isStickyBottomControls
     >
       {UiStatus}
       <PollingComponent

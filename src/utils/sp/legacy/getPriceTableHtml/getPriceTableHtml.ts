@@ -36,7 +36,10 @@ export const getPriceTableHtml = ({
       //   },
       // },
       tablesWrapper: {
-        main: baseClasses.stack4,
+        main: clsx(
+          'w-full',
+          baseClasses.stack4,
+        ),
       },
       table: {
         main: clsx(
@@ -44,6 +47,9 @@ export const getPriceTableHtml = ({
           'text-sm',
           'text-left',
           'text-gray-500',
+
+          // 'border-solid',
+          // 'border-slate-50',
         ),
         thead: {
           main: clsx(
@@ -55,18 +61,23 @@ export const getPriceTableHtml = ({
             'bg-slate-50',
           ),
           tr: {
-            th: clsx('px-3', 'py-3'),
+            th: clsx('px-2', 'py-2'),
           },
         },
         tbody: {
           tr: {
-            main: clsx('bg-white', 'border-b'),
+            main: clsx(
+              'bg-white',
+              'border-b',
+              // 'red-border',
+            ),
             th: clsx(
-              'px-3',
+              'px-2',
               'py-2',
               'font-medium',
               'text-gray-900',
               'whitespace-nowrap',
+              'text-center',
             ),
             td: clsx('px-3', 'py-2'),
             numCell: clsx(

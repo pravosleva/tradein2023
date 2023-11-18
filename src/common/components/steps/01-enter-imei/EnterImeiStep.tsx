@@ -60,6 +60,7 @@ export const EnterImeiStep = memo(({
     <ContentWithControls
       header='Введите IMEI'
       controls={controls}
+      isStickyBottomControls
       autofocusBtnId={makeAutofocusOnComplete ? (isNextBtnDisabled ? undefined : '1') : undefined}
     >
       <Input

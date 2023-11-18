@@ -99,9 +99,13 @@
 /* table > thead {
   border: 1px solid red;
 } */
+/* table {
+  border: 1px solid red;
+} */
 table > tbody > tr > td:first-child {
   /* border: 1px solid red; */
   width: 100%;
+  min-width: 110px;
 }
 
 .react-phone-input-2_containerClass {
@@ -137,7 +141,13 @@ table > tbody > tr > td:first-child {
 .text-right {
   text-align: right;
 }
+.text-center {
+  text-align: center;
+}
 .menu-box-shadow {
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
   /*box-shadow: 0 15px 30px rgba(56, 130, 196, 0.3); spBlueMain */
+}
+.red-border {
+  border: 1px solid red;
 }
