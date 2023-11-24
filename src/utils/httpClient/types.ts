@@ -3,10 +3,14 @@
 import { ECountryCode } from '~/common/xstate/stepMachine'
 
 export namespace NSP {
+  export enum ECondition {
+    C = 'C',
+    D = 'D',
+    NC = 'NC',
+  }
   export type TStandartMinimalResponse = {
     ok: boolean;
     message?: string;
-    _originalResponse?: any;
   };
 
   export type TPhone = {
@@ -38,6 +42,8 @@ export namespace NSP {
 
   export type TImeiResponse = {
     ok: boolean;
+    message?: string;
+
     phone: TPhone;
     imei: string;
     currency: string;
@@ -58,6 +64,8 @@ export namespace NSP {
   };
   export type TCheckPhoneResponse = {
     ok: boolean;
+    message?: string;
+
     currency: string; // 'RUB'
     price: number;
     id: number;
@@ -75,6 +83,8 @@ export namespace NSP {
   };
   export type TPhotoStatusResponse = {
     ok: boolean;
+    message?: string;
+
     started: boolean;
     // TODO: Declare all statuses here
     status: 'ok' | 'not_checked' | 'fake' | 'bad_quality'; // NOTE: Чтоб крутилка исчезла и флоу пошел дальше

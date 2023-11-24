@@ -405,11 +405,11 @@ export const stepMachine = createMachine<TStepMachineContextFormat>(
   {
     actions: {},
     services: {
+      getUserDataMachine,
       fetchIMEIMachine,
       checkPhoneMachine,
       getPhotoLinkMachine,
       sendContractMachine,
-      getUserDataMachine,
     },
     delays: {},
   },

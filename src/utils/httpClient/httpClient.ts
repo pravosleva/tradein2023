@@ -4,6 +4,7 @@ import axios, { CancelTokenSource } from 'axios'
 import { NSP } from './types'
 import { Api } from './Api'
 import { getRandomString, getRandomValue } from '~/utils/aux-ops'
+import { responseValidate, NResponseValidate } from './utils'
 
 // const createCancelTokenSource = () => axios.CancelToken.source()
 const isDev = process.env.NODE_ENV === 'development'
@@ -36,14 +37,10 @@ class Singleton extends Api {
     return Singleton.instance
   }
 
-  async sendIMEI({ IMEI, responseValidate }: {
+  async sendIMEI({ IMEI, rules }: {
+    rules?: NResponseValidate.TRules<NSP.TImeiResponse>;
     IMEI: string;
     kz_2022?: boolean;
-    // responseValidator?: ({ res }: { res: any }) => boolean;
-    responseValidate?: ({ res }: { res: any }) => ({
-      ok: boolean;
-      message?: string;
-    });
   }): Promise<NSP.TImeiResponse | NSP.TStandartMinimalResponse> {
     if (!IMEI) return Promise.reject({ ok: false, message: 'Заполните IMEI' })
 
@@ -57,6 +54,8 @@ class Singleton extends Api {
     //     color: 'cardinal_red',
     //     memory: '512 GB',
     //   },
+    //   // ok: false,
+    //   // message: 'FRONT tst',
     // }
 
     const data = await this.api({
@@ -80,10 +79,10 @@ class Singleton extends Api {
     // }
 
     switch (true) {
-      case !!responseValidate && data?.ok: {
-        const responseValidateResult = responseValidate?.({ res: data })
+      case data?.ok && !!rules: {
         // @ts-ignore
-        return responseValidateResult.ok ? Promise.resolve(data) : Promise.reject(responseValidateResult)
+        const responseValidateResult = responseValidate<NSP.TImeiResponse>({ rules, response: data })
+        return responseValidateResult.ok ? Promise.resolve({ ...data, ...responseValidateResult }) : Promise.reject(responseValidateResult)
       }
       default:
         return data.ok ? Promise.resolve(data) : Promise.reject(data)
@@ -260,13 +259,8 @@ class Singleton extends Api {
     }
   }
 
-  async getUserData({
-    responseValidate,
-  }: {
-    responseValidate?: ({ res }: { res: any }) => ({
-      ok: boolean;
-      message?: string;
-    });
+  async getUserData({ rules }: {
+    rules?: NResponseValidate.TRules<NSP.TUserDataResponse | NSP.TStandartMinimalResponse>;
   }): Promise<NSP.TUserDataResponse | NSP.TStandartMinimalResponse> {
     this.getUserDataCancelTokenSource.cancel('axios request canceled')
     this.getUserDataCancelTokenSource = axios.CancelToken.source()
@@ -295,10 +289,10 @@ class Singleton extends Api {
     this.getUserDataCancelTokenSource.cancel('axios request done')
 
     switch (true) {
-      case !!responseValidate && data?.ok: {
-        const responseValidateResult = responseValidate?.({ res: data })
+      case data?.ok && !!rules: {
         // @ts-ignore
-        return responseValidateResult.ok ? Promise.resolve(data) : Promise.reject(responseValidateResult)
+        const responseValidateResult = responseValidate<NSP.TUserDataResponse>({ rules, response: data })
+        return responseValidateResult.ok ? Promise.resolve({ ...data, ...responseValidateResult }) : Promise.reject(responseValidateResult)
       }
       default:
         return data.ok ? Promise.resolve(data) : Promise.reject(data)

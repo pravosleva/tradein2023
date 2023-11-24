@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { TCfg, TDataCases } from './types'
 import clsx from 'clsx'
+import { groupLog } from '~/utils';
 import { getFormattedPrice } from '~/utils/aux-ops'
 
 type TProps = {
@@ -65,9 +66,23 @@ export const getTable2017v1Html = ({ cfg, originalDataCases, classNameMap }: TPr
 
   if (originalDataCases.possiblePricesStruct.prices) {
     try {
-      const priceMapping = Object.values(cfg.enabledConditionsCodes).reduce((acc: any, key: string) => {
+      const priceMapping: {
+        [key: string]: {
+          isOk: boolean;
+          value: number;
+          message?: string;
+        };
+      } = Object.values(cfg.enabledConditionsCodes).reduce((acc: any, key: string) => {
         if (originalDataCases.possiblePricesStruct.prices[key]?.[memory]?.[color])
-          acc[key] = originalDataCases.possiblePricesStruct.prices[key][memory][color]
+          acc[key] = {
+            isOk: true,
+            value: originalDataCases.possiblePricesStruct.prices[key][memory][color]
+          }
+        else acc[key] = {
+          isOk: false,
+          value: 0,
+          message: `Unknown case for imeiResponse.possible_prices[${key}]?.[${memory}]?.[${color}]`, // `!originalDataCases.possiblePricesStruct.prices[${key}]?.[${memory}]?.[${color}]`
+        }
         return acc
       }, {})
 
@@ -93,10 +108,12 @@ export const getTable2017v1Html = ({ cfg, originalDataCases, classNameMap }: TPr
       </td>
       <td${classNameMap ? ` class="${clsx(classNameMap.table.tbody.tr.td, classNameMap.table.tbody.tr.numCell)}"` : ''}>
         ${Object.keys(priceMapping)
-          .map(
-            (enabledCond) =>
-              `${prettyPrice(priceMapping[enabledCond])} ${getCurrencySymbol(cfg.currency)}`
-          )
+          .map((cond) =>
+              `${
+                priceMapping[cond].isOk
+                ? `${prettyPrice(priceMapping[cond].value)} ${getCurrencySymbol(cfg.currency)}`
+                : `<span title="${priceMapping[cond].message}" class="text-red-500">ERR</span>`
+            }`)
           .join(`</td><td${classNameMap ? ` class="${clsx(classNameMap.table.tbody.tr.td, classNameMap.table.tbody.tr.numCell)}"` : ''}>`)}
       </td>
     </tr>
@@ -111,51 +128,84 @@ export const getTable2017v1Html = ({ cfg, originalDataCases, classNameMap }: TPr
   }
 
   if (originalDataCases?.subsidiesStruct?.subsidies) {
-    const priceMapping = Object.values(cfg.enabledConditionsCodes).reduce((acc: any, key: string) => {
-      if (originalDataCases.subsidiesStruct.prices[key]?.[memory]?.[color]) 
-        acc[key] = originalDataCases.subsidiesStruct.prices[key][memory][color]
+    const priceMapping: {
+      [key: string]: {
+        isOk: boolean;
+        value: number;
+        message?: string;
+      };
+    } = Object.values(cfg.enabledConditionsCodes).reduce((acc: any, key: string) => {
+      if (originalDataCases.subsidiesStruct.prices[key]?.[memory]?.[color])
+        acc[key] = {
+          isOk: true,
+          value: originalDataCases.subsidiesStruct.prices[key][memory][color]
+        }
+      else acc[key] = {
+        isOk: false,
+        value: 0,
+        message: `Unknown case #2 for imeiResponse.possible_subsidies[${key}]?.[${memory}]?.[${color}]`
+      }
 
       return acc
     }, {})
-    const tbody = originalDataCases.subsidiesStruct.subsidies
-      .map((item) => {
-        if (
-          !!originalDataCases.subsidiesStruct.itemValidation &&
-          !originalDataCases.subsidiesStruct.itemValidation(item)
-        )
-          return ''
 
-        const { title, prices } = item // vendor, model,
+    let tbody = ''
+    try {
+      tbody = originalDataCases.subsidiesStruct.subsidies
+        .map((item) => {
+          try {
+            if (
+              !!originalDataCases.subsidiesStruct.itemValidation &&
+              !originalDataCases.subsidiesStruct.itemValidation(item)
+            )
+              return ''
 
-        try {
-          if (
-            originalDataCases.subsidiesStruct.noAllZeroSubsidies &&
-            Object.values(prices[memory][color]).every((val) => !val)
+            const { title, prices } = item // vendor, model,
+
+            try {
+              if (!prices?.[memory]?.[color]) throw new Error(`🚫 Не существует комбинации prices?.[${memory}]?.[${color}] для ${title}`)
+              else if (
+                originalDataCases.subsidiesStruct.noAllZeroSubsidies &&
+                Object.values(prices[memory][color]).every((val) => !val)
+              )
+                return ''
+            } catch (err: any) {
+              groupLog({
+                namespace: err.message || 'ERR#2',
+                items: [
+                  `Incorrect data for ${cfg.memory} ${cfg.color}`,
+                  prices,
+                  err,
+                ]
+              })
+              return '' // `<tr${classNameMap ? ` class="${classNameMap.table.tbody.tr.main}"` : ''}><td>ERR for ${cfg.color}</td></tr>`
+            }
+
+            return `
+    <tr${classNameMap ? ` class="${classNameMap.table.tbody.tr.main}"` : ''}>
+      <td${classNameMap ? ` class="${classNameMap.table.tbody.tr.td}"` : ''}>${title}</td>
+      <td${classNameMap ? `
+        class="${clsx(classNameMap.table.tbody.tr.td, classNameMap.table.tbody.tr.numCell)}"` : ''}
+      >
+        ${cfg.enabledConditionsCodes
+          .map(
+            (enabledCond) =>
+              `${prettyPrice(
+                prices[memory][color][enabledCond] +
+                  (originalDataCases.subsidiesStruct.price || priceMapping[enabledCond].value)
+              )} ${getCurrencySymbol(cfg.currency)}${!priceMapping[enabledCond].isOk ? `<span class="text-red-500" title="${priceMapping[enabledCond].message}">ERR #2</span>` : ''}`
           )
+          .join(`</td><td${classNameMap ? ` class="${clsx(classNameMap.table.tbody.tr.td, classNameMap.table.tbody.tr.numCell)}"` : ''}>`)}
+      </td>
+    </tr>`
+          } catch (err) {
             return ''
-        } catch (err) {
-          // groupLog('outsideClickDebug', `Incorrect data for ${cfg.memory} ${cfg.color}`, [prices])
-          console.warn(err)
-          return ''
-        }
-
-        return `
-<tr${classNameMap ? ` class="${classNameMap.table.tbody.tr.main}"` : ''}>
-  <td${classNameMap ? ` class="${classNameMap.table.tbody.tr.td}"` : ''}>${title}</td>
-  <td${classNameMap ? ` class="${clsx(classNameMap.table.tbody.tr.td, classNameMap.table.tbody.tr.numCell)}"` : ''}>
-    ${cfg.enabledConditionsCodes
-      .map(
-        (enabledCond) =>
-          `${prettyPrice(
-            prices[memory][color][enabledCond] +
-              (originalDataCases.subsidiesStruct.price || priceMapping[enabledCond])
-          )} ${getCurrencySymbol(cfg.currency)}`
-      )
-      .join(`</td><td${classNameMap ? ` class="${clsx(classNameMap.table.tbody.tr.td, classNameMap.table.tbody.tr.numCell)}"` : ''}>`)}
-  </td>
-</tr>`
-      })
-      .join('')
+          }
+        })
+        .join('')
+    } catch (err) {
+      // console.warn(err)
+    }
 
     if (tbody)
       html += `

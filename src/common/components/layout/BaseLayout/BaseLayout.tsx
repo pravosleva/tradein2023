@@ -36,7 +36,7 @@ export const BaseLayout: React.FC<any> = ({ children }) => {
               }}
             >
               {
-                !!vi.smState.initApp.response?.user_data.display_name && (
+                !!vi.smState.initApp.response?.user_data?.display_name && (
                   <div>{vi.smState.initApp.response?.user_data.display_name}</div>
                 )
               }

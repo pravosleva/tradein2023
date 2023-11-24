@@ -50,7 +50,7 @@ export const ContentWithControls = ({
         const focusedBtn = getRef(autofocusBtnId)
         try {
           // @ts-ignore
-          focusedBtn?.current.focus()
+          if (focusedBtn?.current) focusedBtn.current?.focus()
         } catch (err) {
           console.warn(err)
         }

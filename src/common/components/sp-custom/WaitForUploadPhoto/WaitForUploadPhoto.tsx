@@ -88,7 +88,7 @@ export const WaitForUploadPhoto = ({ photoLinkResponse }: TProps) => {
                   style={{ height: '50px', width: '50px', objectFit: 'contain' }}
                 />
                 <div className={classes.boxHeader}>
-                  <span className={classes.desktopOnly}>Если вы загружаете фото с компьютера</span>
+                  <span className={classes.desktopOnly}>Если Вы загружаете фото с компьютера</span>
                   <span className={classes.mobileOnly}>Если загружаете с компьютера</span>
                 </div>
               </div>

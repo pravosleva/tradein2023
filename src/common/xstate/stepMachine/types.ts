@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { NSP } from '~/utils/httpClient'
+import { NSP, NResponseValidate } from '~/utils/httpClient'
 
 export enum EStep {
   AppInit = 'stepMachine:app-init',
@@ -47,7 +47,7 @@ export type TStepMachineContextFormat = {
     // --
   },
   initApp: {
-    response: null | NSP.TUserDataResponse;
+    response: null | (NSP.TUserDataResponse & NResponseValidate.TResult<NSP.TUserDataResponse>);
     uiMsg: string | null;
     result: {
       state: 'stopped' | 'pending' | 'success' | 'error';
@@ -55,7 +55,7 @@ export type TStepMachineContextFormat = {
   },
   imei: {
     value: string;
-    response: null | NSP.TImeiResponse;
+    response: null | (NSP.TImeiResponse & NResponseValidate.TResult<NSP.TImeiResponse>);
     uiMsg: string | null;
     result: {
       state: 'stopped' | 'pending' | 'success' | 'error';
@@ -71,14 +71,14 @@ export type TStepMachineContextFormat = {
     dynamicList: { id: string; value: string; label: string; }[];
   };
   checkPhone: {
-    response: null | NSP.TCheckPhoneResponse;
+    response: null | (NSP.TCheckPhoneResponse & NResponseValidate.TResult<NSP.TCheckPhoneResponse>);
     uiMsg: string | null;
     result: {
       state: 'stopped' | 'pending' | 'success' | 'error';
     };
   };
   photoLink: {
-    response: null | NSP.TPhotoLinkResponse;
+    response: null | (NSP.TPhotoLinkResponse & NResponseValidate.TResult<NSP.TPhotoLinkResponse>);
     uiMsg: string | null;
     result: {
       state: 'stopped' | 'pending' | 'success' | 'error';
@@ -92,7 +92,7 @@ export type TStepMachineContextFormat = {
     };
   };
   contract: {
-    response: null | NSP.TStandartMinimalResponse;
+    response: null | (NSP.TStandartMinimalResponse & NResponseValidate.TResult<NSP.TStandartMinimalResponse>);
     uiMsg: string | null;
     result: {
       state: 'stopped' | 'pending' | 'success' | 'error';

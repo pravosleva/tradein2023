@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { AnyEventObject, InvokeMeta } from 'xstate'
 import { ECountryCode, TStepMachineContextFormat, phoneValidation } from '~/common/xstate/stepMachine'
-import { httpClient } from '~/utils/httpClient'
+import { httpClient, NResponseValidate, NSP } from '~/utils/httpClient'
 import { vi } from '~/common/vi'
 
 export const getUserDataMachine = async (context: TStepMachineContextFormat, _ev: AnyEventObject, _invMeta: InvokeMeta): Promise<any> => {
@@ -14,96 +14,72 @@ export const getUserDataMachine = async (context: TStepMachineContextFormat, _ev
   }
   cleanupInitAppStep()
   const res = await httpClient.getUserData({
-    // NOTE: Validation by different ways exp
-    responseValidate: ({ res }): { ok: boolean; message?: string; } => {
-      const result: { ok: boolean; message?: string; } = { ok: true }
-      const rules: {
-        [key: string]: {
-          isRequired: boolean;
-          validate: (val: any) => { ok: boolean; message?: string; }
-        };
-      } = {
-        user_data: {
-          isRequired: true,
-          validate: (val: any): { ok: boolean; message?: string; } => {
-            const requiredFields = ['display_name']
-            const res: { ok: boolean; message?: string; } = { ok: true }
-            const msgs = []
+    rules: {
+      user_data: {
+        isRequired: true,
+        validate: (val) => {
+          const requiredFields = ['display_name']
+          const res: NResponseValidate.TResult<NSP.TUserDataResponse> = { ok: true }
+          const msgs = []
 
-            for (const key of requiredFields) if (!val?.[key]) msgs.push(`Не найдено поле ${key}`)
+          for (const key of requiredFields) if (!val?.[key]) msgs.push(`Не найдено поле ${key}`)
 
-            if (msgs.length > 0) {
-              res.ok = false
-              res.message = `res.user_data -> ${msgs.join(', ')}`
-            }
-            return res
-          },
+          if (msgs.length > 0) {
+            res.ok = false
+            res.message = `Результат проверки поля res.user_data -> ${msgs.join(', ')}`
+          }
+          return res
         },
-        session_data: {
-          isRequired: true,
-          validate: (val: any): { ok: boolean; message?: string; } => {
-            const requiredFields = ['tradein_id']
-            const res: { ok: boolean; message?: string; } = { ok: true }
-            const msgs = []
+      },
+      session_data: {
+        isRequired: true,
+        validate: (val) => {
+          const requiredFields = ['tradein_id']
+          const res: NResponseValidate.TResult<NSP.TUserDataResponse>  = { ok: true }
+          const msgs = []
 
-            for (const key of requiredFields) if (!val?.[key]) msgs.push(`Не найдено поле ${key}`)
+          for (const key of requiredFields) if (!val?.[key]) msgs.push(`Не найдено поле ${key}`)
 
-            if (msgs.length > 0) {
-              res.ok = false
-              res.message = `res.session_data -> ${msgs.join(', ')}`
-            }
-            return res
-          },
+          if (msgs.length > 0) {
+            res.ok = false
+            res.message = `Результат проверки поля res.session_data -> ${msgs.join(', ')}`
+          }
+          return res
         },
-        features: {
-          isRequired: true,
-          validate: (val: any): { ok: boolean; message?: string; } => {
-            const requiredFields = ['country_code']
-            const res: { ok: boolean; message?: string; } = { ok: true }
-            const msgs = []
+      },
+      features: {
+        isRequired: true,
+        validate: (val) => {
+          const subfieldsForCheck = ['country_code']
+          const res: NResponseValidate.TResult<NSP.TUserDataResponse> = { ok: true }
+          const msgs = []
 
-            for (const key of requiredFields) {
-              switch (key) {
-                case 'country_code':
-                  if (!val?.[key]) msgs.push(`Не найдено поле ${key}`)
-                  else if (typeof val[key] !== 'string') msgs.push(`Поле ${key} лолжно быть строкой (получен тип ${typeof val[key]})`)
-                  else if (!Object.keys(ECountryCode).includes(val?.[key])) {
-                    msgs.push(`Получено нестандартное поле ${key} со значением "${val?.[key]}" (${typeof val?.[key]})`)
-                    msgs.push(`1) Проверьте, соответствует ли код "${val?.[key]}" стандартам ISO 3166-1 alpha-2 https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2`)
-                    msgs.push(`2) Поддерживаемые фронтом ключи: ${Object.values(ECountryCode).join(', ')}`)
-                  }
-                  // @ts-ignore
-                  else if (!phoneValidation[val[key]]) msgs.push(`FRONT WTF! Проверьте поддерживаемые фронтом ключи phoneValidation[${val[key]}]: (val: string) => boolean; для проверки количества символов номера телефона: Не проработан кейс!`)
-                  break
-                default:
-                  break
-              }
+          for (const key of subfieldsForCheck) {
+            switch (key) {
+              case 'country_code':
+                if (!val?.[key]) msgs.push(`Не найдено поле "${key}"`)
+                else if (typeof val[key] !== 'string') msgs.push(`Поле "${key}" лолжно быть строкой (получен тип ${typeof val[key]})`)
+                else if (!Object.keys(ECountryCode).includes(val?.[key])) {
+                  msgs.push(`Получено нестандартное поле ${key} со значением "${val?.[key]}" (${typeof val?.[key]}). Возможные причины:`)
+                  msgs.push(`1) Проверьте, соответствует ли код "${val?.[key]}" стандартам ISO 3166-1 alpha-2 https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2`)
+                  msgs.push(`2) Список поддерживаемых фронтом ключей "${Object.values(ECountryCode).join(', ')}" не содержит ключ "${val?.[key]}"`)
+                }
+                // @ts-ignore
+                else if (!phoneValidation[val[key]]) msgs.push(`FRONT WTF! Проверьте поддерживаемые фронтом ключи phoneValidation[${val[key]}]: (val: string) => boolean; для проверки количества символов номера телефона: Не проработан кейс!`)
+                break
+              default:
+                break
             }
+          }
 
-            if (msgs.length > 0) {
-              res.ok = false
-              res.message = `res.features -> ${msgs.join(', ')}`
-            }
-            return res
-          },
+          if (msgs.length > 0) {
+            res.ok = false
+            res.message = `Результат проверки поля res.features -> ${msgs.join(', ')}`
+            // res._showDetailsInUi = true
+          }
+          return res
         },
-      }
-
-      const msgs: string[] = []
-      for (const key in rules) {
-        if (rules[key].isRequired && !res[key]) msgs.push(`Не найдено обязательное поле ${key} в ответе`)
-        else {
-          const validateResult = rules[key].validate(res[key])
-          if (!validateResult.ok) msgs.push(validateResult?.message || 'No message')
-        }
-      }
-
-      if (msgs.length > 0) {
-        result.ok = false
-        result.message = `Неожиданный ответ от сервера: ${msgs.join(' // ')}`
-      }
-
-      return result
+      },
     }
   })
     .catch((err: any) => err)

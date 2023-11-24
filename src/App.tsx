@@ -34,9 +34,9 @@ import { vi } from '~/common/vi'
 function App() {
   const [state, send] = useMachine(stepMachine)
   const can = state.can.bind(state)
-  const colorAndMemoryHasDetectedOnServer = useMemo(() => !!state.context.imei.response?.phone.memory && !!state.context.imei.response?.phone.color, [
-    state.context.imei.response?.phone.memory,
-    state.context.imei.response?.phone.color,
+  const colorAndMemoryHasDetectedOnServer = useMemo(() => !!state.context.imei.response?.phone?.memory && !!state.context.imei.response?.phone?.color, [
+    state.context.imei.response?.phone?.memory,
+    state.context.imei.response?.phone?.color,
   ])
   const Step = useMemo(() => {
     switch (state.value) {
@@ -70,10 +70,8 @@ function App() {
               header={state.context.initApp.uiMsg || undefined}
             >
               {
-                state.context.initApp.response ? (
-                  <pre className={classes.preStyled}>{JSON.stringify(state.context.initApp.response, null, 2)}</pre>
-                ) : (
-                  <div>No state.context.initApp.response</div>
+                state.context.initApp.response && state.context.initApp.response._showDetailsInUi && (
+                  <pre className={classes.preStyled}>{JSON.stringify(state.context.initApp.response._fromServer || state.context.initApp.response, null, 2)}</pre>
                 )
               }
             </Alert>
@@ -125,10 +123,8 @@ function App() {
               header={state.context.imei.uiMsg || undefined}
             >
               {
-                state.context.imei.response ? (
-                  <pre className={classes.preStyled}>{JSON.stringify(state.context.imei.response, null, 2)}</pre>
-                ) : (
-                  <div>No state.context.imei.response</div>
+                state.context.imei.response && state.context.imei.response._showDetailsInUi && (
+                  <pre className={classes.preStyled}>{JSON.stringify(state.context.imei.response._fromServer || state.context.imei.response, null, 2)}</pre>
                 )
               }
             </Alert>
@@ -244,10 +240,7 @@ function App() {
                   conditionCodeValidator={() => true}
                 />
               ) : (
-                <ResponsiveBlock
-                  isPaddedMobile
-                  isLimitedForDesktop
-                >
+                <ResponsiveBlock isPaddedMobile isLimitedForDesktop>
                   <Alert
                     type='danger'
                     header='Что-то пошло не так'
