@@ -65,7 +65,7 @@ export const getUserDataMachine = async (context: TStepMachineContextFormat, _ev
                   msgs.push(`2) Список поддерживаемых фронтом ключей "${Object.values(ECountryCode).join(', ')}" не содержит ключ "${val?.[key]}"`)
                 }
                 // @ts-ignore
-                else if (!phoneValidation[val[key]]) msgs.push(`FRONT WTF! Проверьте поддерживаемые фронтом ключи phoneValidation[${val[key]}]: (val: string) => boolean; для проверки количества символов номера телефона: Не проработан кейс!`)
+                else if (!phoneValidation[val[key]]) msgs.push(`FRONT ERR (не проработан кейс)! Проверьте поддерживаемые фронтом ключи phoneValidation[${val[key]}]: (val: string) => boolean; для проверки количества символов номера телефона`)
                 break
               default:
                 break
