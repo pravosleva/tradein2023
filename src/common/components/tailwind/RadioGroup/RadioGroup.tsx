@@ -11,9 +11,10 @@ type TProps = {
   items: TItem[];
   selectedItem: TItem | null;
   onSelect: (val: TItem) => void;
+  iconPosition: 'right' | 'left';
 }
 
-export const RadioGroup = ({ items, selectedItem, onSelect }: TProps) => {
+export const RadioGroup = ({ items, selectedItem, onSelect, iconPosition }: TProps) => {
   // const [selected, setSelected] = useState(selectedItem)
 
   return (
@@ -46,7 +47,10 @@ export const RadioGroup = ({ items, selectedItem, onSelect }: TProps) => {
                 <HuiRadioGroup.Option
                   key={item.value}
                   value={item}
-                  className={({ active, checked }) =>
+                  className={({
+                    active,
+                    // checked,
+                  }) =>
                     clsx(
                       'relative',
                       'flex',
@@ -62,14 +66,14 @@ export const RadioGroup = ({ items, selectedItem, onSelect }: TProps) => {
                             'ring-2',
                             'ring-white/60',
                             'ring-offset-2',
-                            // 'ring-offset-spBlueMain/75',
-                            'ring-offset-spGreenDark/75',
+                            'ring-offset-spBlueMain/75',
+                            // 'ring-offset-spGreenDark/75',
                           )
                         ]: active || isSelected,
 
                         // ['bg-spBlueMain/75 text-white']: checked || isSelected,
-                        ['bg-spGreenDark/75 text-white']: checked || isSelected,
-                        ['bg-white']: !isSelected,
+                        // ['bg-spGreenDark/75 text-white']: checked || isSelected,
+                        // ['bg-white']: !isSelected,
                       },
                     )
                   }
@@ -81,8 +85,33 @@ export const RadioGroup = ({ items, selectedItem, onSelect }: TProps) => {
                   }) => (
                     <>
                       <div
-                        className='flex w-full items-center justify-between'
+                        className={clsx(
+                          'w-full',
+                          'flex',
+                          'items-center',
+                          'justify-start',
+                          'gap-4',
+                        )}
                       >
+                        {
+                          iconPosition === 'left' && (
+                            <div
+                              className={clsx(
+                                'shrink-0',
+                                // 'text-white',
+                              )}
+                            >
+                              {(checked || isSelected) ? (
+                                <CheckIcon className='h-6 w-6 stroke-spBlueMain' />
+                              ) : (
+                                <EmptyIcon
+                                  // className='h-6 w-6 stroke-spBlueMain/75'
+                                  className='h-6 w-6 stroke-slate-300'
+                                />
+                              )}
+                            </div>
+                          )
+                        }
                         <div className='flex items-center'>
                           <div className='text-md'>
                             <HuiRadioGroup.Label
@@ -91,7 +120,8 @@ export const RadioGroup = ({ items, selectedItem, onSelect }: TProps) => {
                                 clsx(
                                   'font-medium',
                                   {
-                                    ['text-white']: checked || isSelected,
+                                    // ['text-white']: checked || isSelected,
+                                    // ['text-spBlueMain']: checked || isSelected,
                                     ['text-gray-900']: !(checked || isSelected),
                                   },
                                 )
@@ -115,18 +145,24 @@ export const RadioGroup = ({ items, selectedItem, onSelect }: TProps) => {
 
                           </div>
                         </div>
-                        {(checked || isSelected) ? (
-                          <div className='shrink-0 text-white'>
-                            <CheckIcon className='h-6 w-6' />
-                          </div>
-                        ) : (
-                          <div className="shrink-0 text-white">
-                            <EmptyIcon
-                              // className='h-6 w-6 stroke-spBlueMain/75'
-                              className='h-6 w-6 stroke-slate-300'
-                            />
-                          </div>
-                        )}
+                        {
+                          iconPosition === 'right' && (
+                            <>
+                              {(checked || isSelected) ? (
+                                <div className='shrink-0 text-white'>
+                                  <CheckIcon className='h-6 w-6' />
+                                </div>
+                              ) : (
+                                <div className="shrink-0 text-white">
+                                  <EmptyIcon
+                                    // className='h-6 w-6 stroke-spBlueMain/75'
+                                    className='h-6 w-6 stroke-slate-300'
+                                  />
+                                </div>
+                              )}
+                            </>
+                          )
+                        }
                       </div>
                     </>
                   )}
@@ -143,10 +179,14 @@ export const RadioGroup = ({ items, selectedItem, onSelect }: TProps) => {
 function CheckIcon(props: React.SVGAttributes<SVGElement>) {
   return (
     <svg viewBox='0 0 24 24' fill='none' {...props}>
-      <circle cx={12} cy={12} r={12} fill='#fff' opacity='0.2' />
+      <circle
+        cx={12} cy={12} r={11}
+        // fill='#fff' opacity='0.2'
+        strokeWidth='2'
+      />
       <path
         d='M7 13l3 3 7-7'
-        stroke='#fff'
+        // stroke='#fff'
         strokeWidth={1.5}
         strokeLinecap='round'
         strokeLinejoin='round'

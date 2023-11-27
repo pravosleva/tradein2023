@@ -111,6 +111,7 @@ export const EnterImeiStep = memo(({
             items={options}
             selectedItem={selectedDeviceType}
             onSelect={handleSelect}
+            iconPosition='left'
           />
         )
       }
