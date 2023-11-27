@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // import { stepMachine, EStep } from '~/common/xstate/stepMachine'
-import { memo, useMemo, useRef, useEffect } from 'react'
+import { memo, useMemo, useRef, useEffect, useState, useCallback } from 'react'
 import { Input } from '~/common/components/sp-custom'
 import { ContentWithControls, TControlBtn } from '~/common/components/sp-custom/ContentWithControls'
 // import baseClasses from '~/App.module.scss'
+import { RadioGroup } from '~/common/components/tailwind'
 
 type TProps = {
   value: string;
@@ -14,6 +15,38 @@ type TProps = {
   onPrev?: () => void;
   isPrevBtnDisabled: boolean;
   makeAutofocusOnComplete?: boolean;
+  hasDeviceTypePseudoChoice?: boolean;
+}
+
+type TOption = {
+  label: string;
+  value: string;
+}
+enum EDeviceType {
+  PhoneAndTablet = 'mobile_phone,tablet',
+  Smartwatch = 'smartwatch',
+}
+const options: TOption[] = [
+  {
+    label: 'Смартфоны / Планшеты',
+    value: EDeviceType.PhoneAndTablet,
+  },
+  {
+    label: 'Смарт-часы',
+    value: EDeviceType.Smartwatch,
+  },
+]
+const stepHeader: {
+  [key in EDeviceType]: string;
+} = {
+  [EDeviceType.PhoneAndTablet]: 'Введите IMEI',
+  [EDeviceType.Smartwatch]: 'Введите S/N',
+}
+const stepBtnLabel: {
+  [key in EDeviceType]: string;
+} = {
+  [EDeviceType.PhoneAndTablet]: 'Проверить IMEI',
+  [EDeviceType.Smartwatch]: 'Проверить S/N',
 }
 
 export const EnterImeiStep = memo(({
@@ -24,13 +57,21 @@ export const EnterImeiStep = memo(({
   onPrev,
   isPrevBtnDisabled,
   makeAutofocusOnComplete,
+  hasDeviceTypePseudoChoice,
 }: TProps) => {
+  const [selectedDeviceType, setSelectedDeviceType] = useState<TOption | null>(options[0])
+  const handleSelect = useCallback((item: TOption) => {
+    // TODO: Set external state...
+    setSelectedDeviceType(item)
+  }, [])
+
   const inputRef = useRef<HTMLInputElement>(null)
   const controls = useMemo<TControlBtn[]>(() => {
     const btns: TControlBtn[] = [
       {
         id: '1',
-        label: 'Проверить IMEI',
+        // @ts-ignore
+        label: selectedDeviceType?.value ? stepBtnLabel[selectedDeviceType?.value] : 'Проверить IMEI',
         onClick: onSendIMEI,
         isDisabled: isNextBtnDisabled,
         btn: {
@@ -51,22 +92,34 @@ export const EnterImeiStep = memo(({
       },
     })
     return btns
-  }, [isNextBtnDisabled, onSendIMEI, onPrev, isPrevBtnDisabled])
+  }, [isNextBtnDisabled, onSendIMEI, onPrev, isPrevBtnDisabled, selectedDeviceType?.value])
   useEffect(() => {
     if (inputRef.current && isNextBtnDisabled) inputRef.current.focus()
   }, [isNextBtnDisabled])
 
   return (
     <ContentWithControls
-      header='Введите IMEI'
+      // @ts-ignore
+      header={selectedDeviceType?.value ? stepHeader[selectedDeviceType?.value] : 'Введите IMEI'}
       controls={controls}
       isStickyBottomControls
       autofocusBtnId={makeAutofocusOnComplete ? (isNextBtnDisabled ? undefined : '1') : undefined}
     >
+      {
+        hasDeviceTypePseudoChoice && (
+          <RadioGroup
+            items={options}
+            selectedItem={selectedDeviceType}
+            onSelect={handleSelect}
+          />
+        )
+      }
       <Input
         isSuccess={!isNextBtnDisabled}
         ref={inputRef}
         value={value}
+        // @ts-ignore
+        placeholder={selectedDeviceType?.value ? stepHeader[selectedDeviceType?.value] : 'Введите IMEI'}
         onChange={onChangeIMEI}
         onKeyDown={(e) => {
           if (e.key === 'Enter' && !isNextBtnDisabled) onSendIMEI()

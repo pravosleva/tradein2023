@@ -17,6 +17,7 @@ export type TControlBtn = {
   onClick: () => void;
   isDisabled?: boolean;
   EnabledEndIcon?: React.ReactNode;
+  EnabledStartIcon?: React.ReactNode;
   allowDefaultEnabledEndIconArrowRight?: boolean;
   allowDefaultEnabledEndIconCheck?: boolean;
 }
@@ -171,6 +172,7 @@ export const ContentWithControls = ({
                       isDisabled,
                       btn,
                       EnabledEndIcon,
+                      EnabledStartIcon,
                       allowDefaultEnabledEndIconArrowRight,
                       allowDefaultEnabledEndIconCheck,
                     }) => (
@@ -182,6 +184,7 @@ export const ContentWithControls = ({
                         onClick={onClick}
                         disabled={isDisabled}
                         EnabledEndIcon={EnabledEndIcon}
+                        EnabledStartIcon={EnabledStartIcon}
                         allowDefaultEnabledEndIconArrowRight={allowDefaultEnabledEndIconArrowRight}
                         allowDefaultEnabledEndIconCheck={allowDefaultEnabledEndIconCheck}
                       >

@@ -39,6 +39,7 @@ export interface IButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEleme
   fullWidth?: boolean;
   variant: TVariant;
   EnabledEndIcon?: React.ReactNode;
+  EnabledStartIcon?: React.ReactNode;
   allowDefaultEnabledEndIconArrowRight?: boolean;
   allowDefaultEnabledEndIconCheck?: boolean;
 }
@@ -50,6 +51,7 @@ export const Button = React.forwardRef(({
   fullWidth,
   variant,
   EnabledEndIcon,
+  EnabledStartIcon,
   allowDefaultEnabledEndIconArrowRight,
   allowDefaultEnabledEndIconCheck,
   ..._nativeProps
@@ -72,6 +74,18 @@ export const Button = React.forwardRef(({
     allowDefaultEnabledEndIconCheck,
     nativeProps.disabled,
     EnabledEndIcon,
+  ])
+  const StartIcon = useMemo(() => {
+    if (nativeProps.disabled) return null
+    switch (true) {
+      case !!EnabledStartIcon:
+        return EnabledStartIcon
+      default:
+        return null
+    }
+  }, [
+    nativeProps.disabled,
+    EnabledStartIcon,
   ])
 
   return (
@@ -113,6 +127,7 @@ export const Button = React.forwardRef(({
           gap: '8px',
         }}
       >
+        {StartIcon}
         <span>{children}</span>
         {EndIcon}
       </span>

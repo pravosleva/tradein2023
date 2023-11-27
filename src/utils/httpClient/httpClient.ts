@@ -278,6 +278,7 @@ class Singleton extends Api {
           },
           features: {
             country_code: 'RU',
+            smartwatch_allowed: true,
           },
         },
       },

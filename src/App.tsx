@@ -25,6 +25,7 @@ import {
   getTranslatedConditionSuffixCode,
   getTranslatedDefectReasonCode,
 } from '~/common/components/sp-custom/PriceTable/utils'
+import { IoMdRefresh } from 'react-icons/io'
 import { getCapitalizedFirstLetter } from '~/utils/aux-ops'
 import { useMetrix } from '~/common/hooks'
 import { getReadableSnakeCase } from '~/utils/aux-ops'
@@ -61,6 +62,7 @@ function App() {
                 btn: { variant: 'outlined', color: 'default' },
                 onClick: () => send({ type: 'goPrev' }),
                 // isDisabled: !can({ type: 'goPrev' }),
+                EnabledStartIcon: <IoMdRefresh style={{ fontSize: '20px' }} />,
               },
             ]}
             isStickyBottomControls
@@ -90,6 +92,7 @@ function App() {
             // onPrev={() => send({ type: 'goPrev' })}
             isPrevBtnDisabled={!can({ type: 'goPrev' })}
             makeAutofocusOnComplete
+            hasDeviceTypePseudoChoice={state.context.initApp.response?.features.smartwatch_allowed}
           />
         )
       case EStep.SendImei:
