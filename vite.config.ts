@@ -30,6 +30,7 @@ const _chunksMap = new Map()
 export default defineConfig({
   // server: { port: 2023 },
   // preview: { port: 2024 },
+  base: './', // NOTE: See also https://vite-plugin-ssr.com/base-url
   plugins: [
     react(),
     splitVendorChunkPlugin(),

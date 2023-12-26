@@ -5,7 +5,7 @@ import baseClasses from '~/App.module.scss'
 
 const envs = import.meta.env
 const isDev = process.env.NODE_ENV === 'development'
-const isLocalProd = import.meta.env.VITE_LOCAL_PROD
+const isLocalProd = import.meta.env.VITE_LOCAL_PROD === '1'
 
 type TProps = {
   onStart: () => void;

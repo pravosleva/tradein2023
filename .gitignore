@@ -25,3 +25,6 @@ dist-ssr
 
 ## Envs
 .env.*.local
+
+## Aux tools
+_aux-tool.*

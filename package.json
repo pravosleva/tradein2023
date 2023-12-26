@@ -13,7 +13,8 @@
     "build:prod": "tsc && VITE_APP_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g') VITE_GIT_SHA1=$(git show --format=\"%h\" --no-patch) vite build --mode production --emptyOutDir",
     "build:staging": "tsc && VITE_APP_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g') VITE_GIT_SHA1=$(git show --format=\"%h\" --no-patch) vite build --mode staging --emptyOutDir",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview --host"
+    "preview": "vite preview --host",
+    "_deploy2:staging": "yarn build:prod && bash _aux-tool.deploy2.prod.sh"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.17",
