@@ -4,6 +4,7 @@
 import { AnyEventObject, InvokeMeta } from 'xstate'
 import { TStepMachineContextFormat } from '~/common/xstate/stepMachine'
 import { httpClient } from '~/utils/httpClient'
+import { vi } from '~/common/vi'
 
 export const sendContractMachine = async (context: TStepMachineContextFormat, _ev: AnyEventObject, _invMeta: InvokeMeta): Promise<any> => {
   if (!context.baseSessionInfo.tradeinId) return Promise.reject({
@@ -32,6 +33,8 @@ export const sendContractMachine = async (context: TStepMachineContextFormat, _e
     responseValidator: ({ res }) => res.ok === true,
   })
     .catch((err) => err)
+  
+  vi.setContractStepResponse(res)
 
   // NOTE: Commented cuz it will be set in states[EStep.GetPhotoLink].invoke.onDone
   // context.photoLink.response = res

@@ -30,14 +30,14 @@ class Singleton {
     this.isDebugEnabled = isDebugEnabled
     switch (true) {
       case noSharedWorkers:
-        this.metrixWorker = new Worker(`${PUBLIC_URL}/ww/dx.w.js`)
+        this.metrixWorker = new Worker(`${PUBLIC_URL}/web-wokers/dx.worker.js?ts=${new Date().getTime()}`)
 
         // Etc.
         break
       default:
         this.metrixWorker = SharedWorker
-          ? new SharedWorker(`${PUBLIC_URL}/ww/dx.sw.js`)
-          : new Worker(`${PUBLIC_URL}/ww/dx.w.js`)
+          ? new SharedWorker(`${PUBLIC_URL}/web-wokers/dx.shared-worker.js?ts=${new Date().getTime()}`)
+          : new Worker(`${PUBLIC_URL}/web-wokers/dx.worker.js?ts=${new Date().getTime()}`)
         if (this.metrixWorker instanceof SharedWorker) this.metrixWorker.port.start()
 
         // Etc.

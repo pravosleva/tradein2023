@@ -3,25 +3,25 @@ const tsT0 = new Date().getTime()
 const _perfInfo = {
   tsList: [
     {
-      descr: '[sw]: SW init',
+      descr: '[sw]: SharedWorker loaded',
       p: t0,
       ts: tsT0,
-      name: 'Начало загрузки SW',
+      name: 'SharedWorker загружен',
       // NOTE: Optional
       // data?: { input: { metrixEventType: NEvents.EMetrixClientOutgoing.SP_MX_EV; stateValue: string; } } | any;
     },
   ]
 }
 
-importScripts('./u/gu.js')
-importScripts('./u/ev/evs.js')
-importScripts('./u/ev/val.js')
-importScripts('./u/dbg/cfg.js')
-importScripts('./u/dbg/log.js')
-// importScripts('./u/dbg/debug.js')
-importScripts('./u/s-tools/rootSubscribers.js')
-importScripts('./u/s-tools/mws/withCustomEmitters.js')
-importScripts('./u/s-tools/socket.io-client@4.7.2.min.js')
+importScripts('./utils/gu.js')
+importScripts('./utils/ev/evs.js')
+importScripts('./utils/ev/val.js')
+importScripts('./utils/dbg/cfg.js')
+importScripts('./utils/dbg/log.js')
+// importScripts('./utils/dbg/debug.js')
+importScripts('./utils/s-tools/rootSubscribers.js')
+importScripts('./utils/s-tools/mws/withCustomEmitters.js')
+importScripts('./utils/s-tools/socket.io-client@4.7.2.min.js')
 
 var window = self
 // const _isAnyDebugEnabled = Object.values(dbg).some((v) => v.isEnabled)
@@ -38,16 +38,16 @@ let port // TODO? var ports = new Map()
 (async function selfListenersInit({ self }) {
   const t1 = performance.now()
   const tsT1 = new Date().getTime()
-  _perfInfo.tsList.push({ descr: '[sw]: selfListenersInit', p: t1, ts: tsT1, label: 'Инициализация обработчиков SW' })
+  _perfInfo.tsList.push({ descr: '[sw:init]: selfListenersInit called', p: t1, ts: tsT1, name: 'Инициализация обработчиков SharedWorker' })
 
   if (dbg.swState.isEnabled) log({ label: '⚪ SharedWorker loaded...' })
 
   self.addEventListener(NES.SharedWorker.Native.ESelf.CONNECT, function(e) {
     _perfInfo.tsList.push({
-      descr: `[sw:listener] self listener: ${NES.SharedWorker.Native.ESelf.CONNECT}`,
+      descr: `[sw:self:listener-setup]: init listener for "${NES.SharedWorker.Native.ESelf.CONNECT}"`,
       p: performance.now(),
       ts: new Date().getTime(),
-      name: 'SW подключен к клиенту',
+      name: 'SharedWorker подключен к клиенту',
     })
     if (dbg.swState.isEnabled) log({ label: '🟡 Client connected to SharedWorker' })
     // port = e.ports[0] // NOTE: or port = e.source
@@ -58,7 +58,7 @@ let port // TODO? var ports = new Map()
       // const isNew = _perfInfo.tsList[_perfInfo.tsList.length - 1].descr === e.data.
       // if () 
       _perfInfo.tsList.push({
-        descr: `c->[sw:port:listener]: ${NES.SharedWorker.Native.EPort.MESSAGE}`,
+        descr: `c->[sw:port:listener-setup]: init listener for "${NES.SharedWorker.Native.EPort.MESSAGE}"`,
         p: performance.now(),
         ts: new Date().getTime(),
         data: e.data,
@@ -117,10 +117,10 @@ let port // TODO? var ports = new Map()
           const [loadReport] = _perfInfo.tsList
           _perfInfo.tsList = [
             loadReport, {
-              descr: 'c->[sw]: SW history reset',
+              descr: 'c->[sw]: SharedWorker history reset',
               p: performance.now(),
               ts: new Date().getTime(),
-              name: 'Сброс истории SW',
+              name: 'Сброс истории SharedWorker',
             },
           ]
           port.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_RESET_HISTORY_OK, data: {  tsList: _perfInfo.tsList } })
@@ -139,7 +139,7 @@ let port // TODO? var ports = new Map()
               p: performance.now(),
               ts: new Date().getTime(),
               data: e.data,
-              name: 'SW Получил ивент мертики для отправки на сервер',
+              name: 'SharedWorker Получил ивент мертики для отправки на сервер',
             })
 
             // -- NOTE: Middlewares section
@@ -165,7 +165,7 @@ let port // TODO? var ports = new Map()
       p: performance.now(),
       ts: new Date().getTime(),
       data: { ...e },
-      name: `SW отхватил ошибку: ${e?.data?.message || 'No e.data.message'}`,
+      name: `SharedWorker отхватил ошибку: ${e?.data?.message || 'No e.data.message'}`,
     })
     log({ label: 'error in SharedWorker', msgs: [e.data] })
   })

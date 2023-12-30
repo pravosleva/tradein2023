@@ -37,6 +37,12 @@ class Singleton {
   public setUserDataResponse (res: NSP.TUserDataResponse | null) {
     this._stepMachineState.initApp.response = res
   }
+  public setImeiStepResponse (res: NSP.TImeiResponse | null) {
+    this._stepMachineState.imei.response = res
+  }
+  public setContractStepResponse (res: NSP.TStandartMinimalResponse | null) {
+    this._stepMachineState.contract.response = res
+  }
 
   get smState() {
     return this._stepMachineState

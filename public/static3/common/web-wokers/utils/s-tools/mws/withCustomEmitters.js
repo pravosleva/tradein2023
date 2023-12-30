@@ -20,10 +20,12 @@ const withCustomEmitters = ({
           switch (true) {
             // === NOTE: Hard logs
             case eventData?.input.stateValue === NES.Custom.Client.EStepMachine.AppInitErr:
+            case eventData?.input.stateValue === NES.Custom.Client.EStepMachine.EnterMemoryAndColor:
             case eventData?.input.stateValue === NES.Custom.Client.EStepMachine.FinalPriceTable:
             case eventData?.input.stateValue === NES.Custom.Client.EStepMachine.Contract:
             case eventData?.input.stateValue === NES.Custom.Client.EStepMachine.ContractSending:
             case eventData?.input.stateValue === NES.Custom.Client.EStepMachine.ContractError:
+            case eventData?.input.stateValue === NES.Custom.Client.EStepMachine.Final:
               outputData = {
                 ...input,
                 _wService: {

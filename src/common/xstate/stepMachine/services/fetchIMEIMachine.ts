@@ -5,6 +5,7 @@ import { AnyEventObject, InvokeMeta } from 'xstate'
 import { EErrCode, TStepMachineContextFormat } from '~/common/xstate/stepMachine'
 import { getReadableSnakeCase } from '~/utils/aux-ops'
 import { NResponseValidate, httpClient, NSP } from '~/utils/httpClient'
+import { vi } from '~/common/vi'
 
 export const fetchIMEIMachine = async (context: TStepMachineContextFormat, _ev: AnyEventObject, _invMeta: InvokeMeta): Promise<NResponseValidate.TResult<NSP.TImeiResponse>> => {
   // NOTE: thats received data from states[EStep.SendImei].invoke.data (for example)
@@ -138,6 +139,8 @@ export const fetchIMEIMachine = async (context: TStepMachineContextFormat, _ev: 
         ...(err || { message: err?.message || EErrCode.ERR4 }),
       }
     })
+
+  vi.setImeiStepResponse(res)
 
   if (res.ok) {
     context.imei.result.state = 'success'

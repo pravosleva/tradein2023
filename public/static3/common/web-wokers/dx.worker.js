@@ -3,25 +3,25 @@ const tsT0 = new Date().getTime()
 const _perfInfo = {
   tsList: [
     {
-      descr: '[w]: W init',
+      descr: '[w]: Worker loaded',
       p: t0,
       ts: tsT0,
-      name: 'Начало загрузки W',
+      name: 'Worker загружен',
       // NOTE: Optional
       // data?: { input: { metrixEventType: NEvents.EMetrixClientOutgoing.SP_MX_EV; stateValue: string; } } | any;
     },
   ]
 }
 
-importScripts('./u/gu.js')
-importScripts('./u/ev/evs.js')
-importScripts('./u/ev/val.js')
-importScripts('./u/dbg/cfg.js')
-importScripts('./u/dbg/log.js')
-// importScripts('./u/dbg/debug.js')
-importScripts('./u/s-tools/rootSubscribers.js')
-importScripts('./u/s-tools/mws/withCustomEmitters.js')
-importScripts('./u/s-tools/socket.io-client@4.7.2.min.js')
+importScripts('./utils/gu.js')
+importScripts('./utils/ev/evs.js')
+importScripts('./utils/ev/val.js')
+importScripts('./utils/dbg/cfg.js')
+importScripts('./utils/dbg/log.js')
+// importScripts('./utils/dbg/debug.js')
+importScripts('./utils/s-tools/rootSubscribers.js')
+importScripts('./utils/s-tools/mws/withCustomEmitters.js')
+importScripts('./utils/s-tools/socket.io-client@4.7.2.min.js')
 
 console.log(typeof io.connect)
 
@@ -44,7 +44,7 @@ let connectionsCounter = 0;
       p: performance.now(),
       ts: new Date().getTime(),
       data: e.data,
-      name: 'W отловил сообщение от клиента',
+      name: 'Worker отловил сообщение от клиента',
     })
 
     // -- NOTE: We can validate all events from client to worker...
@@ -87,7 +87,7 @@ let connectionsCounter = 0;
     }
 
     if (dbg.workerEvs.fromClient.isEnabled) log({
-      label: `message received SharedWorker receive evt by client ${socket.connected ? '✅' : '⭕'}`,
+      label: `message received SharedWorker take evt by client ${socket.connected ? '✅' : '⭕'}`,
       msgs: [e.data],
     })
 
@@ -99,10 +99,10 @@ let connectionsCounter = 0;
         const [loadReport] = _perfInfo.tsList
         _perfInfo.tsList = [
           loadReport, {
-            descr: 'c->[w]: SW history reset',
+            descr: 'c->[w]: Worker history reset',
             p: performance.now(),
             ts: new Date().getTime(),
-            name: 'Сброс истории W',
+            name: 'Сброс истории Worker',
           },
         ]
         self.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_RESET_HISTORY_OK, data: {  tsList: _perfInfo.tsList } })
@@ -121,7 +121,7 @@ let connectionsCounter = 0;
             p: performance.now(),
             ts: new Date().getTime(),
             data: e.data,
-            name: 'SW Получил ивент мертики для отправки на сервер',
+            name: 'Worker Получил ивент от клиента для отправки на сервер',
           })
 
           // -- NOTE: Middlewares section
