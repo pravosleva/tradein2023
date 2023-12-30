@@ -637,7 +637,10 @@ function App() {
                 label: 'Клиент подписал договор (завершить)',
                 onClick: () => {
                   send({ type: 'RESET_ALL_RESPONSES' })
-                  for (const key in vi.contractForm) delete vi.contractForm[key] // NOTE: Reset aux contract form
+                  
+                  // NOTE: Reset aux contract form, and etc.
+                  try { vi.resetState() } catch (err) { console.log(err) }
+
                   wws.resetMxHistory()
                   send({ type: 'goStart' })
                 },

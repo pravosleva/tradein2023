@@ -15,7 +15,7 @@ class Singleton {
     stateValue: EStep | null;
     appVersion: string;
   }
-  // NOTE: Etc. 1/3
+  // NOTE: Etc. 1/4
 
   private constructor() {
     this._stepMachineState = proxy(initialStepMachineContextFormat)
@@ -27,7 +27,7 @@ class Singleton {
       stateValue: null,
       appVersion: pkg.version,
     })
-    // NOTE: Etc. 2/3
+    // NOTE: Etc. 2/4
   }
   public static getInstance(): Singleton {
     if (!Singleton.instance) Singleton.instance = new Singleton()
@@ -43,6 +43,17 @@ class Singleton {
   public setContractStepResponse (res: NSP.TStandartMinimalResponse | null) {
     this._stepMachineState.contract.response = res
   }
+  public resetState() {
+    try {
+      // TODO: Doesnt work -> this._stepMachineState = initialStepMachineContextFormat
+      this._stepMachineState.imei.value = ''
+      for (const key in this._contractFormState) delete this._contractFormState[key]
+      this._contractFormLastEditedFieldInfo.name = null
+      // NOTE: Etc. 4/4
+    } catch (err) {
+      console.log(err)
+    }
+  }
 
   get smState() {
     return this._stepMachineState
@@ -56,7 +67,7 @@ class Singleton {
   get common() {
     return this._common
   }
-  // NOTE: Etc. 3/3
+  // NOTE: Etc. 3/4
 }
 
 // NOTE: Valtio Instance (external proxy based multistore)
