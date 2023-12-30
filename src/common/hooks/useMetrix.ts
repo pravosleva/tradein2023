@@ -10,6 +10,13 @@ import { subscribeKey } from 'valtio/utils'
 type TProps = {
   isDebugEnabled?: boolean;
 }
+enum EReportType {
+  DEFAULT = 'default',
+  INFO = 'info',
+  WARNING = 'warning',
+  ERROR = 'error',
+  SUCCESS = 'success',
+}
 
 export const useMetrix = ({ isDebugEnabled }: TProps) => {
   // NOTE: 1.1 Use wws.subscribeOnData once only!
@@ -88,7 +95,10 @@ export const useMetrix = ({ isDebugEnabled }: TProps) => {
   }) => {
     wws.post<{
       input: {
+        ts: number;
+        room: string;
         metrixEventType: string;
+        reportType: EReportType;
         stateValue: string;
         appVersion: string;
       }
@@ -97,6 +107,9 @@ export const useMetrix = ({ isDebugEnabled }: TProps) => {
       eType: NEvents.ECustom.CLIENT_TO_WORKER_MESSAGE,
       data: {
         input: {
+          ts: new Date().getTime(),
+          room: 'FOR_EXAMPLE',
+          reportType: EReportType.DEFAULT,
           appVersion: vi.common.appVersion,
           ...input,
         },

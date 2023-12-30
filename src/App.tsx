@@ -126,7 +126,7 @@ function App() {
               header={state.context.imei.uiMsg || undefined}
             >
               {
-                state.context.imei.response && state.context.imei.response._showDetailsInUi && (
+                state.context.imei.response && state.context.imei.response._showDetailsInUi && (    
                   <pre className={classes.preStyled}>{JSON.stringify(state.context.imei.response._fromServer || state.context.imei.response, null, 2)}</pre>
                 )
               }
@@ -228,7 +228,7 @@ function App() {
                 isDisabled: colorAndMemoryHasDetectedOnServer, // !can({ type: 'goPrev' }),
               },
             ]}
-            // isStickyBottomControls
+            isStickyBottomControls
           >
             {
               state.context.imei.response ? (

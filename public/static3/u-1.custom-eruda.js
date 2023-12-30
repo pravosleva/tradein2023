@@ -22,6 +22,9 @@ class CustomErudaSingletone {
       eruda.init()
       eruda.position({ x: 20, y: 20 })
     }
+    script.onerror = function(err) {
+      console.log(err)
+    }
 
     this.isEnabled = true
   }

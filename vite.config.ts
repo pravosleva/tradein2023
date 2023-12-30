@@ -8,6 +8,7 @@ import { splitVendorChunkPlugin } from 'vite'
 import browserslistToEsbuild from 'browserslist-to-esbuild'
 import slugify from 'slugify'
 import preload from 'vite-plugin-preload'
+import legacy from '@vitejs/plugin-legacy'
 
 slugify.extend({ '/': '_' })
 
@@ -34,8 +35,11 @@ export default defineConfig({
   plugins: [
     react(),
     splitVendorChunkPlugin(),
-
     preload(),
+    legacy({
+      targets: ['defaults', 'not IE 11'],
+    }),
+
     // NOTE: Last one
     // See also https://www.npmjs.com/package/rollup-plugin-visualizer
     visualizer({

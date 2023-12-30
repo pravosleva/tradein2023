@@ -3,7 +3,8 @@ import { groupLog } from './groupLog'
 import { NEvents } from '~/types'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-const PUBLIC_URL = '/static3/common' // process?.env?.PUBLIC_URL || '/static3'
+const VITE_PUBLIC_URL = import.meta.env.VITE_PUBLIC_URL
+const PUBLIC_URL = VITE_PUBLIC_URL || '/static3/common' // process?.env?.PUBLIC_URL || '/static3'
 
 // let _c = 0
 
