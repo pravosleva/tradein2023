@@ -5,6 +5,8 @@ import clsx from 'clsx'
 import { groupLog } from '~/utils';
 import { getFormattedPrice } from '~/utils/aux-ops'
 
+const brandName = import.meta.env.VITE_BRAND || 'Brand'
+
 type TProps = {
   // classNameStr: string;
   classNameMap?: {
@@ -104,7 +106,7 @@ export const getTable2017v1Html = ({ cfg, originalDataCases, classNameMap }: TPr
     </tr>
     <tr${classNameMap ? ` class="${classNameMap.table.tbody.tr.main}"` : ''}>
       <td${classNameMap ? ` class="${classNameMap.table.tbody.tr.td}"` : ''}>
-        <b>Цена SmartPrice</b>
+        <b>Цена ${brandName}</b>
       </td>
       <td${classNameMap ? ` class="${clsx(classNameMap.table.tbody.tr.td, classNameMap.table.tbody.tr.numCell)}"` : ''}>
         ${Object.keys(priceMapping)
