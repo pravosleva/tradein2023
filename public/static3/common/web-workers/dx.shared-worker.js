@@ -14,14 +14,14 @@ const _perfInfo = {
 }
 
 importScripts('./utils/gu.js')
-importScripts('./utils/ev/evs.js')
-importScripts('./utils/ev/val.js')
-importScripts('./utils/dbg/cfg.js')
-importScripts('./utils/dbg/log.js')
-// importScripts('./utils/dbg/debug.js')
-importScripts('./utils/s-tools/rootSubscribers.js')
-importScripts('./utils/s-tools/mws/withCustomEmitters.js')
-importScripts('./utils/s-tools/socket.io-client@4.7.2.min.js')
+importScripts('./utils/event/types.js')
+importScripts('./utils/event/eValidator.js')
+importScripts('./utils/debug/cfg.js')
+importScripts('./utils/debug/log.js')
+// importScripts('./utils/debug/debug.js')
+importScripts('./utils/socket/rootSubscribers.js')
+importScripts('./utils/socket/mws/withCustomEmitters.js')
+importScripts('./utils/socket/socket.io-client@4.7.2.min.js')
 
 var window = self
 // const _isAnyDebugEnabled = Object.values(dbg).some((v) => v.isEnabled)
@@ -55,15 +55,20 @@ let port // TODO? var ports = new Map()
     connectionsCounter++
   
     port.addEventListener(NES.SharedWorker.Native.EPort.MESSAGE, function(e) {
+      //  - TODO: New event only
       // const isNew = _perfInfo.tsList[_perfInfo.tsList.length - 1].descr === e.data.
-      // if () 
-      _perfInfo.tsList.push({
-        descr: `c->[sw:port:listener-setup]: init listener for "${NES.SharedWorker.Native.EPort.MESSAGE}"`,
-        p: performance.now(),
-        ts: new Date().getTime(),
-        data: e.data,
-        name: 'Порт отловил сообщение от клиента',
-      })
+      // if ()
+      // -
+
+      // NOTE: Each event (x2 cache memory)
+      // _perfInfo.tsList.push({
+      //   descr: `c->[sw:port:listener-setup]: init listener for "${NES.SharedWorker.Native.EPort.MESSAGE}"`,
+      //   p: performance.now(),
+      //   ts: new Date().getTime(),
+      //   data: e.data,
+      //   name: 'Порт отловил сообщение от клиента',
+      // })
+
       // -- NOTE: We can validate all events from client to worker...
       const validationResult = eValidator({
         event: e.data,
@@ -139,7 +144,7 @@ let port // TODO? var ports = new Map()
               p: performance.now(),
               ts: new Date().getTime(),
               data: e.data,
-              name: 'SharedWorker Получил ивент мертики для отправки на сервер',
+              name: 'SharedWorker получил ивент мертики для отправки на сервер',
             })
 
             // -- NOTE: Middlewares section

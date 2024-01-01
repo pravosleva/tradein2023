@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { groupLog } from './groupLog'
 import { NEvents } from '~/types'
+import { groupLog } from './groupLog'
+import pkg from '../../package.json'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const VITE_PUBLIC_URL = import.meta.env.VITE_PUBLIC_URL
@@ -30,14 +31,14 @@ class Singleton {
     this.isDebugEnabled = isDebugEnabled
     switch (true) {
       case noSharedWorkers:
-        this.metrixWorker = new Worker(`${PUBLIC_URL}/web-wokers/dx.worker.js?ts=${new Date().getTime()}`)
+        this.metrixWorker = new Worker(`${PUBLIC_URL}/web-workers/dx.worker.js?ts=${new Date().getTime()}&v=${pkg.version}`)
 
         // Etc.
         break
       default:
         this.metrixWorker = SharedWorker
-          ? new SharedWorker(`${PUBLIC_URL}/web-wokers/dx.shared-worker.js?ts=${new Date().getTime()}`)
-          : new Worker(`${PUBLIC_URL}/web-wokers/dx.worker.js?ts=${new Date().getTime()}`)
+          ? new SharedWorker(`${PUBLIC_URL}/web-workers/dx.shared-worker.js?ts=${new Date().getTime()}&v=${pkg.version}`)
+          : new Worker(`${PUBLIC_URL}/web-workers/dx.worker.js?ts=${new Date().getTime()}&v=${pkg.version}`)
         if (this.metrixWorker instanceof SharedWorker) this.metrixWorker.port.start()
 
         // Etc.

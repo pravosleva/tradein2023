@@ -1,4 +1,4 @@
-# SmartPrice Trade-In v3
+# `import.meta.env.VITE_BRAND` Trade-In v3
 
 ## ⚠️ Сборка
 

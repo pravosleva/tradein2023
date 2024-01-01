@@ -14,14 +14,14 @@ const _perfInfo = {
 }
 
 importScripts('./utils/gu.js')
-importScripts('./utils/ev/evs.js')
-importScripts('./utils/ev/val.js')
-importScripts('./utils/dbg/cfg.js')
-importScripts('./utils/dbg/log.js')
-// importScripts('./utils/dbg/debug.js')
-importScripts('./utils/s-tools/rootSubscribers.js')
-importScripts('./utils/s-tools/mws/withCustomEmitters.js')
-importScripts('./utils/s-tools/socket.io-client@4.7.2.min.js')
+importScripts('./utils/event/types.js')
+importScripts('./utils/event/eValidator.js')
+importScripts('./utils/debug/cfg.js')
+importScripts('./utils/debug/log.js')
+// importScripts('./utils/debug/debug.js')
+importScripts('./utils/socket/rootSubscribers.js')
+importScripts('./utils/socket/mws/withCustomEmitters.js')
+importScripts('./utils/socket/socket.io-client@4.7.2.min.js')
 
 console.log(typeof io.connect)
 
@@ -39,13 +39,14 @@ let connectionsCounter = 0;
   self.onmessage = (e) => {
     if (!e) return;
 
-    _perfInfo.tsList.push({
-      descr: `c->[w:listener]: ${NES.Worker.ENative.MESSAGE}`,
-      p: performance.now(),
-      ts: new Date().getTime(),
-      data: e.data,
-      name: 'Worker отловил сообщение от клиента',
-    })
+    // NOTE: Each event (x2 cache memory)
+    // _perfInfo.tsList.push({
+    //   descr: `c->[w:listener]: ${NES.Worker.ENative.MESSAGE}`,
+    //   p: performance.now(),
+    //   ts: new Date().getTime(),
+    //   data: e.data,
+    //   name: 'Worker отловил сообщение от клиента',
+    // })
 
     // -- NOTE: We can validate all events from client to worker...
     const validationResult = eValidator({

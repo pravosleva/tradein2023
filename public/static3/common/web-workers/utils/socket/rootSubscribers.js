@@ -1,4 +1,4 @@
-importScripts('./utils/s-tools/mws/withLNativeSubscribers.js')
+importScripts('./utils/socket/mws/withLNativeSubscribers.js')
 
 const compose = (fns, arg) => {
   return fns.reduce(

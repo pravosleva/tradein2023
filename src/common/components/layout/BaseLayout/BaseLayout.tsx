@@ -5,6 +5,8 @@ import clsx from 'clsx'
 import { useMemo } from 'react'
 import { vi } from '~/common/vi'
 
+const brandName = import.meta.env.VITE_BRAND || 'SP'
+
 export const BaseLayout: React.FC<any> = ({ children }) => {
   const fullyear = useMemo(() => new Date().getFullYear(), [])
 
@@ -65,7 +67,7 @@ export const BaseLayout: React.FC<any> = ({ children }) => {
               2017 – {fullyear}
             </div>
             <div id='footer-compary'>
-              SmartPrice
+              {brandName}
             </div>
           </div>
         </ResponsiveBlock>
