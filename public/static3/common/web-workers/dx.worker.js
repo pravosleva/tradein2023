@@ -39,6 +39,20 @@ let connectionsCounter = 0;
   self.onmessage = (e) => {
     if (!e) return;
 
+    //  - TODO: New events only
+    if (!!e.data && !!e.data.input && !!e.data.input.stateValue) {
+      if (_perfInfo.tsList.length > 1 && !!_perfInfo.tsList[_perfInfo.tsList.length - 1].data) {
+        if (e.data.input.stateValue === _perfInfo.tsList[_perfInfo.tsList.length - 1].data.stateValue) {
+          if (dbg.workerEvs.fromClient.isEnabled) log({
+            label: `⛔ Event ${e.__eType} blocked | Предыдущий stateValue с тем же именем: ${e.data.input.stateValue}`,
+            msgs: [e.data],
+          })
+          return
+        }
+      }
+    }
+    // -
+
     // NOTE: Each event (x2 cache memory)
     // _perfInfo.tsList.push({
     //   descr: `c->[w:listener]: ${NES.Worker.ENative.MESSAGE}`,

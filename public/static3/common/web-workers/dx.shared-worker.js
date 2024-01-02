@@ -55,9 +55,18 @@ let port // TODO? var ports = new Map()
     connectionsCounter++
   
     port.addEventListener(NES.SharedWorker.Native.EPort.MESSAGE, function(e) {
-      //  - TODO: New event only
-      // const isNew = _perfInfo.tsList[_perfInfo.tsList.length - 1].descr === e.data.
-      // if ()
+      //  - TODO: New events only
+      if (!!e.data && !!e.data.input && !!e.data.input.stateValue) {
+        if (_perfInfo.tsList.length > 1 && !!_perfInfo.tsList[_perfInfo.tsList.length - 1].data) {
+          if (e.data.input.stateValue === _perfInfo.tsList[_perfInfo.tsList.length - 1].data.stateValue) {
+            if (dbg.workerEvs.fromClient.isEnabled) log({
+              label: `⛔ Event ${e.__eType} blocked | Предыдущий stateValue с тем же именем: ${e.data.input.stateValue}`,
+              msgs: [e.data],
+            })
+            return
+          }
+        }
+      }
       // -
 
       // NOTE: Each event (x2 cache memory)

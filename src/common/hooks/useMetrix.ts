@@ -106,7 +106,10 @@ export const useMetrix = ({ isDebugEnabled }: TProps) => {
       imei: smViSnap.imei.value,
     }
     switch (input.stateValue) {
-      case EStep.EnterMemoryAndColor:
+      // TODO: Detailed errors
+      // case EStep.AppInitErr:
+      //   break
+      case EStep.SendImeiErr:
         customData.stepDetails = {
           imei: {
             response: structuredClone(smViSnap.imei.response, {
@@ -117,17 +120,30 @@ export const useMetrix = ({ isDebugEnabled }: TProps) => {
             }),
           }
         }
+        customData.reportType = EReportType.ERROR
+        break;
+      case EStep.EnterMemoryAndColor:
+        customData.stepDetails = {
+          imei: {
+            response: structuredClone(smViSnap.imei.response, { lossy: true, json: true }),
+          }
+        }
         customData.reportType = EReportType.INFO
+        break
+      // case EStep.UploadPhotoResultIsFuckup:
+      //   break
+      case EStep.ContractError:
+        customData.stepDetails = {
+          contract: {
+            response: structuredClone(smViSnap.contract.response, { lossy: true, json: true }),
+          }
+        }
+        customData.reportType = EReportType.ERROR
         break
       case EStep.Final:
         customData.stepDetails = {
           contract: {
-            response: structuredClone(smViSnap.contract.response, {
-              // avoid throwing
-              lossy: true,
-              // avoid throwing *and* looks for toJSON
-              json: true
-            }),
+            response: structuredClone(smViSnap.contract.response, { lossy: true, json: true }),
           }
         }
         customData.reportType = EReportType.SUCCESS

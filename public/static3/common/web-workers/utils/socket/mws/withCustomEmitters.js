@@ -9,7 +9,7 @@ const withCustomEmitters = ({
     input,
   } = eventData
 
-  // - NOTE: Level 1: Client-Worker events
+  // - NOTE: Level 1: Client -> Worker communication events
   switch (__eType) {
     case NES.Custom.EType.CLIENT_TO_WORKER_MESSAGE: {
       
