@@ -36,10 +36,10 @@ class Singleton {
         // Etc.
         break
       default:
-        this.metrixWorker = SharedWorker
+        this.metrixWorker = typeof SharedWorker !== 'undefined'
           ? new SharedWorker(`${PUBLIC_URL}/web-workers/dx.shared-worker.js?ts=${new Date().getTime()}&v=${pkg.version}`)
           : new Worker(`${PUBLIC_URL}/web-workers/dx.worker.js?ts=${new Date().getTime()}&v=${pkg.version}`)
-        if (this.metrixWorker instanceof SharedWorker) this.metrixWorker.port.start()
+        if (typeof SharedWorker !== 'undefined' && this.metrixWorker instanceof SharedWorker) this.metrixWorker.port.start()
 
         // Etc.
         break
@@ -65,7 +65,7 @@ class Singleton {
         this[wName].onmessage = cb
         break
       // @ts-ignore
-      case this[wName] instanceof SharedWorker:
+      case typeof SharedWorker !== 'undefined' && this[wName] instanceof SharedWorker:
         // @ts-ignore
         this[wName].port.onmessage = cb
         break
@@ -85,7 +85,7 @@ class Singleton {
         this[wName].onmessageerror = cb
         break
       // @ts-ignore
-      case this[wName] instanceof SharedWorker:
+      case typeof SharedWorker !== 'undefined' && this[wName] instanceof SharedWorker:
         // _c++
         // @ts-ignore
         this[wName].port.onmessageerror = cb

@@ -8,7 +8,11 @@
     <meta name="theme-color" content="#000000" />
     <script defer type="text/javascript" src="/static3/u-1.custom-eruda.js"></script>
     <script async nomodule type="text/javascript" src="/static3/u-2.nomodule-fallback.js"></script>
-    <script defer type="text/javascript">
+  </head>
+  <body>
+    <div id="root"></div>
+    <script defer type="module" src="/src/main.tsx"></script>
+    <script async type="text/javascript">
       const initDevToggler = ({ querySelector, oddLimit, resetTimeout, targetAction }) => {
         let counter = 0
         const elm = document.querySelector(querySelector)
@@ -17,7 +21,7 @@
           counter = 0
         }
 
-        elm.onclick = function () {
+        if (!!elm) elm.onclick = function () {
           if (counter === 0) setTimeout(_resetCounter, resetTimeout)
           counter += 1
           // console.log(counter)
@@ -54,12 +58,8 @@
           console.warn(err)
         }
       }
-      // document.addEventListener('DOMContentLoaded', onReady)
-      window.onload = onReady
+      document.addEventListener('DOMContentLoaded', onReady)
+      // window.onload = onReady
     </script>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script defer type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -130,6 +130,14 @@ export const useMetrix = ({ isDebugEnabled }: TProps) => {
         }
         customData.reportType = EReportType.INFO
         break
+      case EStep.GetPhotoLink:
+        customData.stepDetails = {
+          checkPhone: {
+            response: structuredClone(smViSnap.checkPhone.response, { lossy: true, json: true }),
+          }
+        }
+        customData.reportType = EReportType.INFO
+        break
       // case EStep.UploadPhotoResultIsFuckup:
       //   break
       case EStep.ContractError:
@@ -179,8 +187,9 @@ export const useMetrix = ({ isDebugEnabled }: TProps) => {
     })
   }, [
     smViSnap.imei.response,
-    smViSnap.contract.response,
     smViSnap.imei.value,
+    smViSnap.checkPhone.response,
+    smViSnap.contract.response,
   ])
 
   // NOTE: 2. Send event for each change

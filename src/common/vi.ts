@@ -43,6 +43,9 @@ class Singleton {
   public setContractStepResponse (res: NSP.TStandartMinimalResponse | null) {
     this._stepMachineState.contract.response = res
   }
+  public setPhoneCheckResponse (res: NSP.TCheckPhoneResponse | null) {
+    this._stepMachineState.checkPhone.response = res
+  }
   public resetState() {
     try {
       // TODO: Doesnt work -> this._stepMachineState = initialStepMachineContextFormat

@@ -23,8 +23,6 @@ importScripts('./utils/socket/rootSubscribers.js')
 importScripts('./utils/socket/mws/withCustomEmitters.js')
 importScripts('./utils/socket/socket.io-client@4.7.2.min.js')
 
-console.log(typeof io.connect)
-
 var window = self;
 window.io = io;
 
@@ -35,22 +33,36 @@ const socket = io.connect(gu(), {
 
 let connectionsCounter = 0;
 
+const isNewNativeEvent = ({ newCode: n, prevCode: p }) => {
+  if (!p) return true
+  const ignoresEvsAsDedoup = [
+    `[sock-nat]: ${NES.Socket.ENative.CONNECT}`,
+    `[sock-nat]: ${NES.Socket.ENative.CONNECT_ERROR}`,
+    `[sock-nat]: ${NES.Socket.ENative.RECONNECT}`,
+    `[sock-nat]: ${NES.Socket.ENative.RECONNECT_ATTEMPT}`,
+    `[sock-nat]: ${NES.Socket.ENative.DISCONNECT}`,
+  ]
+
+  if (ignoresEvsAsDedoup.includes(n) && n === p) return false
+  else return true
+}
+
 (function selfListenersInit({ self }) {
   self.onmessage = (e) => {
     if (!e) return;
 
     //  - TODO: New events only
-    if (!!e.data && !!e.data.input && !!e.data.input.stateValue) {
-      if (_perfInfo.tsList.length > 1 && !!_perfInfo.tsList[_perfInfo.tsList.length - 1].data) {
-        if (e.data.input.stateValue === _perfInfo.tsList[_perfInfo.tsList.length - 1].data.stateValue) {
-          if (dbg.workerEvs.fromClient.isEnabled) log({
-            label: `⛔ Event ${e.__eType} blocked | Предыдущий stateValue с тем же именем: ${e.data.input.stateValue}`,
-            msgs: [e.data],
-          })
-          return
-        }
-      }
-    }
+    // if (!!e.data && !!e.data.input && !!e.data.input.stateValue) {
+    //   if (_perfInfo.tsList.length > 1 && !!_perfInfo.tsList[_perfInfo.tsList.length - 1].data) {
+    //     if (e.data.input.stateValue === _perfInfo.tsList[_perfInfo.tsList.length - 1].data.stateValue) {
+    //       if (dbg.workerEvs.fromClient.isEnabled) log({
+    //         label: `⛔ Event ${e.__eType} blocked | Предыдущий stateValue с тем же именем: ${e.data.input.stateValue}`,
+    //         msgs: [e.data],
+    //       })
+    //       return
+    //     }
+    //   }
+    // }
     // -
 
     // NOTE: Each event (x2 cache memory)
@@ -159,27 +171,42 @@ let connectionsCounter = 0;
     socket,
     options: {
       [NES.Socket.ENative.CONNECT]: function () {
-        _perfInfo.tsList.push({ descr: `[sock-nat]: ${NES.Socket.ENative.CONNECT}`, p: performance.now(), ts: new Date().getTime(), name: 'Socket подключен' })
+        if (isNewNativeEvent({
+          newCode: `[sock-nat]: ${NES.Socket.ENative.CONNECT}`,
+          prevCode: !!_perfInfo.tsList.length > 1 ? _perfInfo.tsList[_perfInfo.tsList.length - 1].descr : undefined,
+        })) _perfInfo.tsList.push({ descr: `[sock-nat]: ${NES.Socket.ENative.CONNECT}`, p: performance.now(), ts: new Date().getTime(), name: 'Socket подключен' })
         if (dbg.socketState.isEnabled) log({ label: '🟢 Socket connected', msgs: ['no event'] })
         self.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_CONN })
       },
       [NES.Socket.ENative.CONNECT_ERROR]: function (e) {
-        _perfInfo.tsList.push({ descr: `[sock-nat]: ${NES.Socket.ENative.CONNECT_ERROR}`, p: performance.now(), ts: new Date().getTime(), name: 'Socket в ошибке' })
+        if (isNewNativeEvent({
+          newCode: `[sock-nat]: ${NES.Socket.ENative.CONNECT_ERROR}`,
+          prevCode: !!_perfInfo.tsList.length > 1 ? _perfInfo.tsList[_perfInfo.tsList.length - 1].descr : undefined,
+        })) _perfInfo.tsList.push({ descr: `[sock-nat]: ${NES.Socket.ENative.CONNECT_ERROR}`, p: performance.now(), ts: new Date().getTime(), name: 'Socket в ошибке' })
         if (dbg.socketState.isEnabled) log({ label: '🔴 Socket connection errored', msgs: [e] })
         self.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_CONNN_ERR })
       },
       [NES.Socket.ENative.RECONNECT]: function (e) {
-        _perfInfo.tsList.push({ descr: `[sock-nat]: ${NES.Socket.ENative.RECONNECT}`, p: performance.now(), ts: new Date().getTime(), name: 'Socket переподключен' })
+        if (isNewNativeEvent({
+          newCode: `[sock-nat]: ${NES.Socket.ENative.RECONNECT}`,
+          prevCode: !!_perfInfo.tsList.length > 1 ? _perfInfo.tsList[_perfInfo.tsList.length - 1].descr : undefined,
+        })) _perfInfo.tsList.push({ descr: `[sock-nat]: ${NES.Socket.ENative.RECONNECT}`, p: performance.now(), ts: new Date().getTime(), name: 'Socket переподключен' })
         if (dbg.socketState.isEnabled) log({ label: '🔵 Socket reconnected', msgs: [e] })
         self.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_RECONN })
       },
       [NES.Socket.ENative.RECONNECT_ATTEMPT]: function (e) {
-        _perfInfo.tsList.push({ descr: `[sock-nat]: ${NES.Socket.ENative.RECONNECT_ATTEMPT}`, p: performance.now(), ts: new Date().getTime(), name: 'Socket пытается переподключиться' })
+        if (isNewNativeEvent({
+          newCode: `[sock-nat]: ${NES.Socket.ENative.RECONNECT_ATTEMPT}`,
+          prevCode: !!_perfInfo.tsList.length > 1 ? _perfInfo.tsList[_perfInfo.tsList.length - 1].descr : undefined,
+        })) _perfInfo.tsList.push({ descr: `[sock-nat]: ${NES.Socket.ENative.RECONNECT_ATTEMPT}`, p: performance.now(), ts: new Date().getTime(), name: 'Socket пытается переподключиться' })
         if (dbg.socketState.isEnabled) log({ label: '🟡 Socket trying to reconnect...', msgs: [e] })
         self.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_TRY_TO_RECONN })
       },
       [NES.Socket.ENative.DISCONNECT]: function (e) {
-        _perfInfo.tsList.push({
+        if (isNewNativeEvent({
+          newCode: `[sock-nat]: ${NES.Socket.ENative.DISCONNECT}`,
+          prevCode: !!_perfInfo.tsList.length > 1 ? _perfInfo.tsList[_perfInfo.tsList.length - 1].descr : undefined,
+        })) _perfInfo.tsList.push({
           descr: `[sock-nat]: ${NES.Socket.ENative.DISCONNECT}`,
           p: performance.now(),
           ts: new Date().getTime(),
