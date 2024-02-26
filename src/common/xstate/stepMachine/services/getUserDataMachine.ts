@@ -22,7 +22,7 @@ export const getUserDataMachine = async (context: TStepMachineContextFormat, _ev
           const res: NResponseValidate.TResult<NSP.TUserDataResponse> = { ok: true }
           const msgs = []
 
-          for (const key of requiredFields) if (!val?.[key]) msgs.push(`Не найдено поле ${key}`)
+          for (const key of requiredFields) if (!val?.[key]) msgs.push(`Не найдено поле "${key}"`)
 
           if (msgs.length > 0) {
             res.ok = false
@@ -38,7 +38,7 @@ export const getUserDataMachine = async (context: TStepMachineContextFormat, _ev
           const res: NResponseValidate.TResult<NSP.TUserDataResponse>  = { ok: true }
           const msgs = []
 
-          for (const key of requiredFields) if (!val?.[key]) msgs.push(`Не найдено поле ${key}`)
+          for (const key of requiredFields) if (!val?.[key]) msgs.push(`Не найдено поле "${key}"`)
 
           if (msgs.length > 0) {
             res.ok = false

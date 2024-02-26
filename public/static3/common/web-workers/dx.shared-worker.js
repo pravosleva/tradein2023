@@ -151,7 +151,7 @@ const isNewNativeEvent = ({ newCode: n, prevCode: p }) => {
               name: 'Сброс истории SharedWorker',
             },
           ]
-          port.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_RESET_HISTORY_OK, data: {  tsList: _perfInfo.tsList } })
+          port.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_RESET_HISTORY_OK, data: { tsList: _perfInfo.tsList } })
           break
         default: {
           const {

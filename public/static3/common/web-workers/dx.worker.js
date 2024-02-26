@@ -132,7 +132,7 @@ const isNewNativeEvent = ({ newCode: n, prevCode: p }) => {
             name: 'Сброс истории Worker',
           },
         ]
-        self.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_RESET_HISTORY_OK, data: {  tsList: _perfInfo.tsList } })
+        self.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_RESET_HISTORY_OK, data: { tsList: _perfInfo.tsList } })
         break
       default: {
         const {

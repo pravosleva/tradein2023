@@ -79,7 +79,7 @@ export const getPriceTableHtml = ({
               'whitespace-nowrap',
               'text-center',
             ),
-            td: clsx('px-3', 'py-2'),
+            td: clsx('px-2', 'py-2'),
             numCell: clsx(
               'whitespace-no-wrap',
               'font-weight-bold',
