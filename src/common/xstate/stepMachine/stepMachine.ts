@@ -74,13 +74,14 @@ export const stepMachine = createMachine<TStepMachineContextFormat>(
           },
           goNext: {
             cond: (context) => {
-              // TODO: Result by selected device type!
+              // -- TODO: Result by selected device type!
               // let result = false
               // switch (true) {
               //   case context.initApp.response?.features.smartwatch_allowed:
               //   default:
               //     break
               // }
+              // --
               
               return context.imei.value.length === 15
             },
