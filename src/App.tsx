@@ -272,15 +272,15 @@ function App() {
               '/phone/check',
             ]}
             controls={[
-              // {
-              //   id: '2',
-              //   label: 'Назад',
-              //   btn: { variant: 'outlined', color: 'default' },
-              //   onClick: () => send({ type: 'goPrev' }),
-              //   isDisabled: !can({ type: 'goPrev' }),
-              // },
+              {
+                id: '2',
+                label: 'Назад',
+                btn: { variant: 'outlined', color: 'default' },
+                onClick: () => send({ type: 'goPrev' }),
+                isDisabled: !can({ type: 'goPrev' }),
+              },
             ]}
-            // isStickyBottomControls
+            isStickyBottomControls
           >
             {
               state.context.checkPhone.result.state === 'pending' ? (
