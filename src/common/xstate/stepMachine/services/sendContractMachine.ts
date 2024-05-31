@@ -7,7 +7,7 @@ import { httpClient } from '~/utils/httpClient'
 import { vi } from '~/common/vi'
 
 export const sendContractMachine = async (context: TStepMachineContextFormat, _ev: AnyEventObject, _invMeta: InvokeMeta): Promise<any> => {
-  if (!context.baseSessionInfo.tradeinId) return Promise.reject({
+  if (!context.imei.response?.id) return Promise.reject({
     ok: false,
     message: 'tradeinId не установлен для данной сессии (запрос не был отправлен)',
   })
@@ -28,7 +28,7 @@ export const sendContractMachine = async (context: TStepMachineContextFormat, _e
   // --
 
   const res = await httpClient.sendContractData({
-    tradeinId: context.baseSessionInfo.tradeinId,
+    tradeinId: context.imei.response?.id,
     form: context.contract.form.state,
     responseValidator: ({ res }) => res.ok === true,
   })

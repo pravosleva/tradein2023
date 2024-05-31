@@ -1,6 +1,7 @@
 @import '~/scss-vars/monitors.scss';
 @import '~/scss-vars/colors.scss';
 @import '~/scss-vars/sizes.scss';
+@import '~/scss-vars/common.scss';
 
 // #root {
 //   max-width: 1280px;
@@ -121,3 +122,49 @@
   text-decoration: underline;
   font-weight: bold;
 }
+
+.grayFilter {
+  filter: grayscale(100%);
+  opacity: 0.2;
+}
+
+@media(max-width: #{$monitor-sm}px) {
+  .desktopOnly {
+    display: none;
+  }
+  .mobileOnly {
+    display: block;
+  }
+}
+@media(min-width:calc(#{$monitor-sm}px + 1px)) {
+  .desktopOnly {
+    display: block;
+  }
+  .mobileOnly {
+    display: none;
+  }
+}
+
+.boxShadowTop {
+  box-shadow: rgba(34, 60, 80, 0.2) 0px -10px 7px -8px;
+}
+.boxShadowBottom {
+  box-shadow: rgba(34, 60, 80, 0.2) 0px 10px 7px -8px;
+}
+
+@media(max-width: #{$monitor-sm}px) {
+  .boxShadowTopMobileOnly {
+    box-shadow: rgba(34, 60, 80, 0.2) 0px -10px 7px -8px;
+  }
+  .boxShadowBottomMobileOnly {
+    box-shadow: rgba(34, 60, 80, 0.2) 0px 10px 7px -8px;
+  }
+
+  .panelRoundedTopMobile {
+    border-radius: $common-control-elements-radius-2;
+  }
+  .panelRoundedBottomMobile {
+    border-radius: $common-control-elements-radius-2;
+  }
+}
+

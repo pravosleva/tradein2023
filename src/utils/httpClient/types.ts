@@ -61,6 +61,11 @@ export namespace NSP {
     raw_data:string;
     analytics_session_id: number;
     seconds_since_analytics_session_started: string; // '2022-09-15T13:06+03:00'
+
+    // NOTE: New
+    go_to_final_step?: boolean;
+    condition?: string;
+    condition_limit_reason?: string;
   };
   export type TCheckPhoneResponse = {
     ok: boolean;
@@ -111,13 +116,6 @@ export namespace NSP {
     user_data: {
       partner: string;
       display_name: string;
-    };
-
-    // NOTE: Данные конкретной сессии:
-    session_data: {
-      tradein_id: number;
-      // Видел в коде, что csrftoken где-то вставляется явно в заголовок,
-      // но в наших флоу такого нет, поэтому он пока не нужен, пусть остается в куках
     };
 
     // NOTE: Перечислены достойные внимания фичи (по мере доработки флоу)

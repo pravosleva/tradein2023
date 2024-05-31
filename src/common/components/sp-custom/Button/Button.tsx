@@ -100,7 +100,8 @@ export const Button = React.forwardRef(({
           [classes.spBtn_fullWidth]: fullWidth,
         },
         baseClasses.truncate,
-        'font-medium',
+        // 'font-medium',
+        'font-bold',
         'text-md',
         'py-2',
         'px-5',
@@ -128,7 +129,7 @@ export const Button = React.forwardRef(({
         }}
       >
         {StartIcon}
-        <span>{children}</span>
+        <span className={baseClasses.truncate}>{children}</span>
         {EndIcon}
       </span>
     </button>

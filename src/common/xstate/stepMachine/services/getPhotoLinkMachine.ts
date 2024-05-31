@@ -13,13 +13,13 @@ export const getPhotoLinkMachine = async (context: TStepMachineContextFormat, _e
   }
   cleanupPhotoLinkStep()
 
-  if (!context.baseSessionInfo.tradeinId) return Promise.reject({
+  if (!context.imei.response?.id) return Promise.reject({
     ok: false,
     message: 'tradeinId не установлен для данной сессии (запрос не был отправлен)',
   })
 
   const res = await httpClient.getPhotoLink({
-    tradeinId: context.baseSessionInfo.tradeinId || 0,
+    tradeinId: context.imei.response?.id || 0,
     responseValidator: ({ res }) => res.ok === true,
   })
     .catch((err) => err)

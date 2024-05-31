@@ -31,22 +31,6 @@ export const getUserDataMachine = async (context: TStepMachineContextFormat, _ev
           return res
         },
       },
-      session_data: {
-        isRequired: true,
-        validate: (val) => {
-          const requiredFields = ['tradein_id']
-          const res: NResponseValidate.TResult<NSP.TUserDataResponse>  = { ok: true }
-          const msgs = []
-
-          for (const key of requiredFields) if (!val?.[key]) msgs.push(`Не найдено поле "${key}"`)
-
-          if (msgs.length > 0) {
-            res.ok = false
-            res.message = `Результат проверки поля res.session_data -> ${msgs.join(', ')}`
-          }
-          return res
-        },
-      },
       features: {
         isRequired: true,
         validate: (val) => {
@@ -84,13 +68,16 @@ export const getUserDataMachine = async (context: TStepMachineContextFormat, _ev
   })
     .catch((err: any) => err)
 
-  vi.setUserDataResponse(res)
+  vi.setUserDataResponse({ res, reqState: res?.ok ? 'success' : 'error' })
 
   if (res.ok) {
-    context.contract.result.state = 'success'
+    context.initApp.result.state = 'success'
+    context.initApp.result.isLogged = true
+
     return Promise.resolve(res)
   }
 
-  context.photoLink.result.state = 'error'
+  context.initApp.result.state = 'error'
+  context.initApp.result.isLogged = false
   return Promise.reject(res)
 }

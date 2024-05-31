@@ -40,23 +40,31 @@ class Singleton extends Api {
   async sendIMEI({ IMEI, rules }: {
     rules?: NResponseValidate.TRules<NSP.TImeiResponse>;
     IMEI: string;
-    kz_2022?: boolean;
+    // kz_2022?: boolean;
   }): Promise<NSP.TImeiResponse | NSP.TStandartMinimalResponse> {
     if (!IMEI) return Promise.reject({ ok: false, message: 'Заполните IMEI' })
 
     this.sendIMEICancelTokenSource.cancel('axios request canceled')
     this.sendIMEICancelTokenSource = axios.CancelToken.source()
 
-    const postData = { IMEI, kz_2022: true }
+    const postData = { IMEI }
     // @ts-ignore
-    // if (isDev) postData._add_data = {
-    //   phone: {
-    //     color: 'cardinal_red',
-    //     memory: '512 GB',
-    //   },
-    //   // ok: false,
-    //   // message: 'FRONT tst',
-    // }
+    if (isDev) postData._add_data = {
+      phone: {
+        color: 'cardinal_red',
+        // color: '',
+        memory: '512 GB',
+        vendor: 'Apple',
+      },
+      // ok: false,
+      // message: 'FRONT tst',
+
+      // -- NOTE: Extra final step testing
+      // go_to_final_step: true,
+      // condition: getRandomValue({ items: ['C', 'D', 'NC'] }),
+      // condition_limit_reason: 'no_defects',
+      // --
+    }
 
     const data = await this.api({
       url: '/partner_api/tradein/imei',
@@ -266,19 +274,16 @@ class Singleton extends Api {
     this.getUserDataCancelTokenSource = axios.CancelToken.source()
 
     const data = await this.api({
-      url: '/_tmp/me',
+      url: '/partner_api/tradein/me',
       method: 'POST',
       data: {
         _addData: {
           user_data : {
             display_name: 'Developer',
           },
-          session_data: {
-            tradein_id: 2,
-          },
           features: {
             country_code: 'RU',
-            smartwatch_allowed: true,
+            // smartwatch_allowed: true,
           },
         },
       },

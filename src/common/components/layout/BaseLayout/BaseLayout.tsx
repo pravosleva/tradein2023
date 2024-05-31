@@ -4,8 +4,14 @@ import classes from './BaseLayout.module.scss'
 import clsx from 'clsx'
 import { useMemo } from 'react'
 import { vi } from '~/common/vi'
+import baseClasses from '~/App.module.scss'
 
+const VITE_PUBLIC_URL = import.meta.env.VITE_PUBLIC_URL
+const PUBLIC_URL = VITE_PUBLIC_URL || ''
 const brandName = import.meta.env.VITE_BRAND || 'SP'
+
+const isLocalProd = import.meta.env.VITE_LOCAL_PROD === '1'
+const isStaging = isLocalProd
 
 export const BaseLayout: React.FC<any> = ({ children }) => {
   const fullyear = useMemo(() => new Date().getFullYear(), [])
@@ -31,7 +37,15 @@ export const BaseLayout: React.FC<any> = ({ children }) => {
               gap: '16px',
             }}
           >
-            <img className={classes.logo} src='/static3/img/logo/sp/logo.svg' />
+            <img
+              className={clsx(classes.logo, { [baseClasses.grayFilter]: isStaging })}
+              src={isStaging ? `${PUBLIC_URL}/static3/img/logo/escape-fake.png` : `${PUBLIC_URL}/static3/img/logo/sp/logo.svg`}
+              style={{
+                maxWidth: '180px',
+                maxHeight: '40px',
+                border: 'dashed red',
+              }}
+            />
             <div
               style={{
                 marginLeft: 'auto',
@@ -43,7 +57,6 @@ export const BaseLayout: React.FC<any> = ({ children }) => {
                 )
               }
             </div>
-            
           </div>
         </ResponsiveBlock>
       </div>

@@ -116,6 +116,9 @@ export const EnterImeiStep = memo(({
         )
       }
       <Input
+        style={{
+          letterSpacing: '0.15em',
+        }}
         isSuccess={!isNextBtnDisabled}
         ref={inputRef}
         value={value}
@@ -127,9 +130,7 @@ export const EnterImeiStep = memo(({
         }}
         // @ts-ignore
         maxLength={15}
-        style={{
-          letterSpacing: '0.15em',
-        }}
+        type='number'
       />
     </ContentWithControls>
   )

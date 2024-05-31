@@ -7,6 +7,8 @@ import 'react-phone-input-2/lib/style.css'
 import classes from './PhoneInput.module.scss'
 import inputClasses from '~/common/components/sp-custom/Input/Input.module.scss'
 
+const borderWidth = 1
+
 interface IProps {
   defaultCountryCode?: string;
   // isErrored?: boolean;
@@ -72,7 +74,7 @@ export const PhoneInput = React.forwardRef(({
       height: '100%',
     },
     inputStyle: {
-      borderWidth: '2px',
+      borderWidth: `${borderWidth}px`,
       borderColor: '#cbd5e1', // stale-300
       // padding: '1px',
       // border: '2px solid lightgray',
@@ -84,7 +86,7 @@ export const PhoneInput = React.forwardRef(({
     },
     buttonStyle: {
       borderRadius: '8px 0 0 8px',
-      borderWidth: '2px',
+      borderWidth: `${borderWidth}px`,
       // borderColor: '#cbd5e1', // stale-300
     },
     dropdownStyle: {

@@ -45,7 +45,7 @@ export const InitStep = ({
                       <ul className="max-w-md px-4 space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400">
                         <li><code className={baseClasses.inlineCode}>onSuccess</code>
                           <ul className="max-w-md px-4 space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400">
-                            <li>Put to <code className={baseClasses.inlineCode}>state.context.baseSessionInfo</code>
+                            <li>Put to <code className={baseClasses.inlineCode}>context.imei.response?.id</code>
                               <ul className="max-w-md px-4 space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400">
                                 <li><code className={baseClasses.inlineCode}>tradeinId</code></li>
                               </ul>

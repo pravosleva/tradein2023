@@ -1,14 +1,12 @@
 import { TStepMachineContextFormat } from '~/common/xstate/stepMachine/types'
 
 export const initialStepMachineContextFormat: TStepMachineContextFormat = {
-  baseSessionInfo: {
-    tradeinId: 1,
-  },
   initApp: {
     response: null,
     uiMsg:null,
     result: {
       state: 'stopped',
+      isLogged: false,
     },
   },
   imei: {

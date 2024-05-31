@@ -2,7 +2,7 @@ body {
   -webkit-tap-highlight-color: transparent; /* for removing the highlight */
 }
 
-/* Fira Sans */
+/* Fira Sans
 @font-face {
   font-family: 'Fira Sans';
   src: local('Fira Sans SemiBold'), local('FiraSans-SemiBold'),
@@ -49,6 +49,59 @@ body {
     url('/static3/fonts/firasans/Firasansregular.woff2') format('woff2'),
     url('/static3/fonts/firasans/Firasansregular.woff') format('woff'),
     url('/static3/fonts/firasans/Firasansregular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: auto;
+}
+*/
+
+/* PT Sans */
+@font-face {
+  font-family: 'PT Sans';
+  src: local('PT Sans SemiBold'), local('PTSans-SemiBold'),
+    url('/static3/fonts/ptsans/ptsansbold.woff2') format('woff2'),
+    url('/static3/fonts/ptsans/ptsansbold.woff') format('woff'),
+    url('/static3/fonts/ptsans/ptsansbold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: auto;
+}
+@font-face {
+  font-family: 'PT Sans';
+  src: local('PT Sans Medium'), local('PTSans-Medium'),
+    url('/static3/fonts/ptsans/ptsans.woff2') format('woff2'),
+    url('/static3/fonts/ptsans/ptsans.woff') format('woff'),
+    url('/static3/fonts/ptsans/ptsans.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: auto;
+}
+@font-face {
+  font-family: 'PT Sans';
+  src: local('PT Sans Medium Italic'), local('PTSans-MediumItalic'),
+    url('/static3/fonts/ptsans/ptsansitalic.woff2') format('woff2'),
+    url('/static3/fonts/ptsans/ptsansitalic.woff') format('woff'),
+    url('/static3/fonts/ptsans/ptsansitalic.ttf') format('truetype');
+  font-weight: 500;
+  font-style: italic;
+  font-display: auto;
+}
+@font-face {
+  font-family: 'PT Sans';
+  src: local('PT Sans Italic'), local('PTSans-Italic'),
+    url('/static3/fonts/ptsans/ptsansitalic.woff2') format('woff2'),
+    url('/static3/fonts/ptsans/ptsansitalic.woff') format('woff'),
+    url('/static3/fonts/ptsans/ptsansitalic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: auto;
+}
+@font-face {
+  font-family: 'PT Sans';
+  src: local('PT Sans Regular'), local('PTSans-Regular'),
+    url('/static3/fonts/ptsans/ptsans.woff2') format('woff2'),
+    url('/static3/fonts/ptsans/ptsans.woff') format('woff'),
+    url('/static3/fonts/ptsans/ptsans.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
   font-display: auto;

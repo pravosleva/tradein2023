@@ -4,7 +4,8 @@
 
 * {
   box-sizing: border-box;
-  font-family: Fira Sans, system-ui;
+  /* font-family: "Fira Sans", system-ui; */
+  font-family: "PT Sans", system-ui;
   font-style: normal;
   letter-spacing: .03em;
 
@@ -150,4 +151,16 @@ table > tbody > tr > td:first-child {
 }
 .red-border {
   border: 1px solid red;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
 }

@@ -5,7 +5,7 @@ import pkg from '../../package.json'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const VITE_PUBLIC_URL = import.meta.env.VITE_PUBLIC_URL
-const PUBLIC_URL = VITE_PUBLIC_URL || '/static3/common' // process?.env?.PUBLIC_URL || '/static3'
+const PUBLIC_URL = VITE_PUBLIC_URL ? `${VITE_PUBLIC_URL}/static3/common` : '/static3/common' // process?.env?.PUBLIC_URL || '/static3'
 
 // let _c = 0
 

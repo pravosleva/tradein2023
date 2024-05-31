@@ -1,7 +1,9 @@
 import { proxy } from 'valtio'
 import { initialStepMachineContextFormat, initialContractFormState } from './xstate/stepMachine/initialState'
 import { NSP } from '~/utils/httpClient'
+import { getRandomString } from '~/utils/aux-ops'
 import { TStepMachineContextFormat, TContractForm, EStep } from './xstate/stepMachine/types'
+import { mutateObject } from '~/utils/aux-ops'
 import pkg from '../../package.json' 
 
 class Singleton {
@@ -15,9 +17,13 @@ class Singleton {
     stateValue: EStep | null;
     appVersion: string;
   }
+  public uniquePageLoadKey: string;
+  public uniqueUserDataLoadKey: string;
   // NOTE: Etc. 1/4
 
   private constructor() {
+    this.uniquePageLoadKey = getRandomString(5)
+    this.uniqueUserDataLoadKey = ''
     this._stepMachineState = proxy(initialStepMachineContextFormat)
     this._contractFormState = proxy(initialContractFormState)
     this._contractFormLastEditedFieldInfo = proxy({
@@ -34,8 +40,15 @@ class Singleton {
     return Singleton.instance
   }
 
-  public setUserDataResponse (res: NSP.TUserDataResponse | null) {
+  public setUserDataResponse ({ res, reqState }: {
+    res: NSP.TUserDataResponse | null;
+    reqState: 'stopped' | 'pending' | 'success' | 'error';
+  }) {
+    this.uniqueUserDataLoadKey = getRandomString(7)
     this._stepMachineState.initApp.response = res
+    this._stepMachineState.initApp.result.state = reqState
+
+    this._stepMachineState.initApp.result.isLogged = res?.ok || false
   }
   public setImeiStepResponse (res: NSP.TImeiResponse | null) {
     this._stepMachineState.imei.response = res
@@ -49,10 +62,14 @@ class Singleton {
   public resetState() {
     try {
       // TODO: Doesnt work -> this._stepMachineState = initialStepMachineContextFormat
-      this._stepMachineState.imei.value = ''
       for (const key in this._contractFormState) delete this._contractFormState[key]
-      this._contractFormLastEditedFieldInfo.name = null
       // NOTE: Etc. 4/4
+
+      // NOTE: Exp
+      mutateObject({
+        target: this._stepMachineState,
+        source: initialStepMachineContextFormat,
+      })
     } catch (err) {
       console.log(err)
     }

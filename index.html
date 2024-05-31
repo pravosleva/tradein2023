@@ -2,43 +2,107 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/static3/favicon.ico" />
-    <title>%VITE_BRAND% | Offline Trade-In %VITE_APP_VERSION% | %VITE_GIT_SHA1%</title>
+    <link rel="icon" type="image/svg+xml" href="%VITE_PUBLIC_URL%/static3/favicon.ico" />
+    <title>%VITE_BRAND% | Offline Trade-In v%VITE_APP_VERSION% | %VITE_GIT_SHA1%</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <meta name="theme-color" content="#000000" />
-    <script defer type="text/javascript" src="/static3/u-1.custom-eruda.js"></script>
-    <script async nomodule type="text/javascript" src="/static3/u-2.nomodule-fallback.js"></script>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script defer type="module" src="/src/main.tsx"></script>
-    <script async type="text/javascript">
-      const initDevToggler = ({ querySelector, oddLimit, resetTimeout, targetAction }) => {
-        let counter = 0
-        const elm = document.querySelector(querySelector)
-        const _resetCounter = () => {
-          console.log('RESET')
-          counter = 0
+    <!-- <script type="module" type="text/javascript" src="%VITE_PUBLIC_URL%/static3/u-1.custom-eruda.js"></script> -->
+    <!-- <script async nomodule type="text/javascript" src="%VITE_PUBLIC_URL%/static3/u-2.nomodule-fallback.js"></script> -->
+    <script defer type="text/javascript">
+      // NOTE: https://github.com/liriliri/eruda
+      class CustomErudaSingletone {
+        constructor({ document, publicUrl }) {
+          this.isEnabled = false
+          this.document = document
+          this.publicUrl = publicUrl
+        }
+        static getInstance(arg) {
+          if (!CustomErudaSingletone.instance) CustomErudaSingletone.instance = new CustomErudaSingletone(arg)
+
+          return CustomErudaSingletone.instance
+        }
+        initIfNecessary() {
+          if (this.isEnabled) return
+
+          const src = `${this.publicUrl}/static3/common/eruda@2.10.0.min.js`
+          const script = this.document.createElement('script')
+          script.src = src
+
+          this.document.body.appendChild(script)
+          script.onload = function() {
+            eruda.init()
+            eruda.position({ x: 20, y: 20 })
+          }
+          script.onerror = function(err) {
+            console.log(err)
+          }
+          this.isEnabled = true
+        }
+      }
+      const customEruda = CustomErudaSingletone.getInstance({
+        document: window.document,
+        publicUrl: '%VITE_PUBLIC_URL%',
+      })
+    </script>
+    <script async nomodule type="text/javascript">
+      let supported = null
+      async function modulesSupported() {
+        if (typeof supported === 'boolean') return supported;
+
+        try {
+          let module = await new Function("return (async () => {return await import('data:application/javascript,export%20let%20canary%20=%201;')})")()()
+          supported = module && module.canary && module.canary == 1
+        } catch(e) {
+          supported = false
         }
 
-        if (!!elm) elm.onclick = function () {
-          if (counter === 0) setTimeout(_resetCounter, resetTimeout)
-          counter += 1
-          // console.log(counter)
-          if (counter % oddLimit === 0) {
-            switch (true) {
-              case !!targetAction:
-                targetAction()
-                break
-              default:
-                try {
-                  window.proxiedState.devtool.devMenuChoisementIndicatorCounter += 1
-                } catch (err) {
-                  console.warn(err)
-                }
-                break
+        return supported;
+      }
+      modulesSupported()
+        .then((ok) => {
+          console.log(`modulesSupported is: ${ok}`)
+          if (!ok) {
+            try {
+              customEruda.initIfNecessary()
+            } catch (err) {
+              console.warn(err)
+            } finally {
+              window.alert("Modern browsers know both type=module and nomodule, so skip this")
+              window.alert("Old browsers ignore script with unknown type=module, but execute this.")
             }
           }
+        })
+        .catch((err) => window.alert(err.message || 'WTF'));
+    </script>
+    <script defer type="text/javascript">
+      let params = new URLSearchParams(document.location.search)
+      let isDebugEnabled = params.get("debug") === '1'
+      // NOTE: let age = parseInt(params.get("age"), 10); // is the number 18
+
+      const initDevToggler = ({ querySelector, oddLimit, resetTimeout, targetAction }) => {
+        try {
+          let counter = 0
+          const elm = document.querySelector(querySelector)
+          const _resetCounter = () => {
+            console.log('RESET')
+            counter = 0
+          }
+          if (!!elm) elm.onclick = function () {
+            if (counter === 0) setTimeout(_resetCounter, resetTimeout)
+            counter += 1
+            if (counter % oddLimit === 0) {
+              switch (true) {
+                case !!targetAction:
+                  targetAction()
+                  break
+                default:
+                  break
+              }
+            }
+          }
+          else throw new Error(`elm by querySelector "${querySelector}" is ${typeof elm}`)
+        } catch (err) {
+          console.warn(err)
         }
       }
       window.initDevToggler = initDevToggler
@@ -47,7 +111,7 @@
           if (!!window.initDevToggler)
             window.initDevToggler({
               querySelector: '#footer-compary',
-              oddLimit: 12,
+              oddLimit: 10,
               resetTimeout: 5000,
               targetAction: () => {
                 customEruda.initIfNecessary()
@@ -58,8 +122,15 @@
           console.warn(err)
         }
       }
-      document.addEventListener('DOMContentLoaded', onReady)
-      // window.onload = onReady
+      // document.addEventListener('DOMContentLoaded', onReady)
+      window.onload = () => {
+        if (isDebugEnabled) customEruda.initIfNecessary()
+        else onReady()
+      }
     </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

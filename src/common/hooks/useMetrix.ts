@@ -21,6 +21,8 @@ enum EReportType {
   SUCCESS = 'success',
 }
 
+const VITE_GIT_SHA1 = import.meta.env.VITE_GIT_SHA1
+
 export const useMetrix = ({ isDebugEnabled }: TProps) => {
   const smViSnap = useSnapshot(vi.smState)
   // NOTE: 1.1 Use wws.subscribeOnData once only!
@@ -202,6 +204,10 @@ export const useMetrix = ({ isDebugEnabled }: TProps) => {
           metrixEventType: NEvents.EMetrixClientOutgoing.SP_MX_EV,
           // @ts-ignore
           stateValue: vi.common.stateValue,
+          tradeinId: vi.smState.imei.response?.id || 0,
+          uniquePageLoadKey: vi.uniquePageLoadKey,
+          uniqueUserDataLoadKey: vi.uniqueUserDataLoadKey,
+          gitSHA1: VITE_GIT_SHA1,
         }
       })
     })

@@ -1,10 +1,13 @@
 @import '~/scss-vars/colors.scss';
+@import '~/scss-vars/common.scss';
 
 .spInput {
   outline: unset;
   // border: 2px solid lightgray;
-  border: 2px solid $color-tw-slate-300;
-  border-radius: 8px;
+  // border: 2px solid $color-tw-slate-300;
+  // border-radius: 8px;
+  border: $common-control-elements-border-width solid $color-tw-slate-300;
+  border-radius: $common-control-elements-radius;
   cursor: pointer;
   padding: 5px 10px;
 

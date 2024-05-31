@@ -346,16 +346,16 @@ function App() {
       case EStep.UploadPhotoInProgress:
         return (
           <>
-            {!state.context.baseSessionInfo.tradeinId ? (
+            {!state.context.imei.response?.id ? (
               <Alert
                 type='danger'
                 header='Отсутствует Tradein-Id для текущей сессии'
               >
-                <pre className={classes.preStyled}>{JSON.stringify(state.context.baseSessionInfo, null, 2)}</pre>
+                <pre className={classes.preStyled}>{JSON.stringify(state.context.imei, null, 2)}</pre>
               </Alert>
             ) : (
               <UploadPhotoProcessStep
-                tradeinId={state.context.baseSessionInfo.tradeinId}
+                tradeinId={state.context.imei.response?.id}
                 header={`Загрузите фото устройства${state.context.imei.response?.phone.model ? ` ${state.context.imei.response?.phone.model}` : ''}`}
                 subheader={[
                   'Для финальной оценки и подтверждения состояния',
@@ -614,9 +614,8 @@ function App() {
                 id: '1',
                 label: 'Скачать договор повторно',
                 onClick: () => {
-                  // TODO: state.context.baseSessionInfo.tradeinId
-                  // should be moved to state.context.initApp.response?.session_data.tradein_id
-                  window.open(`/partner_api/tradein/buyout_doc/i/${state.context.baseSessionInfo.tradeinId}.pdf`, '_blank')
+                  // NOTE: Expected in state.context.imei.response?.id
+                  window.open(`/partner_api/tradein/buyout_doc/i/${state.context.imei.response?.id}.pdf`, '_blank')
                 },
                 btn: {
                   color: 'primary',
@@ -652,7 +651,7 @@ function App() {
             ]}
             isStickyBottomControls
           >
-            {null}
+            Договор подписан
           </ContentWithControls>
         )
       default:
@@ -676,7 +675,6 @@ function App() {
     state.context.photoLink.response,
     state.context.photoLink.result.state,
     state.context.photoLink.uiMsg,
-    state.context.baseSessionInfo,
     state.context.photoStatus.uiMsg,
     state.context.photoStatus.response,
     state.context.contract,

@@ -29,7 +29,7 @@ export const stepMachine = createMachine<TStepMachineContextFormat>(
       [EStep.AppInit]: {
         invoke: {
           src: 'getUserDataMachine',
-          id: '/_tmp/me',
+          id: '/partner_api/tradein/me',
           // data: (context) => ({ expText: 'exp text' }),
           onDone: {
             target: EStep.EnterImei,
@@ -394,7 +394,7 @@ export const stepMachine = createMachine<TStepMachineContextFormat>(
           checkPhone: (_ctx, _e) => ({ ...initialStepMachineContextFormat.checkPhone }),
           photoLink: (_ctx, _e) => ({ ...initialStepMachineContextFormat.photoLink }),
           photoStatus: (_ctx, _e) => ({ ...initialStepMachineContextFormat.photoStatus }),
-          initApp: (_ctx, _e) => ({ ...initialStepMachineContextFormat.initApp }),
+          // initApp: (_ctx, _e) => ({ ...initialStepMachineContextFormat.initApp }),
           // NOTE: Etc.
         }),
       },

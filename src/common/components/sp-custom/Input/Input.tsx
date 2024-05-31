@@ -4,7 +4,7 @@ import React from 'react'
 import clsx from 'clsx'
 import classes from './Input.module.scss'
 
-interface IInputProps extends React.ButtonHTMLAttributes<HTMLInputElement> {
+interface IInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   // title: string;
   // showIcon: boolean;
   // color: 'primary' | 'secondary';

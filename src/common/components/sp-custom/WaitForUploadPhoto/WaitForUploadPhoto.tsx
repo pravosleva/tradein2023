@@ -5,6 +5,9 @@ import baseClasses from '~/App.module.scss'
 import { Dialog } from '~/common/components/tailwind'
 import { NSP } from '~/utils/httpClient'
 
+const VITE_PUBLIC_URL = import.meta.env.VITE_PUBLIC_URL
+const PUBLIC_URL = VITE_PUBLIC_URL || ''
+
 type TProps = {
   photoLinkResponse: NSP.TPhotoLinkResponse | null;
 }
@@ -37,7 +40,7 @@ export const WaitForUploadPhoto = ({ photoLinkResponse }: TProps) => {
                 style={{ marginBottom: '0px' }}
               >
                 <img
-                  src='/static3/img/samples/sample-phone.svg'
+                  src={`${PUBLIC_URL}/static3/img/samples/sample-phone.svg`}
                   alt='img'
                   style={{ height: '50px', width: '50px', objectFit: 'contain' }}
                 />
@@ -65,7 +68,7 @@ export const WaitForUploadPhoto = ({ photoLinkResponse }: TProps) => {
               </div>
               <button onClick={handleOpenModal}>
                 <img
-                  src='/static3/img/samples/sample-qr.svg'
+                  src={`${PUBLIC_URL}/static3/img/samples/sample-qr.svg`}
                   alt='img'
                 />
                 <span className={classes.desktopOnly}>Показать QR код</span>
@@ -83,7 +86,7 @@ export const WaitForUploadPhoto = ({ photoLinkResponse }: TProps) => {
 
               <div className={classes.flexStartRow}>
                 <img
-                  src='/static3/img/samples/sample-computer.svg'
+                  src={`${PUBLIC_URL}/static3/img/samples/sample-computer.svg`}
                   alt='img'
                   style={{ height: '50px', width: '50px', objectFit: 'contain' }}
                 />

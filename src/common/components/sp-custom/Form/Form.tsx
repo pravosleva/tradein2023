@@ -213,7 +213,7 @@ export const Form = memo(({
         className={clsx(
           'grid',
           'gap-3',
-          'mb-6',
+          // 'mb-6',
           'grid-cols-1',
           // 'md:grid-cols-1',
         )}

@@ -41,16 +41,12 @@ export enum ECountryCode {
 
 export type TSelectedItem = { value: string; label: string; }
 export type TStepMachineContextFormat = {
-  baseSessionInfo: {
-    // -- TODO: Wich format will be received from backend?
-    tradeinId: number | null;
-    // --
-  },
   initApp: {
     response: null | (NSP.TUserDataResponse & NResponseValidate.TResult<NSP.TUserDataResponse>);
     uiMsg: string | null;
     result: {
       state: 'stopped' | 'pending' | 'success' | 'error';
+      isLogged: boolean;
     };
   },
   imei: {

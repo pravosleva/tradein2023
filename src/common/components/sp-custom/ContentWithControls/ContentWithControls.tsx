@@ -64,7 +64,12 @@ export const ContentWithControls = ({
     <ErrorBoundary>
       <div className={baseClasses.stack4}>
         <ResponsiveBlock
-          className={clsx(classes.stickyTopHeader, 'backdrop-blur--lite')}
+          className={clsx(
+            classes.stickyTopHeader,
+            'backdrop-blur--lite',
+            baseClasses.boxShadowBottomMobileOnly,
+            // baseClasses.panelRoundedBottomMobile,
+          )}
         >
           <ResponsiveBlock
             isPaddedMobile
@@ -152,6 +157,8 @@ export const ContentWithControls = ({
                   'backdrop-blur--lite',
                   {
                     [classes.stickyBottomControls]: isStickyBottomControls,
+                    [baseClasses.boxShadowTopMobileOnly]: isStickyBottomControls,
+                    [baseClasses.panelRoundedTopMobile]: isStickyBottomControls,
                   },
                 )}
               >
