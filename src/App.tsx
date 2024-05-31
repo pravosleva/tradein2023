@@ -54,7 +54,7 @@ function App() {
       case EStep.AppInitErr:
         return (
           <ContentWithControls
-            header='Oops...'
+            header='Oops!'
             controls={[
               {
                 id: '2',

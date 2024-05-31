@@ -3,7 +3,7 @@
 ## ⚠️ Сборка
 
 <details>
-<summary markdown="b">На [test.smartprice.ru](https://test.smartprice.ru/tradein)</summary>
+<summary markdown="b">На [test.example.ru](https://test.example.ru/tradein)</summary>
 
 ```bash
 yarn build:staging
@@ -11,7 +11,7 @@ yarn build:staging
 </details>
 
 <details>
-<summary markdown="b">На продакшен [smartprice.ru/tradein](https://smartprice.ru/tradein)</summary>
+<summary markdown="b">На продакшен [example.ru/tradein](https://example.ru/tradein)</summary>
 
 ```bash
 yarn build:prod
@@ -48,7 +48,7 @@ sp.offline-tradein-2023.mtsmain.xstate/
 <summary markdown="span">How to use</summary>
 
 ```bash
-VITE_BASE_API_URL=https://smartprice.ru
+VITE_BASE_API_URL=https://example.ru
 ```
 
 [See also about Vite envs](https://vitejs.dev/guide/env-and-mode.html)
