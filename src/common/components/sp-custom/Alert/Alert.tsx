@@ -12,7 +12,7 @@ const getColor = ({ type }: { type: TAlertType }): string => {
     case 'warning':
       return 'border-l-4 border-yellow-600 text-yellow-600 border rounded-lg bg-yellow-50'
     case 'danger':
-      return 'p-3 border-none text-black rounded-lg bg-mtsRedLight'
+      return 'p-3 border-none text-black rounded-lg bg-red-50'
     case 'success':
       return 'border-l-4 border-green-600 text-green-600 border rounded-lg bg-green-50'
     default:
