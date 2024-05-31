@@ -7,7 +7,7 @@ import classes from '~/App.module.scss'
 import { stepMachine, EStep, ECountryCode } from '~/common/xstate/stepMachine'
 import { useMachine } from '@xstate/react'
 import { useLayoutEffect, useMemo, useRef } from 'react'
-import { Alert, Spinner } from '~/common/components/tailwind'
+import { Spinner } from '~/common/components/tailwind'
 import { ContentWithControls, ResponsiveBlock } from '~/common/components/sp-custom'
 import { BaseLayout } from '~/common/components/layout/BaseLayout'
 import {
@@ -20,6 +20,7 @@ import {
   ContractStep,
 } from '~/common/components/steps'
 import clsx from 'clsx'
+import { Alert } from '~/common/components/sp-custom'
 import {
   getTranslatedConditionCode,
   getTranslatedConditionSuffixCode,
