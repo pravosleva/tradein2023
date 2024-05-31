@@ -69,6 +69,7 @@ export const ContentWithControls = ({
             'backdrop-blur--lite',
             baseClasses.boxShadowBottomMobileOnly,
             // baseClasses.panelRoundedBottomMobile,
+            'fade-in',
           )}
         >
           <ResponsiveBlock
@@ -130,7 +131,7 @@ export const ContentWithControls = ({
         {
           !!children && (
             hasChildrenFreeWidth ? (
-              <div className={baseClasses.stack}>
+              <div className={clsx(baseClasses.stack, 'fade-in')}>
                 {children}
               </div>
             ) : (
@@ -138,7 +139,7 @@ export const ContentWithControls = ({
                 isPaddedMobile
                 isLimitedForDesktop
               >
-                <div className={baseClasses.stack}>
+                <div className={clsx(baseClasses.stack, 'fade-in')}>
                   {children}
                 </div>
               </ResponsiveBlock>
@@ -160,6 +161,7 @@ export const ContentWithControls = ({
                     [baseClasses.boxShadowTopMobileOnly]: isStickyBottomControls,
                     [baseClasses.panelRoundedTopMobile]: isStickyBottomControls,
                   },
+                  'fade-in',
                 )}
               >
                 <ResponsiveBlock
