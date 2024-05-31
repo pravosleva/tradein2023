@@ -1,21 +1,76 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import axios, { AxiosError, AxiosInstance, AxiosResponse, CancelToken } from 'axios'
+import clsx from 'clsx'
 // import axiosRetry from 'axios-retry'
 // @ts-ignore
 import * as rax from 'retry-axios'
+import { groupLog, TGroupLogProps } from '~/utils/groupLog'
 
 const VITE_BASE_API_URL = import.meta.env.VITE_BASE_API_URL
 
-export class Api {
-  axiosInstance: AxiosInstance
+type TRaxConfig = {
+  // NOTE: Retry 5 times on requests that return a response (500, etc) before giving up. Defaults to 3.
+  retry: number;
+  // NOTE: Milliseconds to delay at first. Defaults to 100. Only considered when backoffType is 'static'
+  retryDelay?: number;
+  // NOTE: You can set the backoff type. Options are 'exponential' (default), 'static' or 'linear'
+  backoffType: 'exponential' | 'static' | 'linear';
+  // NOTE: Retry twice on errors that don't return a response (ENOTFOUND, ETIMEDOUT, etc).
+  noResponseRetries: number;
+  // NOTE: HTTP methods to automatically retry.  Defaults to: ['GET', 'HEAD', 'OPTIONS', 'DELETE', 'PUT']
+  httpMethodsToRetry: ('GET' | 'POST' | 'HEAD' | 'OPTIONS' | 'DELETE' | 'PUT')[];
+  // NOTE: The response status codes to retry.  Supports a double array with a list of ranges.  Defaults to: [[100, 199], [429, 429], [500, 599]]
+  statusCodesToRetry?: number[][];
+  // NOTE: If you are using a non static instance of Axios you need to pass that instance here (const ax = axios.create())
+  instance: AxiosInstance;
+  // NOTE: You can detect when a retry is happening, and figure out how many retry attempts have been made
+  onRetryAttempt: (err: any) => void;
+  currentRetryAttempt?: number;
+}
 
-  constructor() {
+export type TAPIProps = {
+  isDebugEnabled: boolean;
+}
+
+export class API {
+  axiosInstance: AxiosInstance
+  isDebugEnabled: boolean
+
+  constructor({ isDebugEnabled }: TAPIProps) {
+    this.isDebugEnabled = isDebugEnabled
     const axiosInstance = this.axiosInstance = axios.create({
       baseURL: VITE_BASE_API_URL,
       // timeout: 1000,
       // headers: { 'X-Custom-Header': 'foobar' },
     })
+    axiosInstance.interceptors.request.use(
+      (config) => {
+        // NOTE: Do something before request is sent
+        this.log({ namespace: 'API:axios-interceptor:req', items: [config] })
+        return config;
+      },
+      (error) => {
+        // NOTE: Do something with request error
+        this.log({ namespace: 'API:axios-interceptor:req-err', items: [error] })
+        return Promise.reject(error);
+      },
+    )
+    axiosInstance.interceptors.response.use(
+      (response) => {
+        // NOTE: Any status code that lie within the range of 2xx cause this function to trigger
+        // Do something with response data
+        this.log({ namespace: 'API:axios-interceptor:res', items: [response] })
+        return response;
+      },
+      (error) => {
+        // NOTE: Any status codes that falls outside the range of 2xx cause this function to trigger
+        // Do something with response error
+        this.log({ namespace: 'API:axios-interceptor:res-err', items: [error] })
+        return Promise.reject(error);
+      },
+    )
+
     // v1:
     // axiosRetry(this.axiosInstance, { retries: 5, retryDelay: axiosRetry.exponentialDelay })
 
@@ -33,9 +88,24 @@ export class Api {
       httpMethodsToRetry: ['GET', 'OPTIONS', 'POST'],
       // NOTE: You can detect when a retry is happening, and figure out how many
       // retry attempts have been made
-      onRetryAttempt: (err: any) => {
-        const cfg: any = rax.getConfig(err)
-        console.log(`Retry attempt #${cfg.currentRetryAttempt}`)
+      onRetryAttempt: (err: AxiosError) => {
+        // NOTE: This interceptor has lower priority than axios interceptors
+        const raxConfig: TRaxConfig = rax.getConfig(err)
+        const msgs = [`Retry attempt #${raxConfig.currentRetryAttempt}`]
+
+        try {
+          const internalAxiosRequestConfig = err.config
+          // console.log(internalAxiosRequestConfig?.baseURL)
+          if (!internalAxiosRequestConfig?.url)
+            throw new Error(`Ожидалось поле url (строка), получено: ${clsx(typeof internalAxiosRequestConfig?.url, `(${typeof internalAxiosRequestConfig?.url})`)}`)
+          else
+            msgs.push(internalAxiosRequestConfig?.url)
+        } catch (__err: any) {
+          msgs.push(`ERR: Не удалось проанализировать попытку запроса: ${__err.message || 'No err.message'}`)
+          console.warn(__err)
+        } finally {
+          this.log({ namespace: 'API:rax', items: msgs })
+        }
       },
     };
     // const _interceptorId = rax.attach(axiosInstance)
@@ -43,6 +113,10 @@ export class Api {
     rax.attach(axiosInstance)
 
     this.api = this.api.bind(this)
+  }
+
+  log(ps: TGroupLogProps) {
+    if (this.isDebugEnabled) groupLog(ps)
   }
 
   universalAxiosResponseHandler(validator: (data: any) => boolean) {

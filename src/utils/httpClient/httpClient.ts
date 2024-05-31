@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios, { CancelTokenSource } from 'axios'
 import { NSP } from './types'
-import { Api } from './Api'
+import { API, TAPIProps } from './API'
 import { getRandomString, getRandomValue } from '~/utils/aux-ops'
 import { responseValidate, NResponseValidate } from './utils'
 
@@ -10,7 +10,7 @@ import { responseValidate, NResponseValidate } from './utils'
 const isDev = process.env.NODE_ENV === 'development'
 const isLocalProd = import.meta.env.VITE_LOCAL_PROD === '1'
 
-class Singleton extends Api {
+class Singleton extends API {
   private static instance: Singleton
   _devPollingKey: string
   sendIMEICancelTokenSource: CancelTokenSource
@@ -21,8 +21,8 @@ class Singleton extends Api {
   getUserDataCancelTokenSource: CancelTokenSource
   // axiosInstance: AxiosInstance
 
-  private constructor() {
-    super()
+  private constructor(ps: TAPIProps) {
+    super(ps)
     this._devPollingKey = getRandomString(5)
     this.sendIMEICancelTokenSource = axios.CancelToken.source()
     this.checkPhoneCancelTokenSource = axios.CancelToken.source()
@@ -31,8 +31,8 @@ class Singleton extends Api {
     this.sendContractCancelTokenSource = axios.CancelToken.source()
     this.getUserDataCancelTokenSource = axios.CancelToken.source()
   }
-  public static getInstance(): Singleton {
-    if (!Singleton.instance) Singleton.instance = new Singleton()
+  public static getInstance(ps: TAPIProps): Singleton {
+    if (!Singleton.instance) Singleton.instance = new Singleton(ps)
 
     return Singleton.instance
   }
@@ -306,4 +306,4 @@ class Singleton extends Api {
   }
 }
 
-export const httpClient = Singleton.getInstance()
+export const httpClient = Singleton.getInstance({ isDebugEnabled: true })

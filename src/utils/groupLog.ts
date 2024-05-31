@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-type TProps = {
+export type TGroupLogProps = {
   namespace: string;
   items: any[];
 }
 
-export const groupLog = ({ namespace, items }: TProps): void => {
+export const groupLog = ({ namespace, items }: TGroupLogProps): void => {
   if (items.length > 0) { 
     console.groupCollapsed(namespace)
       switch (true) {
