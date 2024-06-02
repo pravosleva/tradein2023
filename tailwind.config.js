@@ -25,13 +25,27 @@ export default {
       '4xl': '2.441rem',
       '5xl': '3.052rem',
     },
+    // NOTE: See also https://tailwindcss.com/docs/border-radius
+    borderRadius: {
+      'none': '0',
+      'sm': '5px',
+      DEFAULT: '10px',
+      // DEFAULT: '4px',
+      'md': '15px',
+      'lg': '20px',
+      'full': '9999px',
+      'large': '30px',
+    },
     extend: {
       // maxWidth: {
       //   'sm': '640px',
       // },
       // width: {
-      //   '110': '110px',
+      //   '1000': '1000px',
       // },
+      fontSize: {
+        xs: '0.6rem',
+      },
       colors: {
         transparent: 'transparent',
         current: 'currentColor',
@@ -40,6 +54,7 @@ export default {
         'spBlue2': '#6ea0eb',
         'spGreenDark': '#168f48',
         'spGreen': '#71bc81',
+        'spRed': '#c84f4f',
       },
     },
   },

@@ -8,7 +8,7 @@ type TProps = {
   isOpened: boolean;
   controls: TControlBtn[];
   onClose: () => void;
-  title: string;
+  title?: string;
   description?: string;
   Body: React.ReactNode;
   size: 'xs' | 'sm' | 'md' | 'lg';
@@ -55,7 +55,7 @@ export function Dialog({
               // 'w-screen',
               'overflow-y-auto',
 
-              'p-6',
+              'p-1',
             )}
           >
             <div className="flex min-h-full items-center justify-center p-4 text-center">
@@ -106,7 +106,9 @@ export function Dialog({
                     )
                   }
 
-                  <div className="mt-2">
+                  <div
+                    // className={clsx('mt-2')}
+                  >
                     {Body}
                   </div>
                   

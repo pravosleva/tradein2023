@@ -1,4 +1,5 @@
 export * from './Alert'
+export * from './devtools'
 export * from './Button'
 export * from './ContentWithControls'
 export * from './Form'

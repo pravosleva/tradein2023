@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios, { CancelTokenSource } from 'axios'
+import { getRandomString, getRandomValue } from '~/utils/aux-ops'
 import { NSP } from './types'
 import { API, TAPIProps } from './API'
-import { getRandomString, getRandomValue } from '~/utils/aux-ops'
 import { responseValidate, NResponseValidate } from './utils'
 
 // const createCancelTokenSource = () => axios.CancelToken.source()
@@ -142,7 +142,13 @@ class Singleton extends API {
     const data = await this.api({
       url: '/partner_api/photo/link',
       method: 'POST',
-      data: { id: tradeinId },
+      data: {
+        id: tradeinId,
+        // _add_data: {
+        //   ok: false,
+        //   message: 'FRONT tst 2',
+        // },
+      },
       cancelToken: this.getPhotoLinkCancelTokenSource.token
     })
       .then((r) => r)
@@ -285,6 +291,8 @@ class Singleton extends API {
             country_code: 'RU',
             // smartwatch_allowed: true,
           },
+          // ok: false,
+          // message: 'Hello fuckup tetsting',
         },
       },
       cancelToken: this.getUserDataCancelTokenSource.token

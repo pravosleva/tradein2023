@@ -1,37 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import axios, { AxiosError, AxiosInstance, AxiosResponse, CancelToken } from 'axios'
+import axios, { AxiosError, AxiosInstance, AxiosResponse, CancelToken, InternalAxiosRequestConfig } from 'axios'
 import clsx from 'clsx'
 // import axiosRetry from 'axios-retry'
 // @ts-ignore
 import * as rax from 'retry-axios'
 import { groupLog, TGroupLogProps } from '~/utils/groupLog'
+import { Counter } from '~/utils'
+import { vi } from '~/common/vi'
+import { TRaxConfig, TAPIProps, TReqStateCode, TRequestDetailsInfo } from './types'
 
 const VITE_BASE_API_URL = import.meta.env.VITE_BASE_API_URL
-
-type TRaxConfig = {
-  // NOTE: Retry 5 times on requests that return a response (500, etc) before giving up. Defaults to 3.
-  retry: number;
-  // NOTE: Milliseconds to delay at first. Defaults to 100. Only considered when backoffType is 'static'
-  retryDelay?: number;
-  // NOTE: You can set the backoff type. Options are 'exponential' (default), 'static' or 'linear'
-  backoffType: 'exponential' | 'static' | 'linear';
-  // NOTE: Retry twice on errors that don't return a response (ENOTFOUND, ETIMEDOUT, etc).
-  noResponseRetries: number;
-  // NOTE: HTTP methods to automatically retry.  Defaults to: ['GET', 'HEAD', 'OPTIONS', 'DELETE', 'PUT']
-  httpMethodsToRetry: ('GET' | 'POST' | 'HEAD' | 'OPTIONS' | 'DELETE' | 'PUT')[];
-  // NOTE: The response status codes to retry.  Supports a double array with a list of ranges.  Defaults to: [[100, 199], [429, 429], [500, 599]]
-  statusCodesToRetry?: number[][];
-  // NOTE: If you are using a non static instance of Axios you need to pass that instance here (const ax = axios.create())
-  instance: AxiosInstance;
-  // NOTE: You can detect when a retry is happening, and figure out how many retry attempts have been made
-  onRetryAttempt: (err: any) => void;
-  currentRetryAttempt?: number;
-}
-
-export type TAPIProps = {
-  isDebugEnabled: boolean;
-}
+const auxFrontHeaderName = '__front_ts'
+const counter = Counter(1)
 
 export class API {
   axiosInstance: AxiosInstance
@@ -47,27 +28,107 @@ export class API {
     axiosInstance.interceptors.request.use(
       (config) => {
         // NOTE: Do something before request is sent
-        this.log({ namespace: 'API:axios-interceptor:req', items: [config] })
-        return config;
+        const msgs: any[] = [config]
+        
+        try {
+          if (!config) throw new Error(`Incorrect error format! Expected config, received: ${typeof config}`)
+
+          if (!config.headers) throw new Error(`Incorrect error format! Expected config.headers, received: ${typeof config.headers}`)
+          else {
+            const ts = new Date().getTime() + (counter.next().value || 0) // NOTE: It works!
+            config.headers[auxFrontHeaderName] = ts
+            msgs.push(`config.headers.${auxFrontHeaderName} -> ${ts}`)
+            vi.__fixRequest({ code: 'pending', url: config.url || '', ts })
+          }
+        } catch (err) {
+          msgs.push(err)
+        } finally {
+          this.log({ namespace: 'API:axios-interceptor:req', items: msgs })
+        }
+        return config
       },
       (error) => {
         // NOTE: Do something with request error
-        this.log({ namespace: 'API:axios-interceptor:req-err', items: [error] })
-        return Promise.reject(error);
+        const msgs = [error]
+        try {
+          const config: InternalAxiosRequestConfig<any> = error.config
+          if (!config) throw new Error(`Incorrect error format! Expected config, received: ${typeof config}`)
+
+          const { url, headers } = config
+          const ts = headers[auxFrontHeaderName]
+          if (!ts) throw new Error(`Incorrect config format! Expected headers.${auxFrontHeaderName}, received: ${typeof ts}`)
+
+          msgs.push(`${url} -> rejected_req`)
+          vi.__fixRequest({ code: 'rejected_req', url: url || '', ts })
+        } catch (err) {
+          msgs.push('Не удалось отследить запрос (DBG Fuckup)')
+          msgs.push(err)
+        } finally {
+          this.log({ namespace: 'API:axios-interceptor:req-err', items: msgs })
+        }
+        return Promise.reject(error)
       },
     )
     axiosInstance.interceptors.response.use(
       (response) => {
         // NOTE: Any status code that lie within the range of 2xx cause this function to trigger
         // Do something with response data
-        this.log({ namespace: 'API:axios-interceptor:res', items: [response] })
-        return response;
+        const msgs: any[] = [response]
+        try {
+          const config = response.config
+          if (!config) throw new Error(`Incorrect response format! Expected config, received: ${typeof config}`)
+
+          const { url, headers } = config
+          const ts = headers[auxFrontHeaderName]
+          if (!ts) throw new Error(`Incorrect config format! Expected headers.${auxFrontHeaderName}, received: ${typeof ts}`)
+          if (!url) throw new Error(`Incorrect config format! Expected url, received: ${typeof url}`)
+
+          msgs.push(`${url || '[No url]'} -> fulfilled`)
+          vi.__fixResponse({ code: 'fulfilled', url: url || '', ts, __details: { status: response.status, res: response.data } })
+        } catch (err: any) {
+          msgs.push('Не удалось отследить ответ (DBG Fuckup)')
+          msgs.push(err)
+        } finally {
+          this.log({ namespace: 'API:axios-interceptor:res', items: msgs })
+        }
+        return response
       },
       (error) => {
         // NOTE: Any status codes that falls outside the range of 2xx cause this function to trigger
         // Do something with response error
-        this.log({ namespace: 'API:axios-interceptor:res-err', items: [error] })
-        return Promise.reject(error);
+        console.log(error.config)
+        const msgs = [error]
+        try {
+          const config: InternalAxiosRequestConfig<any> = error.config
+          if (!config) throw new Error(`Incorrect error format! Expected config, received: ${typeof config}`)
+
+          const { url, headers } = config
+          const ts = headers[auxFrontHeaderName]
+          if (!ts) throw new Error(`Incorrect config format! Expected headers.${auxFrontHeaderName}, received: ${typeof ts}`)
+
+          msgs.push(`${url} -> rejected_res`)
+          const eventData: {
+            code: TReqStateCode;
+            url: string;
+            ts: number;
+            __details?: TRequestDetailsInfo;
+          } = {
+            code: 'rejected_res',
+            url: url || '',
+            ts,
+          }
+          if (error?.status) {
+            eventData.__details = { status: error?.status }
+            if (error.data) eventData.__details.res = error.data
+          }
+          vi.__fixResponse(eventData)
+        } catch (err) {
+          msgs.push('Не удалось отследить ответ (DBG Fuckup)')
+          msgs.push(err)
+        } finally {
+          this.log({ namespace: 'API:axios-interceptor:res-err', items: msgs })
+        }
+        return Promise.reject(error)
       },
     )
 
@@ -83,6 +144,7 @@ export class API {
       backoffType: 'exponential',
       // NOTE: Retry 5 times on requests that return a response (500, etc) before giving up. Defaults to 3.
       retry: 5,
+      retryDelay: 500,
       // NOTE: Retry twice on errors that don't return a response (ENOTFOUND, ETIMEDOUT, etc).
       noResponseRetries: 5,
       httpMethodsToRetry: ['GET', 'OPTIONS', 'POST'],

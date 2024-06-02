@@ -125,7 +125,7 @@
       // document.addEventListener('DOMContentLoaded', onReady)
       window.onload = () => {
         if (isDebugEnabled) customEruda.initIfNecessary()
-        else onReady()
+        else setTimeout(onReady, 3000)
       }
     </script>
   </head>

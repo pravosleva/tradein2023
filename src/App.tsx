@@ -20,7 +20,7 @@ import {
   ContractStep,
 } from '~/common/components/steps'
 import clsx from 'clsx'
-import { Alert } from '~/common/components/sp-custom'
+import { Alert, BottomSheet } from '~/common/components/sp-custom'
 import {
   getTranslatedConditionCode,
   getTranslatedConditionSuffixCode,
@@ -639,7 +639,10 @@ function App() {
                   send({ type: 'RESET_ALL_RESPONSES' })
                   
                   // NOTE: Reset aux contract form, and etc.
-                  try { vi.resetState() } catch (err) { console.log(err) }
+                  try {
+                    vi.resetState()
+                    vi.__resetXHRStates()
+                  } catch (err) { console.log(err) }
 
                   wws.resetMxHistory()
                   send({ type: 'goStart' })
@@ -718,6 +721,7 @@ function App() {
           </ResponsiveBlock> */}
         </div>
       </BaseLayout>
+      <BottomSheet />
     </>
   )
 }
