@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export const mutateObject = ({ target, source }: {
+export const mutateObject = ({ target, source, removeIfUndefined }: {
   target: any;
   source: { [key: string]: any };
+  removeIfUndefined?: boolean;
 }) => {
   if (typeof source === 'object') {
     for (const key in source) {
@@ -11,7 +12,7 @@ export const mutateObject = ({ target, source }: {
           else target[key] = source[key]
           break
         case typeof source[key] === 'object' && !!source[key]:
-          if (target[key]) mutateObject({ target: target[key], source: source[key] })
+          if (target[key]) mutateObject({ target: target[key], source: source[key], removeIfUndefined })
           else target[key] = source[key]
           break
         case typeof source[key] === 'object' && !source[key]:
@@ -26,6 +27,10 @@ export const mutateObject = ({ target, source }: {
           break
       }
     }
+  }
+  if (removeIfUndefined) {
+    for (const key in target)
+      if (typeof source[key] === 'undefined') delete target[key]
   }
   return target
 }

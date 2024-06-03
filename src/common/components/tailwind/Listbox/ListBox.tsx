@@ -79,7 +79,7 @@ export const Listbox = ({
               'relative',
               'w-full',
               'cursor-default',
-              'rounded-lg',
+              'rounded-md',
               'bg-white py-2',
               'pl-3',
               'pr-10',

@@ -11,6 +11,9 @@ import { vi } from '~/common/vi'
 import { TRaxConfig, TAPIProps, TReqStateCode, TRequestDetailsInfo } from './types'
 
 const VITE_BASE_API_URL = import.meta.env.VITE_BASE_API_URL
+const isDev = process.env.NODE_ENV === 'development'
+const isLocalProd = import.meta.env.VITE_LOCAL_PROD === '1'
+const isStaging = isDev || isLocalProd
 const auxFrontHeaderName = '__front_ts'
 const counter = Counter(1)
 
@@ -23,7 +26,10 @@ export class API {
     const axiosInstance = this.axiosInstance = axios.create({
       baseURL: VITE_BASE_API_URL,
       // timeout: 1000,
+      withCredentials: !isStaging,
       // headers: { 'X-Custom-Header': 'foobar' },
+      xsrfHeaderName: 'X-CSRFToken',
+      xsrfCookieName: 'csrftoken',
     })
     axiosInstance.interceptors.request.use(
       (config) => {

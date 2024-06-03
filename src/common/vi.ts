@@ -158,6 +158,7 @@ class Singleton {
     mutateObject({
       target: this._common.devtools.network.xhr,
       source: defaultXHRState,
+      removeIfUndefined: true,
     })
   }
   // --

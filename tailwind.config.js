@@ -30,7 +30,6 @@ export default {
       'none': '0',
       'sm': '4px',
       DEFAULT: '8px',
-      // DEFAULT: '4px',
       'md': '8px',
       'lg': '16px',
       'full': '9999px',
