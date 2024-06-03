@@ -76,7 +76,7 @@ export function Dialog({
                     'w-full',
                     `max-w-${size}`,
                     'transform overflow-hidden',
-                    'rounded-2xl',
+                    'rounded-lg',
                     'bg-white',
                     'p-6',
                     'text-left',
