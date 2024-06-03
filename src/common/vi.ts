@@ -154,7 +154,7 @@ class Singleton {
       console.warn(err)
     }
   }
-  public __resetXHRStates() {
+  private __resetXHRStates() {
     mutateObject({
       target: this._common.devtools.network.xhr,
       source: defaultXHRState,
@@ -193,6 +193,8 @@ class Singleton {
         target: this._stepMachineState,
         source: initialStepMachineContextFormat,
       })
+
+      this.__resetXHRStates()
     } catch (err) {
       console.log(err)
     }

@@ -639,10 +639,7 @@ function App() {
                   send({ type: 'RESET_ALL_RESPONSES' })
                   
                   // NOTE: Reset aux contract form, and etc.
-                  try {
-                    vi.resetState()
-                    vi.__resetXHRStates()
-                  } catch (err) { console.log(err) }
+                  try { vi.resetState() } catch (err) { console.log(err) }
 
                   wws.resetMxHistory()
                   send({ type: 'goStart' })
