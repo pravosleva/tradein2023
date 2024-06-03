@@ -37,11 +37,11 @@ export const BottomSheet = memo(() => {
   const isDebugUIEnabled = debugViSnap.isUIEnabled
 
   const { get } = useSearchParams()
-  const isDebugEnabled = get('debug') === '1'
+  const shouldDebugUIBeEnabled = get('debug') === '1'
 
   useLayoutEffect(() => {
-    if (isDebugEnabled) vi.enableDebugUI()
-  }, [isDebugEnabled])
+    if (shouldDebugUIBeEnabled) vi.enableDebugUI()
+  }, [shouldDebugUIBeEnabled])
 
   return (
     <>
