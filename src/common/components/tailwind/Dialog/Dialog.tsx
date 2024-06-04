@@ -44,7 +44,15 @@ export function Dialog({
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-black/25" aria-hidden="true" />
+            <div
+              className={clsx(
+                'fixed',
+                'inset-0',
+                // 'bg-black/25'
+                'backdrop-blur--lite',
+              )}
+              aria-hidden="true"
+            />
           </Transition.Child>
 
           <div
