@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 const VITE_PUBLIC_URL = process.env.VITE_PUBLIC_URL
 const PUBLIC_URL = VITE_PUBLIC_URL || ''
 
-export const LazyImage = (props: React.HTMLProps<HTMLImageElement>) => {
+export const LazyImage = ({ src, ...restProps }: React.HTMLProps<HTMLImageElement>) => {
   const [inView, setInView] = useState(false)
 
   const placeholderRef = useRef(null)
@@ -31,13 +31,18 @@ export const LazyImage = (props: React.HTMLProps<HTMLImageElement>) => {
   }, [])
 
   return inView ? (
-    <img {...props} alt={props.alt || ""} />
+    <img src={src} {...restProps} alt={restProps.alt || ''} />
   ) : (
     <img
-      {...props}
+      {...restProps}
       ref={placeholderRef}
       src={`${PUBLIC_URL}/static3/img/spinner/wifi-white-36.svg`}
-      alt={props.alt || ""}
+      alt={restProps.alt || ''}
+      // style={{
+      //   ...(restProps.style || {}),
+      //   backgroundColor: '',
+      // }}
+      className='bg-mtsGray'
     />
-  );
-};
+  )
+}
