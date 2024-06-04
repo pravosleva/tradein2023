@@ -51,8 +51,8 @@ class Singleton extends API {
     // @ts-ignore
     if (isDev) postData._add_data = {
       phone: {
-        color: 'cardinal_red',
-        // color: '',
+        // color: 'cardinal_red',
+        color: '',
         memory: '512 GB',
         vendor: 'Apple',
       },

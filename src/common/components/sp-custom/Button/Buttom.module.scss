@@ -40,6 +40,7 @@
     &_primary:hover {
       box-shadow: 0px 14px 30px -8px rgba(38, 114, 182, 0.5);
       background: $color-blue-main;
+      border-color: $color-blue-main;
       color: #fff;
     }
 
@@ -54,6 +55,7 @@
     }
     &_success:hover {
       background: #49C77C;
+      border-color: #49C77C;
       box-shadow: 0px 14px 30px -8px rgba(4, 156, 119, 0.5);
     }
 
@@ -80,7 +82,7 @@
       border-color: $color-blue-main;
     }
     &_primary:hover {
-      // border: 2px solid #599DDB;
+      border-color: $color-blue-main;
       box-shadow: 0px 14px 30px -8px rgba(38, 114, 182, 0.5);
       background: #599DDB;
     }
@@ -95,8 +97,8 @@
       border-color: $color-green-dark;
     }
     &_success:hover {
-      // border: 2px solid #49C77C;
       box-shadow: 0px 14px 30px -8px rgba(4, 156, 119, 0.5);
+      border-color: #49C77C;
       background: #49C77C;
     }
 

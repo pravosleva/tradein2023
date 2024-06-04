@@ -123,7 +123,7 @@ export const Listbox = ({
                 'max-h-60',
                 'w-full',
                 'overflow-auto',
-                'rounded-lg',
+                'rounded-md',
                 'bg-white',
                 // 'py-1',
                 'text-base',

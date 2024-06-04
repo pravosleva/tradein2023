@@ -28,10 +28,10 @@ export default {
     // NOTE: See also https://tailwindcss.com/docs/border-radius
     borderRadius: {
       'none': '0',
-      'sm': '4px',
-      DEFAULT: '8px',
-      'md': '8px',
-      'lg': '16px',
+      'sm': '5px',
+      DEFAULT: '10px',
+      'md': '10px',
+      'lg': '20px',
       'full': '9999px',
       'large': '30px',
     },

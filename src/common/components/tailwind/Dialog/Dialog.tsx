@@ -55,7 +55,7 @@ export function Dialog({
               // 'w-screen',
               'overflow-y-auto',
 
-              'p-1',
+              'p-0',
             )}
           >
             <div className="flex min-h-full items-center justify-center p-4 text-center">

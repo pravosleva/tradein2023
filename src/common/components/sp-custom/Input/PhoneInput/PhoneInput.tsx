@@ -85,14 +85,14 @@ export const PhoneInput = React.forwardRef(({
       // letterSpacing: '0.05em',
     },
     buttonStyle: {
-      borderRadius: '8px 0 0 8px',
+      borderRadius: '10px 0 0 10px',
       borderWidth: `${borderWidth}px`,
       // borderColor: '#cbd5e1', // stale-300
     },
     dropdownStyle: {
       // border: '2px solid lightgray',
       maxWidth: '220px',
-      borderRadius: '8px',
+      borderRadius: '10px',
     },
     // searchStyle: {},
   }
