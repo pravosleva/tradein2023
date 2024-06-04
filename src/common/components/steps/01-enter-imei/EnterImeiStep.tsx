@@ -2,9 +2,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // import { stepMachine, EStep } from '~/common/xstate/stepMachine'
 import { memo, useMemo, useRef, useEffect, useState, useCallback } from 'react'
-import { Input } from '~/common/components/sp-custom'
+import { Alert, Input } from '~/common/components/sp-custom'
 import { ContentWithControls, TControlBtn } from '~/common/components/sp-custom/ContentWithControls'
-// import baseClasses from '~/App.module.scss'
+import baseClasses from '~/App.module.scss'
 import { RadioGroup } from '~/common/components/tailwind'
 
 type TProps = {
@@ -132,6 +132,49 @@ export const EnterImeiStep = memo(({
         maxLength={15}
         type='number'
       />
+
+      <div
+        style={{
+          // marginTop: '60px',
+          marginTop: '8px',
+          display: 'flex',
+          flexDirection: 'column',
+          // gap: '8px',
+          gap: '0px',
+        }}
+      >
+        <Alert
+          type='danger'
+        >
+          IMEI устройства можно проверить запросом USSD-команды <code className={baseClasses.inlineCode} style={{ fontSize: '15px' }}>*#06#</code> в приложении «Телефон»
+          <br />
+          <br />
+          Отсканируйте штрихкод сканером или введите IMEI устройства вручную
+        </Alert>
+
+        {/* <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            gap: '16px',
+            alignItems: 'center',
+            padding: '8px',
+            fontSize: 'small'
+          }}
+        >
+          <div>
+            В случае, если не получилось найти или проверить IMEI, обратитесь в круглосуточную поддержку в Telegram, отсканировав QR-код
+          </div>
+          <img
+            style={{
+              width: '90px',
+              height: '90px',
+            }}
+            src={`${PUBLIC_URL}/static3/img/common/qr-tg-support-bot.gif`}
+            alt='tg'
+          />
+        </div> */}
+      </div>
     </ContentWithControls>
   )
 })
