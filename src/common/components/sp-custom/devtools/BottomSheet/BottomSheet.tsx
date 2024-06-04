@@ -34,7 +34,7 @@ export const BottomSheet = memo(() => {
   }, [setIsOpened])
   const xhrViSnap = useSnapshot(vi.common.devtools.network.xhr)
   const debugViSnap = useSnapshot(vi.common.devtools)
-  const isDebugUIEnabled = debugViSnap.isUIEnabled
+  const isMobileDebugUIEnabled = debugViSnap.isUIEnabled
 
   const { get } = useSearchParams()
   const shouldDebugUIBeEnabled = get('debug') === '1'
@@ -46,7 +46,7 @@ export const BottomSheet = memo(() => {
   return (
     <>
       {
-        isDebugUIEnabled && (
+        isMobileDebugUIEnabled && (
           <div
             className={clsx(
               classes.fixedBottomLeftTogglerMobileOnly,
