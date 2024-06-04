@@ -4,10 +4,10 @@ import { ContentWithControls, TControlBtn } from '~/common/components/sp-custom/
 // import baseClasses from '~/App.module.scss'
 import { PollingComponent } from '~/common/components/sp-custom/PollingComponent'
 import { httpClient, NSP } from '~/utils/httpClient'
-import { Spinner } from '~/common/components/tailwind'
+// import { Spinner } from '~/common/components/tailwind'
 import { useCallback, useMemo, memo, useState } from 'react'
 import baseClasses from '~/App.module.scss'
-import { WaitForUploadPhoto } from '~/common/components/sp-custom'
+import { Loader, WaitForUploadPhoto } from '~/common/components/sp-custom'
 
 type TProps = {
   tradeinId: number;
@@ -36,7 +36,7 @@ export const UploadPhotoProcessStep = memo(({
         return (
           <div className={baseClasses.stack6}>
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <Spinner />
+              <Loader />
             </div>
             {/* <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
               [ TODO: UI Сотрудник проверяет фото... ]
@@ -47,7 +47,7 @@ export const UploadPhotoProcessStep = memo(({
         return (
           <div className={baseClasses.stack6}>
             {/* <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <Spinner />
+              <Loader />
             </div> */}
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
               <WaitForUploadPhoto photoLinkResponse={photoLinkResponse} />

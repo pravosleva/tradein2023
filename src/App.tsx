@@ -7,7 +7,7 @@ import classes from '~/App.module.scss'
 import { stepMachine, EStep, ECountryCode } from '~/common/xstate/stepMachine'
 import { useMachine } from '@xstate/react'
 import { useLayoutEffect, useMemo, useRef } from 'react'
-import { Spinner } from '~/common/components/tailwind'
+// import { Spinner } from '~/common/components/tailwind'
 import { ContentWithControls, ResponsiveBlock } from '~/common/components/sp-custom'
 import { BaseLayout } from '~/common/components/layout/BaseLayout'
 import {
@@ -20,7 +20,7 @@ import {
   ContractStep,
 } from '~/common/components/steps'
 import clsx from 'clsx'
-import { Alert, BottomSheet } from '~/common/components/sp-custom'
+import { Alert, BottomSheet, Loader } from '~/common/components/sp-custom'
 import {
   getTranslatedConditionCode,
   getTranslatedConditionSuffixCode,
@@ -49,7 +49,7 @@ function App() {
             controls={[]}
             isStickyBottomControls
           >
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}><Spinner /></div>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}><Loader /></div>
           </ContentWithControls>
         )
       case EStep.AppInitErr:
@@ -104,7 +104,7 @@ function App() {
             isStickyBottomControls
           >
             {/* <div>{state.context.imei.result.state}</div> */}
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}><Spinner /></div>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}><Loader /></div>
           </ContentWithControls>
         )
       case EStep.SendImeiErr:
@@ -285,7 +285,7 @@ function App() {
           >
             {
               state.context.checkPhone.result.state === 'pending' ? (
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}><Spinner /></div>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}><Loader /></div>
               ) : (
                 <Alert
                   type={state.context.checkPhone.result.state === 'error' ? 'danger' : 'info'}
@@ -327,7 +327,7 @@ function App() {
           >
             {
               state.context.photoLink.result.state === 'pending' ? (
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}><Spinner /></div>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}><Loader /></div>
               ) : (
                 <Alert
                   type={state.context.photoLink.result.state === 'error' ? 'danger' : 'info'}
@@ -576,7 +576,7 @@ function App() {
             controls={[]}
             // isStickyBottomControls
           >
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}><Spinner /></div>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}><Loader /></div>
           </ContentWithControls>
         )
       case EStep.ContractError:

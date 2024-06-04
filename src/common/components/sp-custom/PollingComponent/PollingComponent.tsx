@@ -2,8 +2,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useRef, useState, useCallback, memo, useLayoutEffect } from 'react';
 import baseClasses from '~/App.module.scss'
-import { Spinner } from '~/common/components/tailwind'
-import { Alert } from '~/common/components/sp-custom'
+// import { Spinner } from '~/common/components/tailwind'
+import { Alert, Loader } from '~/common/components/sp-custom'
 
 type TProps = {
   resValidator: (data: any) => boolean;
@@ -74,7 +74,7 @@ export const PollingComponent = memo(({
 
           {isWorking && (
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <Spinner />
+              <Loader />
             </div>
           )}
 
