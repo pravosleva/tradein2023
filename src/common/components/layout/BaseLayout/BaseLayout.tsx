@@ -5,6 +5,7 @@ import clsx from 'clsx'
 import { useMemo } from 'react'
 import { vi } from '~/common/vi'
 import baseClasses from '~/App.module.scss'
+import { LazyImage } from '~/common/components/sp-custom'
 
 const VITE_PUBLIC_URL = import.meta.env.VITE_PUBLIC_URL
 const PUBLIC_URL = VITE_PUBLIC_URL || ''
@@ -37,7 +38,7 @@ export const BaseLayout: React.FC<any> = ({ children }) => {
               gap: '16px',
             }}
           >
-            <img
+            <LazyImage
               className={clsx(classes.logo, { [baseClasses.grayFilter]: isStaging })}
               src={isStaging ? `${PUBLIC_URL}/static3/img/logo/escape-fake.png` : `${PUBLIC_URL}/static3/img/logo/sp/logo.svg`}
               style={{

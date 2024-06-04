@@ -10,8 +10,8 @@ import slugify from 'slugify'
 import preload from 'vite-plugin-preload'
 import legacy from '@vitejs/plugin-legacy'
 
-const VITE_PUBLIC_URL = process.env.VITE_PUBLIC_URL
-const PUBLIC_URL = VITE_PUBLIC_URL || ''
+// const VITE_PUBLIC_URL = process.env.VITE_PUBLIC_URL
+// const PUBLIC_URL = VITE_PUBLIC_URL || ''
 
 slugify.extend({ '/': '_' })
 
