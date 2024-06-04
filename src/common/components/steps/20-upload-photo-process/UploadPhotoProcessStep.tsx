@@ -12,7 +12,8 @@ import { Loader, WaitForUploadPhoto } from '~/common/components/sp-custom'
 type TProps = {
   tradeinId: number;
   header: string;
-  subheader?: string | (string | null | undefined | false)[];
+  subheader: string[];
+  initLastSubheader?: string;
   controls: TControlBtn[];
   onDone: ({ value }: { value: NSP.TPhotoStatusResponse }) => void;
   photoLinkResponse: NSP.TPhotoLinkResponse | null;
@@ -21,7 +22,8 @@ type TProps = {
 export const UploadPhotoProcessStep = memo(({
   tradeinId,
   header: initHeader,
-  subheader: initSubheader,
+  subheader: __subheader,
+  initLastSubheader,
   controls,
   onDone,
   photoLinkResponse,
@@ -62,8 +64,8 @@ export const UploadPhotoProcessStep = memo(({
     return !state?.started ? initHeader : 'Подождите...'
   }, [state?.started, initHeader])
   const subheader = useMemo(() => {
-    return !state?.started ? initSubheader : 'Сотрудник проверяет фото'
-  }, [state?.started, initSubheader])
+    return [...__subheader, !state?.started ? initLastSubheader : 'Сотрудник проверяет фото']
+  }, [state?.started, __subheader, initLastSubheader])
   // --
 
   return (

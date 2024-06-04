@@ -141,7 +141,10 @@ function App() {
               doIt: colorAndMemoryHasDetectedOnServer,
               cb: () => send({ type: 'goNext' }),
             }}
-            header={state.context.imei.response?.phone.model || '⚠️ Модель устройства не определена'}
+            header={clsx(
+              state.context.imei.response?.phone.vendor,
+              state.context.imei.response?.phone.model || '⚠️ Модель устройства не определена',
+            )}
             subheader={clsx(
               !(!!state.context.imei.response?.phone.color || !!state.context.color.selectedItem || state.context.imei.response?.phone.memory || !!state.context.memory.selectedItem) && 'Выберите параметры',
               getReadableSnakeCase(state.context.imei.response?.phone.color || '') || state.context.color.selectedItem?.label,
@@ -208,6 +211,7 @@ function App() {
             hasChildrenFreeWidth
             header='Предварительная сумма скидки'
             subheader={clsx(
+              state.context.imei.response?.phone.vendor,
               state.context.imei.response?.phone.model || '⚠️ Модель устройства не определена',
               getReadableSnakeCase(state.context.imei.response?.phone.color || '') || state.context.color.selectedItem?.label,
               state.context.imei.response?.phone.memory || state.context.memory.selectedItem?.label,
@@ -266,6 +270,7 @@ function App() {
             header='Подождите...'
             subheader={[
               clsx(
+                state.context.imei.response?.phone.vendor,
                 state.context.imei.response?.phone.model || '⚠️ Модель устройства не определена',
                 getReadableSnakeCase(state.context.imei.response?.phone.color || '') || state.context.color.selectedItem?.label,
                 state.context.imei.response?.phone.memory || state.context.memory.selectedItem?.label,
@@ -308,6 +313,7 @@ function App() {
             header='Подождите...'
             subheader={[
               clsx(
+                state.context.imei.response?.phone.vendor,
                 state.context.imei.response?.phone.model || '⚠️ Модель устройства не определена',
                 getReadableSnakeCase(state.context.imei.response?.phone.color || '') || state.context.color.selectedItem?.label,
                 state.context.imei.response?.phone.memory || state.context.memory.selectedItem?.label,
@@ -357,10 +363,16 @@ function App() {
             ) : (
               <UploadPhotoProcessStep
                 tradeinId={state.context.imei.response?.id}
-                header={`Загрузите фото устройства${state.context.imei.response?.phone.model ? ` ${state.context.imei.response?.phone.model}` : ''}`}
+                header='Загрузите фото устройства'
                 subheader={[
-                  'Для финальной оценки и подтверждения состояния',
+                  clsx(
+                    state.context.imei.response?.phone.vendor,
+                    state.context.imei.response?.phone.model,
+                    getReadableSnakeCase(state.context.imei.response?.phone.color || '') || state.context.color.selectedItem?.label,
+                    state.context.imei.response?.phone.memory || state.context.memory.selectedItem?.label,
+                  ),
                 ]}
+                initLastSubheader='Для финальной оценки и подтверждения состояния'
                 controls={[
                   {
                     id: '2',
@@ -427,6 +439,7 @@ function App() {
             header='Итоговая сумма скидки'
             subheader={[
               clsx(
+                state.context.imei.response?.phone.vendor,
                 state.context.imei.response?.phone.model || '⚠️ Модель устройства не определена',
                 getReadableSnakeCase(state.context.imei.response?.phone.color || '') || state.context.color.selectedItem?.label,
                 state.context.imei.response?.phone.memory || state.context.memory.selectedItem?.label,
