@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { proxy } from 'valtio'
-import { initialStepMachineContextFormat, initialContractFormState } from './xstate/stepMachine/initialState'
 import { NSP } from '~/utils/httpClient'
 import { TReqStateCode, TRequestDetailsInfo } from '~/utils/httpClient/API'
-import { getRandomString } from '~/utils/aux-ops'
-import { TStepMachineContextFormat, TContractForm, EStep } from './xstate/stepMachine/types'
-import { mutateObject } from '~/utils/aux-ops'
+import { getRandomString, mutateObject } from '~/utils/aux-ops'
 import clsx from 'clsx'
+import { groupLog } from '~/utils'
+import { initialStepMachineContextFormat, initialContractFormState } from './xstate/stepMachine/initialState'
+import { TStepMachineContextFormat, TContractForm, EStep } from './xstate/stepMachine/types'
 import pkg from '../../package.json'
 
 const defaultXHRState = {
@@ -135,8 +135,10 @@ class Singleton {
       this.__fixXHRState({ url, code, ts })
       this.__fixXHRTotalCounters({ code })
     } catch (err: any) {
-      console.warn(err?.message || 'Что-то пошло не так...')
-      console.warn(err)
+      groupLog({
+        namespace: clsx('⚠️ ERR:', '[vi.__fixRequest]', code),
+        items: [err],
+      })
     }
   }
   public __fixResponse({ url, code, ts, __details }: {
@@ -150,8 +152,10 @@ class Singleton {
       this.__fixXHRState({ url, code, ts, __details })
       this.__fixXHRTotalCounters({ code })
     } catch (err: any) {
-      console.warn(err?.message || 'Что-то пошло не так...')
-      console.warn(err)
+      groupLog({
+        namespace: clsx('⚠️ ERR:', '[vi.__fixResponse]', code),
+        items: [err],
+      })
     }
   }
   private __resetXHRStates() {
