@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useCallback, useState } from 'react'
+import { useCallback, useState, memo } from 'react'
 import clsx from 'clsx'
 import baseClasses from '~/App.module.scss'
 // import { FaChevronDown, FaChevronUp } from 'react-icons/fa'
@@ -13,7 +13,7 @@ type TProps = {
   StartIcon?: React.ReactNode;
 };
 
-export const CollapsibleBox = ({ title, children, level, StartIcon }: TProps) => {
+export const CollapsibleBox = memo(({ title, children, level, StartIcon }: TProps) => {
   const [isOpened, setIsOpened] = useState<boolean>(false);
   const toggler = useCallback(() => {
     setIsOpened((s) => !s);
@@ -38,4 +38,4 @@ export const CollapsibleBox = ({ title, children, level, StartIcon }: TProps) =>
       {isOpened && <div>{children}</div>}
     </>
   )
-}
+})
