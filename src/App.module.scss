@@ -175,3 +175,22 @@
   }
 }
 
+@keyframes slide-up {
+  from {
+    transform: translateY(150px);
+    opacity: 0;
+  }
+  to   {
+    transform: translateY(0px);
+    opacity: 1;
+  }
+}
+.slideUpMobileMediumSpeed {
+  border: none;
+}
+@media(max-width: #{$monitor-sm}px) {
+  .slideUpMobileMediumSpeed {
+    animation: slide-up 0.75s;
+    animation-timing-function: ease-in;
+  }
+}

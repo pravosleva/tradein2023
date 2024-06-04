@@ -67,7 +67,7 @@ export const ContentWithControls = ({
           className={clsx(
             classes.stickyTopHeader,
             'backdrop-blur--lite',
-            baseClasses.boxShadowBottomMobileOnly,
+            // baseClasses.boxShadowBottomMobileOnly,
             // baseClasses.panelRoundedBottomMobile,
             'fade-in',
           )}
@@ -160,8 +160,9 @@ export const ContentWithControls = ({
                     [classes.stickyBottomControls]: isStickyBottomControls,
                     [baseClasses.boxShadowTopMobileOnly]: isStickyBottomControls,
                     [baseClasses.panelRoundedTopMobile]: isStickyBottomControls,
+                    [baseClasses.slideUpMobileMediumSpeed]: isStickyBottomControls,
                   },
-                  'fade-in',
+                  // 'fade-in',
                 )}
               >
                 <ResponsiveBlock
