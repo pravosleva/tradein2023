@@ -15,7 +15,7 @@
       transform: translateY(2px);
     }
     // border-bottom: 2px dashed #{$color-red};
-    border-bottom: 2px solid lightgray;
+    border-bottom: 2px solid $color-tw-slate-300;
 
     position: sticky;
     top: 0;
@@ -49,6 +49,6 @@
 
   & > .siteFooter {
     // border: 2px dashed lightgray;
-    border-top: 2px solid lightgray;
+    border-top: 2px solid $color-tw-slate-300;
   }
 }

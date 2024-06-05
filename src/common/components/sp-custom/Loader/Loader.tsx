@@ -23,8 +23,8 @@ export const Loader = () => {
           cy="50"
           r="20"
           fill="none"
-          stroke-width="5"
-          stroke-miterlimit="10"
+          strokeWidth="5"
+          strokeMiterlimit="10"
         />
       </svg>
     </div>

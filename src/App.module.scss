@@ -204,3 +204,8 @@
     animation-timing-function: ease-in;
   }
 }
+
+.fadeIn {
+  animation: fade-in 0.3s;
+  animation-timing-function: ease-in;
+}

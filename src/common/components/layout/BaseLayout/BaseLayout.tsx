@@ -39,12 +39,18 @@ export const BaseLayout: React.FC<any> = ({ children }) => {
             }}
           >
             <LazyImage
-              className={clsx(classes.logo, { [baseClasses.grayFilter]: isStaging })}
+              className={clsx(
+                classes.logo,
+                { [baseClasses.grayFilter]: isStaging },
+                baseClasses.fadeIn,
+              )}
               src={isStaging ? `${PUBLIC_URL}/static3/img/logo/escape-fake.png` : `${PUBLIC_URL}/static3/img/logo/sp/logo.svg`}
               style={{
+                minWidth: '180px',
+                minHeight: '40px',
                 maxWidth: '180px',
                 maxHeight: '40px',
-                border: 'dashed red',
+                // border: 'dashed red',
               }}
             />
             <div

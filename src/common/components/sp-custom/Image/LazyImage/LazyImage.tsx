@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useRef, useState } from 'react'
 
-const VITE_PUBLIC_URL = process.env.VITE_PUBLIC_URL
+const VITE_PUBLIC_URL = import.meta.env.VITE_PUBLIC_URL
 const PUBLIC_URL = VITE_PUBLIC_URL || ''
 
 export const LazyImage = ({ src, ...restProps }: React.HTMLProps<HTMLImageElement>) => {
@@ -31,18 +32,35 @@ export const LazyImage = ({ src, ...restProps }: React.HTMLProps<HTMLImageElemen
   }, [])
 
   return inView ? (
-    <img src={src} {...restProps} alt={restProps.alt || ''} />
-  ) : (
     <img
+      src={src}
       {...restProps}
-      ref={placeholderRef}
-      src={`${PUBLIC_URL}/static3/img/spinner/wifi-white-36.svg`}
       alt={restProps.alt || ''}
-      // style={{
-      //   ...(restProps.style || {}),
-      //   backgroundColor: '',
-      // }}
-      className='bg-mtsGray'
+
+      loading='lazy'
+      // @ts-ignore
+      fetchpriority='low'
+      decoding='async'
     />
+  ) : (
+    <picture>
+      <source
+        type='image/svg'
+        src={`${PUBLIC_URL}/static3/img/spinner/wifi-white-36.svg`}
+      ></source>
+      <img
+        {...restProps}
+        ref={placeholderRef}
+        src={`${PUBLIC_URL}/static3/img/spinner/wifi-white-36.svg`}
+        alt={restProps.alt || ''}
+        // style={{
+        //   ...(restProps.style || {}),
+        //   backgroundColor: '',
+        // }}
+        className='bg-mtsGray'
+
+        loading='lazy'
+      />
+    </picture>
   )
 }
