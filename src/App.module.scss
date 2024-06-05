@@ -185,12 +185,22 @@
     opacity: 1;
   }
 }
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
 .slideUpMobileMediumSpeed {
   border: none;
 }
 @media(max-width: #{$monitor-sm}px) {
   .slideUpMobileMediumSpeed {
     animation: slide-up 0.75s;
+    animation-timing-function: ease-in;
+  }
+}
+@media(min-width: calc(#{$monitor-sm}px + 1px)) {
+  .slideUpMobileMediumSpeed {
+    animation: fade-in 0.75s;
     animation-timing-function: ease-in;
   }
 }

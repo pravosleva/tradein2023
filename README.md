@@ -61,7 +61,7 @@ VITE_BASE_API_URL=https://example.ru
 ```
 </details>
 
-## Buisness logic
+## Business logic
 
 <details>
 <summary markdown="span">stepMachine</summary>

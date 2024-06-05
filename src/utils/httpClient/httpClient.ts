@@ -49,12 +49,19 @@ class Singleton extends API {
 
     const postData = { IMEI }
     // @ts-ignore
-    if (isDev) postData._add_data = {
+    if (isDev || isLocalProd) postData._add_data = {
       phone: {
         // color: 'cardinal_red',
         color: '',
         memory: '512 GB',
-        vendor: 'Apple',
+
+        vendor: 'Samsung',
+        model: 'Galaxy S22',
+        photo: 'https://smartprice.ru/static/img/smartprice/models/samsung/galaxy-s22/01.jpg',
+        
+        // vendor: 'Apple',
+        // model: 'iPhone 12 Pro',
+        // photo: 'https://smartprice.ru/static/img/smartprice/models/apple/iphone-12-pro/color_graphite_01.jpg',
       },
       // ok: false,
       // message: 'FRONT tst',
@@ -186,7 +193,7 @@ class Singleton extends API {
       inputData._odd_scenario = {
         status: {
           // NOTE: status -> not_checked will be set by default
-          ok: 10,
+          ok: 20,
           // bad_quality: 10,
         },
         started: 5, // NOTE: started -> true
