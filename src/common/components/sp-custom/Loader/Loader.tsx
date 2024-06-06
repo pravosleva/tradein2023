@@ -1,7 +1,8 @@
+import { memo } from 'react'
 import clsx from 'clsx'
 import classes from './Loader.module.scss'
 
-export const Loader = () => {
+export const Loader = memo(() => {
   return (
     <div
       className={clsx(
@@ -29,4 +30,4 @@ export const Loader = () => {
       </svg>
     </div>
   )
-}
+})

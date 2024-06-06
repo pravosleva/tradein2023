@@ -34,9 +34,11 @@ export const Input = React.forwardRef(({
 
           // 'caret-blue-400',
           classes.spInput,
+          'py-2',
+          'px-4',
           {
             [classes.borderedGreen]: isSuccess,
-          }
+          },
         )
       }
       {...nativeProps}

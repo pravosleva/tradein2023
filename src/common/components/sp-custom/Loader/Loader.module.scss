@@ -22,23 +22,8 @@
 }
 
 @keyframes colorChange {
-  100%,
-  0% {
+  100%, 0% {
     stroke: $color-blue-main;
-  }
-  20% {
-    stroke: $color-blue-main;
-  }
-  30% {
-    stroke: $color-tw-slate-300;
-  }
-  56%,
-  66% {
-    stroke: $color-blue-main;
-  }
-  80%,
-  90% {
-    stroke: $color-tw-slate-300;
   }
 }
 

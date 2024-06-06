@@ -81,7 +81,7 @@ export const Listbox = ({
               'cursor-default',
               'rounded-md',
               'bg-white',
-              'py-1',
+              'py-2',
               'pl-4',
               'pr-8',
               'text-left',
@@ -157,7 +157,7 @@ export const Listbox = ({
                     'relative',
                     'cursor-pointer',
                     'select-none',
-                    'py-2',
+                    'py-3',
                     'pl-4',
                     'pr-8',
                     {

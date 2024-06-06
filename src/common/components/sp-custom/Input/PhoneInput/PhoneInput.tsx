@@ -40,6 +40,9 @@ export const PhoneInput = React.forwardRef(({
         [classes.borderedGreen]: isSuccess,
         [classes.borderedGray]: !isSuccess,
       },
+      'py-2',
+      'pl-2',
+      'pr-6',
     ),
     buttonClass: clsx(
       // inputClasses.buttonClass,
