@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { defineConfig } from 'vite'
+import { defineConfig, preprocessCSS, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 import { visualizer } from 'rollup-plugin-visualizer'
@@ -9,9 +10,16 @@ import browserslistToEsbuild from 'browserslist-to-esbuild'
 import slugify from 'slugify'
 import preload from 'vite-plugin-preload'
 import legacy from '@vitejs/plugin-legacy'
+import { VitePWA } from 'vite-plugin-pwa'
 
-// const VITE_PUBLIC_URL = process.env.VITE_PUBLIC_URL
-// const PUBLIC_URL = VITE_PUBLIC_URL || ''
+process.env = {
+  ...process.env,
+  ...loadEnv(process.env.NODE_ENV, process.cwd()),
+}
+const isDev = process.env.NODE_ENV === 'development'
+const VITE_PUBLIC_URL = process.env.VITE_PUBLIC_URL
+const PUBLIC_URL = VITE_PUBLIC_URL || '/tradein/mtsmain' // NOTE: Prod setting by default
+const BRAND_NAME = process.env.VITE_BRAND || 'SP'
 
 slugify.extend({ '/': '_' })
 
@@ -42,9 +50,77 @@ export default defineConfig({
     legacy({
       targets: ['defaults', 'not IE 11'],
     }),
+    VitePWA({
+      /**
+       * Build mode.
+       *
+       * From `v0.18.0` this option is ignored when using `injectManifest` strategy:
+       * - the new Vite build will use the same mode as the application when using `injectManifest` strategy.
+       * - if you don't want to minify your service worker, configure `injectManifest.minify = false` in your PWA configuration.
+       * - if you want the sourcemap only for the service worker, configure `injectManifest.sourcemap = true` in your PWA configuration.
+       * - if you want workbox logs in your service worker when using production build, configure `injectManifest.enableWorkboxModulesLogs = true` in your PWA configuration.
+       * - you can use `import.meta.env.MODE` to access the Vite mode inside your service worker.
+       * - you can use `import.meta.env.DEV` or `import.meta.env.PROD` to check if the service worker is
+       *   running on development or production (equivalent to `process.env.NODE_ENV`),
+       *   check Vite [NODE_ENV and Modes](https://vitejs.dev/guide/env-and-mode#node-env-and-modes) docs.
+       *
+       * @see https://vitejs.dev/guide/env-and-mode#node-env-and-modes
+       * @default process.env.NODE_ENV or "production"
+       */
+      mode: isDev ? 'development' : 'production',
+      // NOTE: Default 'public'
+      srcDir: 'public/static3/pwa/',
+      outDir: 'dist',
+      filename: 'sw.js',
+      // NOTE: Default 'manifest.webmanifest'
+      manifestFilename: 'webmanifest.json',
+      strategies: 'generateSW',
+      injectRegister: 'auto',
+      registerType: 'autoUpdate',
+      minify: false,
+      manifest: {
+        theme_color: "#3882c4",
+        background_color: "#3882c4",
+        name: `${BRAND_NAME} Offline Trade-In`,
+        short_name: `${BRAND_NAME} Trade-In`,
+        start_url: `${PUBLIC_URL}/?debug=1`,
+        scope: PUBLIC_URL,
+        // scope: "./",
+        icons: [
+          {
+            src: `${PUBLIC_URL}/static3/favicon.ico`,
+            sizes: "64x64 32x32 24x24 16x16",
+            type: "image/x-icon"
+          },
+          {
+            purpose: "maskable",
+            sizes: "512x512",
+            src: `${PUBLIC_URL}/static3/pwa/icon512_maskable.png`,
+            type: "image/png"
+          },
+          {
+            purpose: "any",
+            sizes: "512x512",
+            src: `${PUBLIC_URL}/static3/pwa/icon512_rounded.png`,
+            type: "image/png"
+          }
+        ],
+        orientation: "any",
+        display: "standalone",
+        // display_override: ["fullscreen", "minimal-ui"],
+        lang: "ru-RU"
+      },
+      useCredentials: true,
+      includeManifestIcons: true,
+      disable: false,
+      devOptions: {
+        enabled: true,
+      },
+    }),
 
     // NOTE: Last one
     // See also https://www.npmjs.com/package/rollup-plugin-visualizer
+    // @ts-ignore
     visualizer({
       title: `Stats | Trade-In v${pkg.version}`,
       template: 'sunburst', // sunburst, treemap, network

@@ -28,3 +28,4 @@ dist-ssr
 
 ## Aux tools
 _aux-tool.*
+dev-dist/*
