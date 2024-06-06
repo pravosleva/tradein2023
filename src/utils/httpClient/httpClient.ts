@@ -193,7 +193,7 @@ class Singleton extends API {
       inputData._odd_scenario = {
         status: {
           // NOTE: status -> not_checked will be set by default
-          ok: 100,
+          ok: 10,
           // bad_quality: 10,
         },
         started: 5, // NOTE: started -> true
