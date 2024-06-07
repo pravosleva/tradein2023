@@ -31,14 +31,14 @@ const FingerprintSingleton = class _FingerprintSingleton {
   get __uniqueClientKeyOriginal() {
     return clsx([
       this.platform,
-      this.appName,
-      this.appCodeName,
-      this.appVersion,
-      `isGecko:${Number(this.isGecko)}`,
-      `isDesktopWebKit:${Number(this.isDesktopWebKit)}`,
-      `isChromium:${Number(this.isChromium)}`,
+      // this.appName,
+      // this.appCodeName,
+      // this.appVersion,
+      // `isGecko:${Number(this.isGecko)}`,
+      // `isDesktopWebKit:${Number(this.isDesktopWebKit)}`,
+      // `isChromium:${Number(this.isChromium)}`,
       this.userAgent,
-      this.product,
+      // this.product,
       this.language,
       this.timezone,
     ].join('//')).replace(/\s/g, '_')
