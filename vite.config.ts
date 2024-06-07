@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { defineConfig, preprocessCSS, loadEnv } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 import { visualizer } from 'rollup-plugin-visualizer'
@@ -20,6 +20,7 @@ const isDev = process.env.NODE_ENV === 'development'
 const VITE_PUBLIC_URL = process.env.VITE_PUBLIC_URL
 const PUBLIC_URL = VITE_PUBLIC_URL || '/tradein/mtsmain' // NOTE: Prod setting by default
 const BRAND_NAME = process.env.VITE_BRAND || 'SP'
+// const isLocalProd = process.env.VITE_LOCAL_PROD === '1'
 
 slugify.extend({ '/': '_' })
 
@@ -112,7 +113,7 @@ export default defineConfig({
       },
       useCredentials: true,
       includeManifestIcons: true,
-      disable: false,
+      disable: true, // isDev || isLocalProd,
       devOptions: {
         enabled: true,
       },

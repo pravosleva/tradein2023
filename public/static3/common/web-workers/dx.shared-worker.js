@@ -13,6 +13,7 @@ const _perfInfo = {
   ]
 }
 
+importScripts('./utils/clsx.js')
 importScripts('./utils/gu.js')
 importScripts('./utils/event/types.js')
 importScripts('./utils/event/eValidator.js')
@@ -22,6 +23,7 @@ importScripts('./utils/debug/log.js')
 importScripts('./utils/socket/rootSubscribers.js')
 importScripts('./utils/socket/mws/withCustomEmitters.js')
 importScripts('./utils/socket/socket.io-client@4.7.2.min.js')
+importScripts('./utils/fingerprint/index.js')
 
 var window = self
 // const _isAnyDebugEnabled = Object.values(dbg).some((v) => v.isEnabled)
@@ -172,7 +174,10 @@ const isNewNativeEvent = ({ newCode: n, prevCode: p }) => {
 
             // -- NOTE: Middlewares section
             withCustomEmitters({
-              eventData: e.data,
+              eventData: {
+                ...(e.data || {}),
+                specialClientKey: fingerprint.uniqueClientKey,
+              },
               socket,
             })
             // --

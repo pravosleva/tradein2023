@@ -7,6 +7,7 @@ const withCustomEmitters = ({
   const {
     __eType,
     input,
+    specialClientKey,
   } = eventData
 
   // - NOTE: Level 1: Client -> Worker communication events
@@ -16,7 +17,10 @@ const withCustomEmitters = ({
       // -- NOTE: Level 2: Different app event types
       switch (true) {
         case eventData?.input?.metrixEventType === NES.Socket.Metrix.EClientOutgoing.SP_MX_EV: {
-          let outputData = input
+          let outputData = {
+            ...input,
+            specialClientKey,
+          }
 
           // --- NOTE: Level 3: Internal app state handlers
           switch (true) {
@@ -33,13 +37,12 @@ const withCustomEmitters = ({
             // case eventData?.input.stateValue === NES.Custom.Client.EStepMachine.ContractSending:
             case eventData?.input.stateValue === NES.Custom.Client.EStepMachine.ContractError:
             case eventData?.input.stateValue === NES.Custom.Client.EStepMachine.Final:
-              outputData = {
-                ...input,
+              socket.emit(input.metrixEventType, {
+                ...outputData,
                 _wService: {
                   _perfInfo,
                 },
-              }
-              socket.emit(input.metrixEventType, outputData, (r) => {
+              }, (r) => {
                 log({ label: 'c->sw:port:listener:metrixEventType:detailed->s->[cb]', msgs: [r] })
               })
               break
