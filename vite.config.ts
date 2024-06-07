@@ -79,6 +79,7 @@ export default defineConfig({
       injectRegister: 'auto',
       registerType: 'autoUpdate',
       minify: false,
+      selfDestroying: true,
       manifest: {
         theme_color: "#3882c4",
         background_color: "#3882c4",
@@ -111,6 +112,34 @@ export default defineConfig({
         // display_override: ["fullscreen", "minimal-ui"],
         lang: "ru-RU"
       },
+      // -- NOTE: workbox exp; See also https://vite-pwa-org.netlify.app/workbox/generate-sw.html
+      // workbox: {
+      //   cleanupOutdatedCaches: true,
+      //   runtimeCaching: [
+      //     {
+      //       urlPattern: /^https:\/\/jsonplaceholder\.typicode\.com\/todos/i,
+      //       handler: 'NetworkFirst', // 'NetworkFirst', // 'NetworkOnly',
+      //       options: {
+      //         cacheName: `pwa-cache-v${pkg.version}-pack-0.0.8`,
+      //         networkTimeoutSeconds: 3,
+      //         expiration: {
+      //           maxEntries: 1,
+      //           maxAgeSeconds: 60 * 60 * 24, // NOTE: (secs)
+      //           purgeOnQuotaError: false, // NOTE: Очистить при ошибке квоты
+      //         },
+      //         backgroundSync: {
+      //           name: `pwa-cache-v${pkg.version}-pack-0.0.8`, // NOTE: Queue Name should be unique!
+      //           options: {
+      //             // forceSyncFallback: true,
+      //             maxRetentionTime: 60 * 24, // NOTE: (mins) Попытка выполнения повторного запроса будет выполнена в течение 24 часов (в минутах)
+      //           }
+      //         },
+      //       },
+      //       method: 'POST',
+      //     },
+      //   ],
+      // },
+      // --
       useCredentials: true,
       includeManifestIcons: true,
       disable: true, // isDev || isLocalProd,
