@@ -23,7 +23,7 @@ import { IoIosCheckmarkCircleOutline, IoIosCloseCircle, IoIosWarning } from 'rea
 // import { IoWarningOutline } from 'react-icons/io5'
 import { MdTimelapse } from 'react-icons/md'
 import { useSearchParams } from '~/common/hooks'
-import pkg from '../../../../../../package.json'
+import pkg from '../../../../../../../package.json'
 const VITE_GIT_SHA1 = import.meta.env.VITE_GIT_SHA1
 
 export const BottomSheet = memo(() => {
@@ -36,7 +36,7 @@ export const BottomSheet = memo(() => {
   }, [setIsOpened])
   const xhrViSnap = useSnapshot(vi.common.devtools.network.xhr)
   const debugViSnap = useSnapshot(vi.common.devtools)
-  const isMobileDebugUIEnabled = debugViSnap.isUIEnabled
+  const isDebugUIEnabled = debugViSnap.isUIEnabled
 
   const { get } = useSearchParams()
   const shouldDebugUIBeEnabled = get('debug') === '1'
@@ -48,7 +48,7 @@ export const BottomSheet = memo(() => {
   return (
     <>
       {
-        isMobileDebugUIEnabled && (
+        isDebugUIEnabled && (
           <div
             className={clsx(
               classes.fixedBottomLeftTogglerMobileOnly,

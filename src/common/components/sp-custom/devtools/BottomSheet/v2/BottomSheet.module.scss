@@ -1,0 +1,57 @@
+@import '~/scss-vars/monitors.scss';
+@import '~/scss-vars/colors.scss';
+@import '~/scss-vars/common.scss';
+
+.bottomsheetContent {
+  // border: 1px solid red;
+  box-sizing: border-box;
+}
+.controlsSection {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.wrapper {
+  border-radius: $common-control-elements-radius;
+
+  // border: 1px solid red;
+  max-height: calc(100dvh - 200px);
+  overflow-y: auto;
+
+  & > *:first-child {
+    border-top-left-radius: $common-control-elements-radius;
+    border-top-right-radius: $common-control-elements-radius;
+  }
+  & > *:last-child {
+    border-bottom-left-radius: $common-control-elements-radius;
+    border-bottom-right-radius: $common-control-elements-radius;
+  }
+}
+.fixedBottomLeftTogglerMobileOnly {
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
+
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  cursor: pointer;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  border-width: 2px;
+  border-style: solid;
+  border-color: rgb(255, 255, 255);
+  box-shadow: rgba(7, 7, 7, 0.3) 0px 0px 10px 0px;
+  transition: background-color 0.5s ease-in-out 0s;
+}
+
+@media(min-width:calc(#{$monitor-sm}px + 1px)) {
+  .fixedBottomLeftTogglerMobileOnly {
+    display: none;
+  }
+}

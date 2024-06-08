@@ -1,1 +1,1 @@
-export * from './BottomSheet'
+export * from './v2'
