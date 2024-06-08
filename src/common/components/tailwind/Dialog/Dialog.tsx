@@ -97,7 +97,7 @@ export function Dialog({
                     !!title && (
                       <HuiDialog.Title
                         as="h2"
-                        className="text-lg font-bold leading-6 text-gray-900 mb-4"
+                        className="mb-4 text-lg font-bold leading-6 text-gray-900"
                       >
                         {title}
                       </HuiDialog.Title>
@@ -110,7 +110,7 @@ export function Dialog({
 
                   {
                     !!description && (
-                      <div className="mb-2">
+                      <div className="mb-4">
                         <p className="text-sm text-gray-500">
                           {description}
                         </p>
@@ -118,9 +118,7 @@ export function Dialog({
                     )
                   }
 
-                  <div
-                    // className={clsx('mt-2')}
-                  >
+                  <div className={clsx('mb-4')}>
                     {Body}
                   </div>
                   
