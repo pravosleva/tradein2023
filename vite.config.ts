@@ -10,7 +10,7 @@ import browserslistToEsbuild from 'browserslist-to-esbuild'
 import slugify from 'slugify'
 import preload from 'vite-plugin-preload'
 import legacy from '@vitejs/plugin-legacy'
-// import { VitePWA } from 'vite-plugin-pwa'
+import { VitePWA } from 'vite-plugin-pwa'
 
 process.env = {
   ...process.env,
@@ -20,7 +20,7 @@ const isDev = process.env.NODE_ENV === 'development'
 const VITE_PUBLIC_URL = process.env.VITE_PUBLIC_URL
 const PUBLIC_URL = VITE_PUBLIC_URL || '/tradein/mtsmain' // NOTE: Prod setting by default
 const BRAND_NAME = process.env.VITE_BRAND || 'SP'
-// const isLocalProd = process.env.VITE_LOCAL_PROD === '1'
+const isLocalProd = process.env.VITE_LOCAL_PROD === '1'
 
 slugify.extend({ '/': '_' })
 
@@ -56,86 +56,86 @@ export default defineConfig({
     legacy({
       targets: ['defaults', 'not IE 11'],
     }),
-    // VitePWA({
-    //   mode: isDev ? 'development' : 'production',
-    //   // NOTE: Default 'public'
-    //   srcDir: 'public/static3/pwa/',
-    //   outDir: 'dist',
-    //   filename: 'sw.js',
-    //   // NOTE: Default 'manifest.webmanifest'
-    //   manifestFilename: 'webmanifest.json',
-    //   strategies: 'generateSW',
-    //   injectRegister: 'auto',
-    //   registerType: 'autoUpdate',
-    //   minify: false,
-    //   selfDestroying: true,
-    //   manifest: {
-    //     theme_color: "#3882c4",
-    //     background_color: "#3882c4",
-    //     name: `${BRAND_NAME} Offline Trade-In`,
-    //     short_name: `${BRAND_NAME} Trade-In`,
-    //     start_url: `${PUBLIC_URL}/?debug=1`,
-    //     scope: PUBLIC_URL,
-    //     // scope: "./",
-    //     icons: [
-    //       {
-    //         src: `${PUBLIC_URL}/static3/favicon.ico`,
-    //         sizes: "64x64 32x32 24x24 16x16",
-    //         type: "image/x-icon"
-    //       },
-    //       {
-    //         purpose: "maskable",
-    //         sizes: "512x512",
-    //         src: `${PUBLIC_URL}/static3/pwa/icon512_maskable.png`,
-    //         type: "image/png"
-    //       },
-    //       {
-    //         purpose: "any",
-    //         sizes: "512x512",
-    //         src: `${PUBLIC_URL}/static3/pwa/icon512_rounded.png`,
-    //         type: "image/png"
-    //       }
-    //     ],
-    //     orientation: "any",
-    //     display: "standalone",
-    //     // display_override: ["fullscreen", "minimal-ui"],
-    //     lang: "ru-RU"
-    //   },
-    //   // -- NOTE: workbox exp; See also https://vite-pwa-org.netlify.app/workbox/generate-sw.html
-    //   // workbox: {
-    //   //   cleanupOutdatedCaches: true,
-    //   //   runtimeCaching: [
-    //   //     {
-    //   //       urlPattern: /^https:\/\/jsonplaceholder\.typicode\.com\/todos/i,
-    //   //       handler: 'NetworkFirst', // 'NetworkFirst', // 'NetworkOnly',
-    //   //       options: {
-    //   //         cacheName: `pwa-cache-v${pkg.version}-pack-0.0.8`,
-    //   //         networkTimeoutSeconds: 3,
-    //   //         expiration: {
-    //   //           maxEntries: 1,
-    //   //           maxAgeSeconds: 60 * 60 * 24, // NOTE: (secs)
-    //   //           purgeOnQuotaError: false, // NOTE: Очистить при ошибке квоты
-    //   //         },
-    //   //         backgroundSync: {
-    //   //           name: `pwa-cache-v${pkg.version}-pack-0.0.8`, // NOTE: Queue Name should be unique!
-    //   //           options: {
-    //   //             // forceSyncFallback: true,
-    //   //             maxRetentionTime: 60 * 24, // NOTE: (mins) Попытка выполнения повторного запроса будет выполнена в течение 24 часов (в минутах)
-    //   //           }
-    //   //         },
-    //   //       },
-    //   //       method: 'POST',
-    //   //     },
-    //   //   ],
-    //   // },
-    //   // --
-    //   useCredentials: true,
-    //   includeManifestIcons: true,
-    //   disable: true, // isDev || isLocalProd,
-    //   devOptions: {
-    //     enabled: true,
-    //   },
-    // }),
+    VitePWA({
+      mode: isDev ? 'development' : 'production',
+      // NOTE: Default 'public'
+      srcDir: 'public/static3/pwa/',
+      outDir: 'dist',
+      filename: 'sw.js',
+      // NOTE: Default 'manifest.webmanifest'
+      manifestFilename: 'webmanifest.json',
+      strategies: 'injectManifest', // 'generateSW',
+      injectRegister: 'auto',
+      registerType: 'autoUpdate',
+      minify: false,
+      selfDestroying: true,
+      manifest: {
+        theme_color: "#3882c4",
+        background_color: "#3882c4",
+        name: `${BRAND_NAME} Offline Trade-In`,
+        short_name: `${BRAND_NAME} Trade-In`,
+        start_url: `${PUBLIC_URL}/?debug=1`,
+        scope: PUBLIC_URL,
+        // scope: "./",
+        icons: [
+          {
+            src: `${PUBLIC_URL}/static3/favicon.ico`,
+            sizes: "64x64 32x32 24x24 16x16",
+            type: "image/x-icon"
+          },
+          {
+            purpose: "maskable",
+            sizes: "512x512",
+            src: `${PUBLIC_URL}/static3/pwa/icon512_maskable.png`,
+            type: "image/png"
+          },
+          {
+            purpose: "any",
+            sizes: "512x512",
+            src: `${PUBLIC_URL}/static3/pwa/icon512_rounded.png`,
+            type: "image/png"
+          }
+        ],
+        orientation: "any",
+        display: "standalone",
+        // display_override: ["fullscreen", "minimal-ui"],
+        lang: "ru-RU"
+      },
+      // -- NOTE: workbox exp; See also https://vite-pwa-org.netlify.app/workbox/generate-sw.html
+      // workbox: {
+      //   cleanupOutdatedCaches: true,
+      //   runtimeCaching: [
+      //     {
+      //       urlPattern: /^https:\/\/jsonplaceholder\.typicode\.com\/todos/i,
+      //       handler: 'NetworkFirst', // 'NetworkFirst', // 'NetworkOnly',
+      //       options: {
+      //         cacheName: `pwa-cache-v${pkg.version}-pack-0.0.8`,
+      //         networkTimeoutSeconds: 3,
+      //         expiration: {
+      //           maxEntries: 1,
+      //           maxAgeSeconds: 60 * 60 * 24, // NOTE: (secs)
+      //           purgeOnQuotaError: false, // NOTE: Очистить при ошибке квоты
+      //         },
+      //         backgroundSync: {
+      //           name: `pwa-cache-v${pkg.version}-pack-0.0.8`, // NOTE: Queue Name should be unique!
+      //           options: {
+      //             // forceSyncFallback: true,
+      //             maxRetentionTime: 60 * 24, // NOTE: (mins) Попытка выполнения повторного запроса будет выполнена в течение 24 часов (в минутах)
+      //           }
+      //         },
+      //       },
+      //       method: 'POST',
+      //     },
+      //   ],
+      // },
+      // --
+      useCredentials: true,
+      includeManifestIcons: true,
+      disable: !isLocalProd, // true, // isDev || isLocalProd,
+      devOptions: {
+        enabled: true,
+      },
+    }),
 
     // NOTE: Last one
     // See also https://www.npmjs.com/package/rollup-plugin-visualizer
