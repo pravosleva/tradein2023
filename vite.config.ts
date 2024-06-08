@@ -57,6 +57,7 @@ export default defineConfig({
       targets: ['defaults', 'not IE 11'],
     }),
     VitePWA({
+      disable: !isLocalProd, // true, // isDev || isLocalProd,
       mode: isDev ? 'development' : 'production',
       // NOTE: Default 'public'
       srcDir: 'public/static3/pwa/',
@@ -65,7 +66,7 @@ export default defineConfig({
       // NOTE: Default 'manifest.webmanifest'
       manifestFilename: 'webmanifest.json',
       strategies: 'injectManifest', // 'generateSW',
-      injectRegister: 'auto',
+      injectRegister: 'inline', // 'auto',
       registerType: 'autoUpdate',
       minify: false,
       selfDestroying: true,
@@ -80,7 +81,8 @@ export default defineConfig({
         icons: [
           {
             src: `${PUBLIC_URL}/static3/favicon.ico`,
-            sizes: "64x64 32x32 24x24 16x16",
+            // sizes: "64x64 32x32 24x24 16x16",
+            sizes: "16x16",
             type: "image/x-icon"
           },
           {
@@ -131,7 +133,6 @@ export default defineConfig({
       // --
       useCredentials: true,
       includeManifestIcons: true,
-      disable: !isLocalProd, // true, // isDev || isLocalProd,
       devOptions: {
         enabled: true,
       },
