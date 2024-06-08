@@ -8,7 +8,7 @@ type TProps = {
   isOpened: boolean;
   controls: TControlBtn[];
   onClose: () => void;
-  title?: string;
+  title?: string | React.ReactNode;
   description?: string;
   Body: React.ReactNode;
   size: 'xs' | 'sm' | 'md' | 'lg';
@@ -93,12 +93,16 @@ export function Dialog({
                     'transition-all',
                   )}
                 >
-                  <HuiDialog.Title
-                    as="h3"
-                    className="text-lg font-medium leading-6 text-gray-900"
-                  >
-                    {title}
-                  </HuiDialog.Title>
+                  {
+                    !!title && (
+                      <HuiDialog.Title
+                        as="h2"
+                        className="text-lg font-bold leading-6 text-gray-900 mb-4"
+                      >
+                        {title}
+                      </HuiDialog.Title>
+                    )
+                  }
 
                   {/* <HuiDialog.Description>
                     This will permanently deactivate your account
@@ -106,7 +110,7 @@ export function Dialog({
 
                   {
                     !!description && (
-                      <div className="mt-2">
+                      <div className="mb-2">
                         <p className="text-sm text-gray-500">
                           {description}
                         </p>
@@ -121,7 +125,7 @@ export function Dialog({
                   </div>
                   
                   <div
-                    className="mt-4 flex flex-row flex-wrap"
+                    className="flex flex-row flex-wrap"
                     style={{ gap: '16px' }}
                     // NOTE: grid grid-rows-4 grid-flow-col gap-4
                   >

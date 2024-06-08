@@ -23,6 +23,8 @@ import { IoIosCheckmarkCircleOutline, IoIosCloseCircle, IoIosWarning } from 'rea
 // import { IoWarningOutline } from 'react-icons/io5'
 import { MdTimelapse } from 'react-icons/md'
 import { useSearchParams } from '~/common/hooks'
+import pkg from '../../../../../../package.json'
+const VITE_GIT_SHA1 = import.meta.env.VITE_GIT_SHA1
 
 export const BottomSheet = memo(() => {
   const [isOpened, setIsOpened] = useState<boolean>(false)
@@ -60,7 +62,20 @@ export const BottomSheet = memo(() => {
         )
       }
       <Dialog
-        // title='Devtools'
+        title={
+          <span
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: '8px',
+            }}
+          >
+            <span>{pkg.version}</span>
+            <span>GIT SHA1</span>
+            <code className={baseClasses.inlineCode}>{VITE_GIT_SHA1}</code>
+          </span>
+        }
         size='md'
         isOpened={isOpened}
         onClose={handleClose}
