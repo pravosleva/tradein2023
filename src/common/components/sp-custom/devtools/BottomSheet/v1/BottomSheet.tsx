@@ -137,7 +137,7 @@ export const BottomSheet = memo(() => {
                       // @ts-ignore
                       Object.keys(xhrViSnap[key]).map((url) => {
                         // @ts-ignore
-                        const isOk = key === 'state' && Object.keys(xhrViSnap[key][url]).every((tsstr) => xhrViSnap[key]?.[url]?.[tsstr]?.__details?.res?.ok === true)
+                        const isOk = key === 'state' && Object.keys(xhrViSnap[key][url]).every((tsstr) => xhrViSnap[key]?.[url]?.[tsstr]?.__resDetails?.res?.ok === true)
                         const hasPending = key === 'state' && Object.keys(xhrViSnap[key][url]).some((tsstr) => xhrViSnap[key]?.[url]?.[tsstr]?.code === 'pending')
 
                         let hasLastErrored = false
@@ -147,7 +147,7 @@ export const BottomSheet = memo(() => {
                             if (ts > acc) acc = ts
                             return acc
                           }, 0)
-                          hasLastErrored = !xhrViSnap[key]?.[url]?.[String(lastTs)].__details?.res.ok
+                          hasLastErrored = !xhrViSnap[key]?.[url]?.[String(lastTs)].__resDetails?.res.ok
                         }
                         // IoIosWarning
                         const hasErrored = !isOk
@@ -180,7 +180,7 @@ export const BottomSheet = memo(() => {
                                     key === 'state'
                                     ? xhrViSnap[key]?.[url]?.[tsstr]?.code === 'pending'
                                       ? <MdTimelapse />
-                                      : xhrViSnap[key]?.[url]?.[tsstr]?.__details?.res?.ok === true
+                                      : xhrViSnap[key]?.[url]?.[tsstr]?.__resDetails?.res?.ok === true
                                         ? <IoIosCheckmarkCircleOutline />
                                         : <IoIosCloseCircle color='red' />
                                     : undefined
@@ -191,9 +191,9 @@ export const BottomSheet = memo(() => {
                                       baseClasses.preStyled,
                                       {
                                         // @ts-ignore
-                                        'bg-spBlueMain': xhrViSnap[key]?.[url]?.[tsstr]?.__details?.res?.ok === true,
+                                        'bg-spBlueMain': xhrViSnap[key]?.[url]?.[tsstr]?.__resDetails?.res?.ok === true,
                                         // @ts-ignore
-                                        'bg-spRed': xhrViSnap[key]?.[url]?.[tsstr]?.__details?.res?.ok !== true,
+                                        'bg-spRed': xhrViSnap[key]?.[url]?.[tsstr]?.__resDetails?.res?.ok !== true,
                                       },
                                       'text-xs',
                                     )}

@@ -8,7 +8,7 @@ import * as rax from 'retry-axios'
 import { groupLog, TGroupLogProps } from '~/utils/groupLog'
 import { Counter } from '~/utils'
 import { vi } from '~/common/vi'
-import { TRaxConfig, TAPIProps, TReqStateCode, TRequestDetailsInfo } from './types'
+import { TRaxConfig, TAPIProps, TReqStateCode, TResponseDetailsInfo, TRequestDetailsInfo } from './types'
 
 const VITE_BASE_API_URL = import.meta.env.VITE_BASE_API_URL
 const isDev = process.env.NODE_ENV === 'development'
@@ -44,7 +44,42 @@ export class API {
             const ts = new Date().getTime() + (counter.next().value || 0) // NOTE: It works!
             config.headers[auxFrontHeaderName] = ts
             msgs.push(`config.headers.${auxFrontHeaderName} -> ${ts}`)
-            vi.__fixRequest({ code: 'pending', url: config.url || '', ts })
+
+            const _fix2ViOpts: { url: string; code: TReqStateCode; ts: number; __reqDetails?: TRequestDetailsInfo; } = {
+              code: 'pending',
+              url: config.url || '',
+              ts,
+            }
+
+            try {
+              switch (true) {
+                case !!config.data: {
+                  try {
+                    const mayBeJson = config.data // JSON.parse(config.data)
+
+                    _fix2ViOpts.__reqDetails = {
+                      req: mayBeJson,
+                      comment: `config.data is ${typeof mayBeJson}`
+                    }
+                  } catch (_err: any) {
+                    const msgs = [
+                      '[wtf?] Неожиданная ошибка при обработке config.data',
+                      `config.data is ${typeof config?.data}`,
+                      _err.message || 'No _err.message',
+                    ]
+                    throw new Error(msgs.join(' / '))
+                  }
+                  break
+                }
+                default:
+                  throw new Error('Объект config.data не найден')
+              }
+            } catch (err: any) {
+              _fix2ViOpts.__reqDetails = {
+                comment: err.message || 'Failed to log the request input data info',
+              }
+            }
+            vi.__fixRequest(_fix2ViOpts)
           }
         } catch (err) {
           msgs.push(err)
@@ -90,7 +125,7 @@ export class API {
           if (!url) throw new Error(`Incorrect config format! Expected url, received: ${typeof url}`)
 
           msgs.push(`${url || '[No url]'} -> fulfilled`)
-          vi.__fixResponse({ code: 'fulfilled', url: url || '', ts, __details: { status: response.status, res: response.data } })
+          vi.__fixResponse({ code: 'fulfilled', url: url || '', ts, __resDetails: { status: response.status, res: response.data } })
         } catch (err: any) {
           msgs.push('Не удалось отследить ответ (DBG Fuckup)')
           msgs.push(err)
@@ -117,15 +152,15 @@ export class API {
             code: TReqStateCode;
             url: string;
             ts: number;
-            __details?: TRequestDetailsInfo;
+            __resDetails?: TResponseDetailsInfo;
           } = {
             code: 'rejected_res',
             url: url || '',
             ts,
           }
           if (error?.status) {
-            eventData.__details = { status: error?.status }
-            if (error.data) eventData.__details.res = error.data
+            eventData.__resDetails = { status: error?.status }
+            if (error.data) eventData.__resDetails.res = error.data
           }
           vi.__fixResponse(eventData)
         } catch (err) {

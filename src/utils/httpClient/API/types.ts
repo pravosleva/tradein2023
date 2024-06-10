@@ -43,7 +43,12 @@ export type TReqStateCode = 'pending' | 'rejected_req' | 'rejected_res' | 'fulfi
 // for (const key in EReqStateCode) _reqStateCodeCounters[EReqStateCode[key]] = 0
 // export const reqStateCodeCounters = _reqStateCodeCounters
 
-export type TRequestDetailsInfo = {
+export type TResponseDetailsInfo = {
   status?: number;
   res?: any;
+}
+
+export type TRequestDetailsInfo = {
+  req?: any;
+  comment?: string;
 }

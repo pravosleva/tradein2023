@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { proxy } from 'valtio'
 import { NSP } from '~/utils/httpClient'
-import { TReqStateCode, TRequestDetailsInfo } from '~/utils/httpClient/API'
+import { TReqStateCode, TResponseDetailsInfo, TRequestDetailsInfo } from '~/utils/httpClient/API'
 import { getRandomString, mutateObject } from '~/utils/aux-ops'
 import clsx from 'clsx'
-import { groupLog } from '~/utils'
 import { initialStepMachineContextFormat, initialContractFormState } from './xstate/stepMachine/initialState'
 import { TStepMachineContextFormat, TContractForm, EStep } from './xstate/stepMachine/types'
 import pkg from '../../package.json'
@@ -40,7 +39,8 @@ class Singleton {
             [key: string]: { // NOTE: url as key
               [key: string]: { // NOTE: ts as key
                 code: TReqStateCode;
-                __details?: TRequestDetailsInfo;
+                __resDetails?: TResponseDetailsInfo;
+                __reqDetails?: TRequestDetailsInfo;
               };
             };
           };
@@ -106,11 +106,12 @@ class Singleton {
       console.warn(err)
     }
   }
-  public __fixXHRState({ url, code, ts, __details }: {
+  public __fixXHRState({ url, code, ts, __resDetails, __reqDetails }: {
     url: string;
     code: TReqStateCode;
     ts: number;
-    __details?: TRequestDetailsInfo;
+    __resDetails?: TResponseDetailsInfo;
+    __reqDetails?: TRequestDetailsInfo;
   }) {
     if (!this._common.devtools.network.xhr.state[url]) {
       this._common.devtools.network.xhr.state[url] = {
@@ -118,7 +119,8 @@ class Singleton {
           code,
         },
       }
-      if (__details) this._common.devtools.network.xhr.state[url][String(ts)].__details = __details
+      if (__resDetails) this._common.devtools.network.xhr.state[url][String(ts)].__resDetails = __resDetails
+      if (__reqDetails) this._common.devtools.network.xhr.state[url][String(ts)].__reqDetails = __reqDetails
     } else {
       if (!this._common.devtools.network.xhr.state[url][String(ts)])
         this._common.devtools.network.xhr.state[url][String(ts)] = {
@@ -126,36 +128,33 @@ class Singleton {
         }
       else this._common.devtools.network.xhr.state[url][String(ts)].code = code
 
-      if (__details) this._common.devtools.network.xhr.state[url][String(ts)].__details = __details
+      if (__resDetails) this._common.devtools.network.xhr.state[url][String(ts)].__resDetails = __resDetails
+      if (__reqDetails) this._common.devtools.network.xhr.state[url][String(ts)].__reqDetails = __reqDetails
     }
   }
-  public __fixRequest({ url, code, ts }: { url: string; code: TReqStateCode; ts: number; }) {
+  public __fixRequest({ url, code, ts, __reqDetails }: { url: string; code: TReqStateCode; ts: number; __reqDetails?: TRequestDetailsInfo; }) {
     try {
       if (!url) throw new Error(`Incorrect url! expected: not empty string. received: ${clsx(url || 'empty', `(${typeof url})`)}`)
-      this.__fixXHRState({ url, code, ts })
+      this.__fixXHRState({ url, code, ts, __reqDetails })
       this.__fixXHRTotalCounters({ code })
     } catch (err: any) {
-      groupLog({
-        namespace: clsx('⚠️ ERR:', '[vi.__fixRequest]', code),
-        items: [err],
-      })
+      console.warn(err?.message || 'Что-то пошло не так...')
+      console.warn(err)
     }
   }
-  public __fixResponse({ url, code, ts, __details }: {
+  public __fixResponse({ url, code, ts, __resDetails }: {
     url: string;
     code: TReqStateCode;
     ts: number;
-    __details?: TRequestDetailsInfo;
+    __resDetails?: TResponseDetailsInfo;
   }) {
     try {
       if (!url) throw new Error(`Incorrect url! expected: not empty string. received: ${clsx(url || 'empty', `(${typeof url})`)}`)
-      this.__fixXHRState({ url, code, ts, __details })
+      this.__fixXHRState({ url, code, ts, __resDetails })
       this.__fixXHRTotalCounters({ code })
     } catch (err: any) {
-      groupLog({
-        namespace: clsx('⚠️ ERR:', '[vi.__fixResponse]', code),
-        items: [err],
-      })
+      console.warn(err?.message || 'Что-то пошло не так...')
+      console.warn(err)
     }
   }
   private __resetXHRStates() {
