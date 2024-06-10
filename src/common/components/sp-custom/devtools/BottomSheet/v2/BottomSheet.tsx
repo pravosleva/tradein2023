@@ -26,7 +26,8 @@ import pkg from '../../../../../../../package.json'
 const VITE_GIT_SHA1 = import.meta.env.VITE_GIT_SHA1
 import { Sheet } from 'react-modal-sheet'
 import { Button } from '~/common/components/sp-custom/Button'
-import { IoMdClose } from 'react-icons/io'
+// import { IoMdClose } from 'react-icons/io'
+import { FaPowerOff } from 'react-icons/fa'
 
 // NOTE: See also https://www.npmjs.com/package/react-modal-sheet
 
@@ -118,7 +119,7 @@ export const BottomSheet = memo(() => {
                   variant='filled'
                   onClick={handleClose}
                 >
-                  <IoMdClose className={baseClasses.truncate} />
+                  <FaPowerOff className={baseClasses.truncate} />
                 </Button>
               </h2>
               <div
