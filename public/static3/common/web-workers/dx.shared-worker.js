@@ -176,7 +176,7 @@ const isNewNativeEvent = ({ newCode: n, prevCode: p }) => {
             withCustomEmitters({
               eventData: {
                 ...(e.data || {}),
-                specialClientKey: fingerprint.uniqueClientKey,
+                // specialClientKey: fingerprint.uniqueClientKey,
               },
               socket,
             })

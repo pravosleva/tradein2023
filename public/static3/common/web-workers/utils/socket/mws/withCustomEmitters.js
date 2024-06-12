@@ -7,7 +7,7 @@ const withCustomEmitters = ({
   const {
     __eType,
     input,
-    specialClientKey,
+    // specialClientKey,
   } = eventData
 
   // - NOTE: Level 1: Client -> Worker communication events
@@ -22,7 +22,7 @@ const withCustomEmitters = ({
           log({ label: 'c->[w:port:listener:eventType:report]->socket', msgs: [input] })
           let outputData = {
             ...input,
-            specialClientKey,
+            // specialClientKey,
             _wService: {
               _perfInfo,
             },
@@ -36,7 +36,7 @@ const withCustomEmitters = ({
         case eventData?.input?.metrixEventType === NES.Socket.Metrix.EClientOutgoing.SP_MX_EV: {
           let outputData = {
             ...input,
-            specialClientKey,
+            // specialClientKey,
           }
 
           // ---- NOTE: Level 3: Internal app state handlers
