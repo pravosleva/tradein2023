@@ -89,14 +89,14 @@ const NES = {
       EClientOutgoing: {
         // LAB_TEST: 'lab:client:tst-action',
         SP_MX_EV: 'sp-mx:offline-tradein:c:event',
-        SP_XHR_HISTORY_REPORT_EV: 'sp-history:offline-tradein:c:report',
-        _SP_XHR_HISTORY_REPORT_EV_DEPRECATED: 'sp-xhr-history:offline-tradein:c:report',
+        SP_HISTORY_REPORT_EV: 'sp-history:offline-tradein:c:report',
+        _SP_HISTORY_REPORT_EV_DEPRECATED: 'sp-xhr-history:offline-tradein:c:report',
       },
       EClientIncoming: {
         // LAB_TEST: 'lab:server:tst-action',
         SP_MX_EV: 'sp-mx:offline-tradein:s:event',
-        SP_MX_SERVER_ON_XHR_FULL_HISTORY_REPORT_OK: 'sp-mx:history-report:s:ok',
-        SP_MX_SERVER_ON_XHR_FULL_HISTORY_REPORT_ERR: 'sp-mx:history-report:s:err',
+        SP_MX_SERVER_ON_HISTORY_REPORT_ANSWER_OK: 'sp-mx:history-report:s:ok',
+        SP_MX_SERVER_ON_HISTORY_REPORT_ANSWER_ERR: 'sp-mx:history-report:s:err',
       },
     },
   },

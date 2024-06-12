@@ -17,8 +17,8 @@ const withCustomEmitters = ({
       // -- NOTE: Level 2: Different app event types
       switch (true) {
         // --- NOTE: Special report by user (UI testing by Alexey)
-        case eventData?.input?.metrixEventType === NES.Socket.Metrix.EClientOutgoing.SP_XHR_HISTORY_REPORT_EV:
-        case eventData?.input?.metrixEventType === NES.Socket.Metrix.EClientOutgoing._SP_XHR_HISTORY_REPORT_EV_DEPRECATED: {
+        case eventData?.input?.metrixEventType === NES.Socket.Metrix.EClientOutgoing.SP_HISTORY_REPORT_EV:
+        case eventData?.input?.metrixEventType === NES.Socket.Metrix.EClientOutgoing._SP_HISTORY_REPORT_EV_DEPRECATED: {
           log({ label: 'c->[w:port:listener:eventType:report]->socket', msgs: [input] })
           let outputData = {
             ...input,

@@ -16,7 +16,7 @@ export namespace NEvents {
   export enum EMetrixClientOutgoing {
     // LAB_TEST = 'lab:client:tst-action',
     SP_MX_EV = 'sp-mx:offline-tradein:c:event',
-    SP_XHR_HISTORY_REPORT_EV = 'sp-history:offline-tradein:c:report',
+    SP_HISTORY_REPORT_EV = 'sp-history:offline-tradein:c:report',
   }
   export enum ESharedWorkerCustom {
     CLIENT_TO_WORKER_DIE = 'die',

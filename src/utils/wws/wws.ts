@@ -188,7 +188,7 @@ class Singleton {
           input: {
             ts: new Date().getTime(),
             room: 'FOR_EXAMPLE',
-            metrixEventType: NEvents.EMetrixClientOutgoing.SP_XHR_HISTORY_REPORT_EV,
+            metrixEventType: NEvents.EMetrixClientOutgoing.SP_HISTORY_REPORT_EV,
             reportType: EReportType.WARNING,
             stateValue: vi.common.stateValue,
             appVersion: vi.common.appVersion,

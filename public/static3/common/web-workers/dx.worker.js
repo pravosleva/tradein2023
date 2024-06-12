@@ -245,11 +245,11 @@ const isNewNativeEvent = ({ newCode: n, prevCode: p }) => {
         self.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA, ...e })
       },
       // -- NOTE: New report exp
-      [NES.Socket.Metrix.EClientIncoming.SP_MX_SERVER_ON_XHR_FULL_HISTORY_REPORT_OK]: function (e) {
+      [NES.Socket.Metrix.EClientIncoming.SP_MX_SERVER_ON_HISTORY_REPORT_ANSWER_OK]: function (e) {
         // const { message, result, yourData } = e
         const dataForMemory = e
         _perfInfo.tsList.push({
-          descr: `[sock-cus:sp-rep-res]<-s:ok: ${NES.Socket.Metrix.EClientIncoming.SP_MX_SERVER_ON_XHR_FULL_HISTORY_REPORT_OK}`,
+          descr: `[sock-cus:sp-rep-res]<-s:ok: ${NES.Socket.Metrix.EClientIncoming.SP_MX_SERVER_ON_HISTORY_REPORT_ANSWER_OK}`,
           p: performance.now(),
           ts: new Date().getTime(),
           data: dataForMemory,
@@ -258,11 +258,11 @@ const isNewNativeEvent = ({ newCode: n, prevCode: p }) => {
         if (dbg.workerEvs.fromServer.isEnabled) log({ label: '⚡ Socket received response from server', msgs: [e] })
         self.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA, ...e, code: 'ui_message_success' })
       },
-      [NES.Socket.Metrix.EClientIncoming.SP_MX_SERVER_ON_XHR_FULL_HISTORY_REPORT_ERR]: function (e) {
+      [NES.Socket.Metrix.EClientIncoming.SP_MX_SERVER_ON_HISTORY_REPORT_ANSWER_ERR]: function (e) {
         // const { message, result, yourData } = e
         const dataForMemory = e
         _perfInfo.tsList.push({
-          descr: `[sock-cus:sp-rep-res]<-s:err: ${NES.Socket.Metrix.EClientIncoming.SP_MX_SERVER_ON_XHR_FULL_HISTORY_REPORT_ERR}`,
+          descr: `[sock-cus:sp-rep-res]<-s:err: ${NES.Socket.Metrix.EClientIncoming.SP_MX_SERVER_ON_HISTORY_REPORT_ANSWER_ERR}`,
           p: performance.now(),
           ts: new Date().getTime(),
           data: dataForMemory,
