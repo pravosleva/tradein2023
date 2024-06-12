@@ -6,8 +6,34 @@ import { EErrCode, TStepMachineContextFormat } from '~/common/xstate/stepMachine
 import { getReadableSnakeCase } from '~/utils/aux-ops'
 import { NResponseValidate, httpClient, NSP } from '~/utils/httpClient'
 import { vi } from '~/common/vi'
+import clsx from 'clsx'
+// import { checkByEmployeeCfg } from './ui-cfg/checkByEmployee'
 
 export const fetchIMEIMachine = async (context: TStepMachineContextFormat, _ev: AnyEventObject, _invMeta: InvokeMeta): Promise<NResponseValidate.TResult<NSP.TImeiResponse>> => {
+  // if (!context.appMode.currentMode) {
+  //   const message = [
+  //     'Ошибка валидации перед запросом',
+  //     'Режим appMode должен быть определен до отправки IMEI received',
+  //     `Текущее значение: ${context.appMode.currentMode || 'empty'} (${typeof context.appMode.currentMode})`,
+  //     'Возможные причины: 1) Забыли обновить значение при выборе режима (скорее всего); 2) xstate (маловероятно)',
+  //     '(frontend only)',
+  //   ].join(' // ')
+  //   return Promise.reject({
+  //     ok: false,
+  //     message,
+  //   })
+  // }
+
+  // const runFuckup = true
+
+  // if (runFuckup) {
+  //   return Promise.reject({
+  //     ok: false,
+  //     message: 'For example',
+  //   })
+  // }
+  
+  
   // NOTE: thats received data from states[EStep.SendImei].invoke.data (for example)
   // console.log(_invMeta.data)
   const cleanupImeiStep = () => {
@@ -24,19 +50,90 @@ export const fetchIMEIMachine = async (context: TStepMachineContextFormat, _ev: 
 
   const res = await httpClient.sendIMEI({
     IMEI: context.imei.value,
+    // mts_tradein_mode: context.appMode.currentMode,
     rules: {
+      go_to_final_step: {
+        isRequired: false,
+        validate: (val, fullResponse) => {
+          const res: NResponseValidate.TResult<NSP.TImeiResponse> = { ok: true }
+          switch (true) {
+            case typeof val !== 'boolean':
+              res.ok = false
+              res.message = 'Поле должно соответствовать логическому типу данных'
+              break
+            case val === true:
+              if (val === true) {
+                const _msgs = []
+                if (!fullResponse?.condition) {
+                  _msgs.push(
+                    `В случае { "go_to_final_step": true }, ответ должен соделжать непустое поле "condition", получено ${clsx(fullResponse?.condition || 'empty', `(${typeof fullResponse?.condition})`)}`
+                  )
+                }
+                if (!fullResponse?.condition_limit_reason) {
+                  _msgs.push(
+                    `В случае { "go_to_final_step": true }, ответ должен соделжать непустое поле "condition_limit_reason", получено ${clsx(fullResponse?.condition_limit_reason || 'empty', `(${typeof fullResponse?.condition_limit_reason})`)}`
+                  )
+                }
+                if (_msgs.length > 0) {
+                  res.ok = false
+                  res.message = _msgs.join(' / ')
+                  res._showDetailsInUi = true
+                }
+              }
+              break
+            default:
+              break
+          }
+          return res
+        }
+      },
+      id: {
+        isRequired: true,
+        validate: (val) => {
+          const res: NResponseValidate.TResult<NSP.TImeiResponse> = { ok: true }
+          switch (true) {
+            case typeof val !== 'number':
+              res.ok = false
+              res.message = 'Поле должно быть числом'
+              break
+            case typeof val === 'number' && val <= 0:
+              res.ok = false
+              res.message = 'Поле должно быть положительным числом'
+              break
+            default:
+              break
+          }
+          return res
+        }
+      },
       phone: {
         isRequired: true,
         validate: (val) => {
           // NOTE: Обработка ошибочных кейсов
           const subfieldsForCheck = [
-            'color_choices',
-            'memory_choices',
+            // -- NOTE: Unnecessary for mtsmain
+            // 'color_choices',
+            // 'memory_choices',
+            // --
+            // -- NOTE: На время демонстраций для mtsmain
+            // 'color',
+            // 'memory',
+            // --
+            'vendor',
+            'type',
+            'model',
           ]
           const res: NResponseValidate.TResult<NSP.TImeiResponse> = { ok: true }
           const msgs = []
           for (const key of subfieldsForCheck) {
             switch (key) {
+              case 'vendor':
+              case 'type':
+              case 'model':
+              case 'color':
+              case 'memory':
+                if (!val?.[key]) msgs.push(`Не получено поле "${key}" ${clsx(val?.[key], `(ожидается ${typeof val?.[key]})`)}`)
+                break
               // case 'memory': {
               //   if (!!val?.memory && !val?.color_choices[val.memory])
               //     msgs.push(`Неконсистентный ответ: нет выбора цвета для памяти "${val?.memory}"`)
@@ -91,7 +188,7 @@ export const fetchIMEIMachine = async (context: TStepMachineContextFormat, _ev: 
 
           if (msgs.length > 0) {
             res.ok = false
-            res.message = `Результат проверки поля res.phone -> ${msgs.join(', ')}`
+            res.message = `Результат проверки поля "res.phone": ${msgs.join(', ')}`
           }
           return res
         },
@@ -127,6 +224,7 @@ export const fetchIMEIMachine = async (context: TStepMachineContextFormat, _ev: 
           return res
         },
       },
+      
       // TODO?: possible_subsidies
       // Можно проверить консистентность possible_subsidies,
       // что будет передано в таблицу под originalDataCases?.subsidiesStruct?.subsidies
@@ -140,7 +238,7 @@ export const fetchIMEIMachine = async (context: TStepMachineContextFormat, _ev: 
       }
     })
 
-  vi.setImeiStepResponse(res)
+  vi.setImeiStepResponse({ res, reqState: res.ok ? 'success' : 'error' })
 
   if (res.ok) {
     context.imei.result.state = 'success'
@@ -181,6 +279,15 @@ export const fetchIMEIMachine = async (context: TStepMachineContextFormat, _ev: 
       context.memory.dynamicList = memoryDynamicList
     }
     // ---
+    // --
+
+    // -- NOTE: (NEW) Опросник для шага Проверка сотрудником
+    // const { vendor } = res.phone
+    // const targetDiagConfig = vendor
+    //   ? checkByEmployeeCfg[vendor] || checkByEmployeeCfg.DEFAULT
+    //   : checkByEmployeeCfg.DEFAULT
+
+    // context.checkByEmployee.targetDiagConfig = targetDiagConfig
     // --
 
     return Promise.resolve(res)

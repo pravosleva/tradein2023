@@ -17,7 +17,7 @@ export default {
       '2xl': '1536px', // => @media (min-width: 1536px) { ... }
     },
     fontSize: {
-      sm: '0.8rem',
+      sm: '0.85rem',
       base: '1rem',
       xl: '1.25rem',
       '2xl': '1.563rem',
@@ -40,7 +40,7 @@ export default {
       //   'sm': '640px',
       // },
       // width: {
-      //   '1000': '1000px',
+      //   '110': '110px',
       // },
       fontSize: {
         xs: '0.6rem',
@@ -54,6 +54,9 @@ export default {
         'spGreenDark': '#168f48',
         'spGreen': '#71bc81',
         'spRed': '#c84f4f',
+        'mtsRed': '#FF0032',
+        'mtsRedLight': '#FFE5E5',
+        'mtsGray': '#7F7D89',
       },
     },
   },

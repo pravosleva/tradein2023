@@ -61,12 +61,16 @@ export namespace NSP {
     raw_data:string;
     analytics_session_id: number;
     seconds_since_analytics_session_started: string; // '2022-09-15T13:06+03:00'
-
+    
     // NOTE: New
     go_to_final_step?: boolean;
     condition?: string;
     condition_limit_reason?: string;
   };
+  export type TCheckFMIPResponse = {
+    ok: boolean; // NOTE: true -> FMIP on; false -> FMIP off;
+    message?: string;
+  }
   export type TCheckPhoneResponse = {
     ok: boolean;
     message?: string;

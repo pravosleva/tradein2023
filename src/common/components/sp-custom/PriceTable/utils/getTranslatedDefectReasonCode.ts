@@ -4,7 +4,7 @@ const legacyDefectInfo: {
   };
 } = {
   mobile_phone: {
-    no_defects: 'дефектов нет',
+    no_defects: 'нет',
     scratched_screen: 'экран с царапинами или потертостями',
     broken_strap: 'ремешок поврежден',
     case_defects: 'корпус имеет видимые повреждения',

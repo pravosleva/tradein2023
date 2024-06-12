@@ -2,52 +2,129 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useLayoutEffect, useCallback } from 'react'
-import { groupLog, wws } from '~/utils'
+import { groupLog, wws, EReportType } from '~/utils'
 import { NEvents } from '~/types'
 import { vi } from '~/common/vi'
 import { subscribeKey } from 'valtio/utils'
 import { EStep } from '../xstate/stepMachine'
 import { useSnapshot } from 'valtio'
+import { useProxy } from 'valtio/utils'
 import structuredClone from '@ungap/structured-clone'
+import {
+  useSnackbar,
+  SnackbarMessage as TSnackbarMessage,
+  OptionsObject as IOptionsObject,
+  // SharedProps as ISharedProps,
+  // closeSnackbar,
+} from 'notistack'
 
 type TProps = {
   isDebugEnabled?: boolean;
 }
-enum EReportType {
-  DEFAULT = 'default',
-  INFO = 'info',
-  WARNING = 'warning',
-  ERROR = 'error',
-  SUCCESS = 'success',
-}
 
+// const isDev = process.env.NODE_ENV === 'development'
+// const isLocalProd = import.meta.env.VITE_LOCAL_PROD === '1'
+// const isStaging = isDev || isLocalProd
 const VITE_GIT_SHA1 = import.meta.env.VITE_GIT_SHA1
+
+type TIncomingData = {
+  output?: any;
+  type?: NEvents.ESharedWorkerNative;
+  yourData?: { [key: string]: any; };
+  code?: NEvents.EWorkerToClientEventCode;
+  __eType: string;
+  message?: string;
+  result?: {
+    isOk: boolean;
+    message?: string;
+    response: {
+      ok: boolean;
+      id?: number;
+      gRes?: any;
+    };
+  };
+};
 
 export const useMetrix = ({ isDebugEnabled }: TProps) => {
   const smViSnap = useSnapshot(vi.smState)
+  const devtoolsViProxy = useProxy(vi.common.devtools)
+  const { enqueueSnackbar } = useSnackbar()
+  const showNotif = useCallback((msg: TSnackbarMessage, opts?: IOptionsObject) => {
+    if (!document.hidden) enqueueSnackbar(msg, opts)
+  }, [enqueueSnackbar])
+  const showError = useCallback(({ message }: { message: string }) => {
+    showNotif(message || 'No message', { variant: 'error' })
+  }, [showNotif])
+  const showSuccess = useCallback(({ message }: { message: string }) => {
+    showNotif(message || 'No message', { variant: 'default' })
+  }, [showNotif])
+
   // NOTE: 1.1 Use wws.subscribeOnData once only!
   useLayoutEffect(() => {
     wws.subscribeOnData<{
-      data: {
-        output: any;
-        type: NEvents.ESharedWorkerNative;
-        yourData: { [key: string]: any; };
-      };
+      data: TIncomingData
     }>({
       wName: 'metrixWorker',
-      cb: (e: any) => {
+      cb: (e: {
+        data: TIncomingData;
+      }) => {
+        if (isDebugEnabled) groupLog({ namespace: 'new data (high level)', items: [e] })
         switch (e.data.__eType) {
           case NEvents.ECustom.WORKER_TO_CLIENT_REMOTE_DATA:
             if (isDebugEnabled) groupLog({
               namespace: `--useMetrix:by-metrixWorker ✅ (on data) [${e.data.__eType}] e.data:`,
               items: [e.data],
             })
-            // NOTE: App logic?
+
+            // -- NOTE: App logic exp
+            switch (true) {
+              case e.data.code === NEvents.EWorkerToClientEventCode.UI_MESSAGE_DANGER:
+                if (isDebugEnabled) groupLog({ namespace: 'ui msg err', items: [e.data] })
+                showError({ message: e.data.message || 'Ooops! Что-то пошло не так...' })
+                break
+              case e.data.code === NEvents.EWorkerToClientEventCode.UI_MESSAGE_SUCCESS:
+                if (isDebugEnabled) groupLog({ namespace: 'ui msg ok', items: [e.data] })
+                showSuccess({ message: e.data.message || 'Ok' })
+                break
+              default:
+                break
+            }
+            // --
+
+            break
+          case NEvents.ECustom.WORKER_TO_CLIENT_CONN:
+            if (!devtoolsViProxy.network.socket.__isConnectionIgnoredForUI) devtoolsViProxy.network.socket.isConnected = true
+
+            if (isDebugEnabled) groupLog({
+              namespace: `--useMetrix:by-metrixWorker 🟢 [${e.data.__eType}] e.data:`,
+              items: [
+                e.data,
+                `__isConnectionIgnoredForUI: ${String(devtoolsViProxy.network.socket.__isConnectionIgnoredForUI)}`,
+                devtoolsViProxy.network.socket.__isConnectionIgnoredForUI
+                  ? 'So, this event does not affect the user interface'
+                  : 'So, this event will affect the user interface',
+              ],
+            })
+            break
+          case NEvents.ECustom.WORKER_TO_CLIENT_CONNN_ERR:
+          case NEvents.ECustom.WORKER_TO_CLIENT_DISCONN:
+            if (!devtoolsViProxy.network.socket.__isConnectionIgnoredForUI) devtoolsViProxy.network.socket.isConnected = false
+
+            if (isDebugEnabled) groupLog({
+              namespace: `--useMetrix:by-metrixWorker 🔴 [${e.data.__eType}] e.data:`,
+              items: [
+                e.data,
+                `__isConnectionIgnoredForUI: ${String(devtoolsViProxy.network.socket.__isConnectionIgnoredForUI)}`,
+                devtoolsViProxy.network.socket.__isConnectionIgnoredForUI
+                  ? 'So, this event does not affect the user interface'
+                  : 'So, this event will affect the user interface',
+              ],
+            })
             break
           default: {
             if (isDebugEnabled) groupLog({
               namespace: `--useMetrix:by-metrixWorker ⚠️ (on data) UNHANDLED! [${e.data.__eType}] e.data:`,
-              items: [e.data],
+              items: [e.data, 'Необработанное событие'],
             })
             break
           }
@@ -89,6 +166,7 @@ export const useMetrix = ({ isDebugEnabled }: TProps) => {
         })
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDebugEnabled])
 
   const sendSnapshotToWorker = useCallback(({
@@ -97,6 +175,7 @@ export const useMetrix = ({ isDebugEnabled }: TProps) => {
     input: {
       metrixEventType: any;
       stateValue: EStep;
+      tradeinId: number | null;
     }
   }) => {
     // - TODO: Custom input data for the particular stateValue
@@ -108,22 +187,126 @@ export const useMetrix = ({ isDebugEnabled }: TProps) => {
       imei: smViSnap.imei.value,
     }
     switch (input.stateValue) {
-      // TODO: Detailed errors
-      // case EStep.AppInitErr:
-      //   break
-      case EStep.SendImeiErr:
+      case EStep.AppInitErr:
         customData.stepDetails = {
-          imei: {
-            response: structuredClone(smViSnap.imei.response, {
+          initApp: {
+            response: structuredClone(smViSnap.initApp.response, { lossy: true, json: true }),
+            result: structuredClone(smViSnap.initApp.result, { lossy: true, json: true }),
+          },
+        }
+        customData.reportType = EReportType.ERROR
+        break
+        /*
+      case EStep.FinalScenarioErr:
+        customData.stepDetails = {
+          appMode: {
+            currentMode: structuredClone(smViSnap.appMode.currentMode, {
               // avoid throwing
               lossy: true,
               // avoid throwing *and* looks for toJSON
               json: true
             }),
+          },
+          appMode2: {
+            currentMode: structuredClone(smViSnap.appMode2.currentMode, { lossy: true, json: true }),
+          },
+        }
+        customData.reportType = EReportType.ERROR
+        break
+      case EStep.AppModeMenu:
+        customData.stepDetails = {
+          initApp: {
+            response: structuredClone(smViSnap.initApp.response, { lossy: true, json: true }),
+            result: structuredClone(smViSnap.initApp.result, { lossy: true, json: true }),
           }
+        }
+        customData.reportType = EReportType.DEFAULT
+        break
+      case EStep.AppModeMenu2:
+        customData.stepDetails = {
+          appMode: {
+            currentMode: structuredClone(smViSnap.appMode.currentMode, { lossy: true, json: true }),
+          },
+        }
+        customData.reportType = EReportType.DEFAULT
+        break
+      case EStep.AppModeMenu2FinalErr:
+        customData.stepDetails = {
+          appMode: {
+            currentMode: structuredClone(smViSnap.appMode.currentMode, { lossy: true, json: true }),
+          },
+        }
+        customData.reportType = EReportType.ERROR
+        break
+      case EStep.CheckDeviceCharge:
+        customData.stepDetails = {
+          appMode: {
+            currentMode: structuredClone(smViSnap.appMode.currentMode, { lossy: true, json: true }),
+          },
+          appMode2: {
+            currentMode: structuredClone(smViSnap.appMode2.currentMode, { lossy: true, json: true }),
+          },
+        }
+        customData.reportType = EReportType.INFO
+        break
+      
+      case EStep.EnterImei:
+        customData.stepDetails = {
+          appMode: {
+            currentMode: structuredClone(smViSnap.appMode.currentMode, { lossy: true, json: true }),
+          },
+          appMode2: {
+            currentMode: structuredClone(smViSnap.appMode2.currentMode, { lossy: true, json: true }),
+          },
+          checkDeviceCharge: {
+            form: {
+              state: structuredClone(smViSnap.checkDeviceCharge.form.state, { lossy: true, json: true }),
+            },
+          },
+        }
+        customData.reportType = EReportType.INFO
+        break
+      */
+      case EStep.SendImeiErr:
+        customData.stepDetails = {
+          // appMode: {
+          //   currentMode: structuredClone(smViSnap.appMode.currentMode, { lossy: true, json: true }),
+          // },
+          // appMode2: {
+          //   currentMode: structuredClone(smViSnap.appMode2.currentMode, { lossy: true, json: true }),
+          // },
+          // checkDeviceCharge: {
+          //   form: {
+          //     state: structuredClone(smViSnap.checkDeviceCharge.form.state, { lossy: true, json: true }),
+          //   },
+          // },
+          imei: {
+            response: structuredClone(smViSnap.imei.response, { lossy: true, json: true }),
+          },
         }
         customData.reportType = EReportType.ERROR
         break;
+      /*
+      case EStep.SendImeiDone:
+        customData.stepDetails = {
+          appMode: {
+            currentMode: structuredClone(smViSnap.appMode.currentMode, { lossy: true, json: true }),
+          },
+          appMode2: {
+            currentMode: structuredClone(smViSnap.appMode2.currentMode, { lossy: true, json: true }),
+          },
+          checkDeviceCharge: {
+            form: {
+              state: structuredClone(smViSnap.checkDeviceCharge.form.state, { lossy: true, json: true }),
+            },
+          },
+          imei: {
+            response: structuredClone(smViSnap.imei.response, { lossy: true, json: true }),
+          },
+        }
+        customData.reportType = EReportType.INFO
+        break;
+      */
       case EStep.EnterMemoryAndColor:
         customData.stepDetails = {
           imei: {
@@ -132,16 +315,121 @@ export const useMetrix = ({ isDebugEnabled }: TProps) => {
         }
         customData.reportType = EReportType.INFO
         break
-      case EStep.GetPhotoLink:
+      /*
+      case EStep.SendCheckFMIPResultOff:
         customData.stepDetails = {
-          checkPhone: {
-            response: structuredClone(smViSnap.checkPhone.response, { lossy: true, json: true }),
+          appMode: {
+            currentMode: structuredClone(smViSnap.appMode.currentMode, { lossy: true, json: true }),
+          },
+          appMode2: {
+            currentMode: structuredClone(smViSnap.appMode2.currentMode, { lossy: true, json: true }),
+          },
+          checkDeviceCharge: {
+            form: {
+              state: structuredClone(smViSnap.checkDeviceCharge.form.state, { lossy: true, json: true }),
+            },
+          },
+          checkFMIP: {
+            response: structuredClone(smViSnap.checkFMIP.response, { lossy: true, json: true }),
+            result: structuredClone(smViSnap.checkFMIP.result, { lossy: true, json: true }),
+          },
+        }
+        customData.reportType = EReportType.INFO
+        break
+      case EStep.SendCheckFMIPResultOn:
+        customData.stepDetails = {
+          appMode: {
+            currentMode: structuredClone(smViSnap.appMode.currentMode, { lossy: true, json: true }),
+          },
+          appMode2: {
+            currentMode: structuredClone(smViSnap.appMode2.currentMode, { lossy: true, json: true }),
+          },
+          checkDeviceCharge: {
+            form: {
+              state: structuredClone(smViSnap.checkDeviceCharge.form.state, { lossy: true, json: true }),
+            },
+          },
+          checkFMIP: {
+            response: structuredClone(smViSnap.checkFMIP.response, { lossy: true, json: true }),
+            result: structuredClone(smViSnap.checkFMIP.result, { lossy: true, json: true }),
+          },
+        }
+        customData.reportType = EReportType.WARNING
+        break
+      case EStep.CheckByEmployee:
+        customData.stepDetails = {
+          imei: {
+            response: structuredClone(smViSnap.imei.response, { lossy: true, json: true }),
+            result: structuredClone(smViSnap.imei.result, { lossy: true, json: true }),
+          },
+          checkFMIP: {
+            response: structuredClone(smViSnap.checkFMIP.response, { lossy: true, json: true }),
+            result: structuredClone(smViSnap.checkFMIP.result, { lossy: true, json: true }),
+          },
+        }
+        customData.reportType = EReportType.INFO
+        break
+      
+      case EStep.CheckPhone:
+        customData.stepDetails = {
+          appMode: {
+            currentMode: structuredClone(smViSnap.appMode.currentMode, { lossy: true, json: true }),
+          },
+          appMode2: {
+            currentMode: structuredClone(smViSnap.appMode2.currentMode, { lossy: true, json: true }),
+          },
+          checkDeviceCharge: {
+            form: {
+              state: structuredClone(smViSnap.checkDeviceCharge.form.state, { lossy: true, json: true }),
+            },
+          },
+        }
+        if (smViSnap.checkFMIP.response) {
+          customData.stepDetails.checkFMIP = {
+            response: structuredClone(smViSnap.checkFMIP.response, { lossy: true, json: true }),
+            result: structuredClone(smViSnap.checkFMIP.result, { lossy: true, json: true }),
           }
         }
+        customData.stepDetails.checkByEmployee = {
+          form: {
+            state: structuredClone(smViSnap.checkByEmployee.form.state, { lossy: true, json: true }),
+          },
+        },
+        customData.reportType = EReportType.INFO
+        break
+      case EStep.GetPhotoLink:
+        customData.stepDetails = {
+          appMode: {
+            currentMode: structuredClone(smViSnap.appMode.currentMode, { lossy: true, json: true }),
+          },
+          appMode2: {
+            currentMode: structuredClone(smViSnap.appMode2.currentMode, { lossy: true, json: true }),
+          },
+          checkDeviceCharge: {
+            form: {
+              state: structuredClone(smViSnap.checkDeviceCharge.form.state, { lossy: true, json: true }),
+            },
+          },
+        }
+        if (smViSnap.checkFMIP.response) {
+          customData.stepDetails.checkFMIP = {
+            response: structuredClone(smViSnap.checkFMIP.response, { lossy: true, json: true }),
+            result: structuredClone(smViSnap.checkFMIP.result, { lossy: true, json: true }),
+          }
+        }
+        customData.stepDetails.checkPhone = {
+          response: structuredClone(smViSnap.checkPhone.response, { lossy: true, json: true }),
+        }
+        customData.stepDetails.checkByEmployee = {
+          form: {
+            state: structuredClone(smViSnap.checkByEmployee.form.state, { lossy: true, json: true }),
+          },
+        },
         customData.reportType = EReportType.INFO
         break
       // case EStep.UploadPhotoResultIsFuckup:
       //   break
+      */
       case EStep.ContractError:
         customData.stepDetails = {
           contract: {
@@ -158,6 +446,33 @@ export const useMetrix = ({ isDebugEnabled }: TProps) => {
         }
         customData.reportType = EReportType.SUCCESS
         break
+      /*
+      case EStep.ActPrint:
+        customData.stepDetails = {
+          appMode: {
+            currentMode: structuredClone(smViSnap.appMode.currentMode, { lossy: true, json: true }),
+          },
+          appMode2: {
+            currentMode: structuredClone(smViSnap.appMode2.currentMode, { lossy: true, json: true }),
+          },
+          photoStatus: {
+            response: structuredClone(smViSnap.photoStatus.response, { lossy: true, json: true }),
+            result: structuredClone(smViSnap.photoStatus.result, { lossy: true, json: true }),
+          },
+        }
+        if (smViSnap.imei.response?.go_to_final_step) {
+          customData.stepDetails.imei = {
+            _customDetails: {
+              go_to_final_step: structuredClone(smViSnap.imei.response?.go_to_final_step, { lossy: true, json: true }),
+              condition: structuredClone(smViSnap.imei.response?.condition, { lossy: true, json: true }),
+              condition_limit_reason: structuredClone(smViSnap.imei.response?.condition_limit_reason, { lossy: true, json: true }),
+            },
+            result: structuredClone(smViSnap.imei.result, { lossy: true, json: true }),
+          }
+        }
+        customData.reportType = EReportType.SUCCESS
+        break
+      */
       default: break
     }
     // -
@@ -165,7 +480,7 @@ export const useMetrix = ({ isDebugEnabled }: TProps) => {
       input: {
         ts: number;
         room: string;
-        metrixEventType: string;
+        metrixEventType: NEvents.EMetrixClientOutgoing;
         reportType: EReportType;
         stateValue: EStep;
         appVersion: string;
@@ -188,10 +503,21 @@ export const useMetrix = ({ isDebugEnabled }: TProps) => {
       },
     })
   }, [
+    smViSnap.initApp.response,
+    smViSnap.initApp.result,
+    // smViSnap.appMode.currentMode,
+    // smViSnap.appMode2.currentMode,
     smViSnap.imei.response,
+    // smViSnap.imei.result,
     smViSnap.imei.value,
-    smViSnap.checkPhone.response,
+    // smViSnap.checkPhone.response,
     smViSnap.contract.response,
+    // smViSnap.checkByEmployee.form.state,
+    // smViSnap.checkDeviceCharge.form.state,
+    // smViSnap.checkFMIP.response,
+    // smViSnap.checkFMIP.result,
+    // smViSnap.photoStatus.response,
+    // smViSnap.photoStatus.result,
   ])
 
   // NOTE: 2. Send event for each change

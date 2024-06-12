@@ -19,7 +19,7 @@ export const getPhotoLinkMachine = async (context: TStepMachineContextFormat, _e
   })
 
   const res = await httpClient.getPhotoLink({
-    tradeinId: context.imei.response?.id || 0,
+    tradeinId: context.imei.response?.id,
     responseValidator: ({ res }) => res.ok === true,
   })
     .catch((err) => err)

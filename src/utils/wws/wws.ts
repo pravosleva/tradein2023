@@ -1,11 +1,16 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { NEvents } from '~/types'
-import { groupLog } from './groupLog'
-import pkg from '../../package.json'
+import { groupLog } from '../groupLog'
+import pkg from '../../../package.json'
+import { NViDevtools, vi } from '~/common/vi'
+import structuredClone from '@ungap/structured-clone'
+import { EReportType } from './types'
+import { EStep } from '~/common/xstate/stepMachine'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const VITE_PUBLIC_URL = import.meta.env.VITE_PUBLIC_URL
 const PUBLIC_URL = VITE_PUBLIC_URL ? `${VITE_PUBLIC_URL}/static3/common` : '/static3/common' // process?.env?.PUBLIC_URL || '/static3'
+const VITE_GIT_SHA1 = import.meta.env.VITE_GIT_SHA1
 
 // let _c = 0
 
@@ -31,14 +36,14 @@ class Singleton {
     this.isDebugEnabled = isDebugEnabled
     switch (true) {
       case noSharedWorkers:
-        this.metrixWorker = new Worker(`${PUBLIC_URL}/web-workers/dx.worker.js?ts=${new Date().getTime()}&v=${pkg.version}`)
+        this.metrixWorker = new Worker(`${PUBLIC_URL}/web-workers/dx.worker.js?ts=${new Date().getTime()}&v=${pkg.version}&gitSHA1=${VITE_GIT_SHA1}`)
 
         // Etc.
         break
       default:
         this.metrixWorker = typeof SharedWorker !== 'undefined'
-          ? new SharedWorker(`${PUBLIC_URL}/web-workers/dx.shared-worker.js?ts=${new Date().getTime()}&v=${pkg.version}`)
-          : new Worker(`${PUBLIC_URL}/web-workers/dx.worker.js?ts=${new Date().getTime()}&v=${pkg.version}`)
+          ? new SharedWorker(`${PUBLIC_URL}/web-workers/dx.shared-worker.js?ts=${new Date().getTime()}&v=${pkg.version}&gitSHA1=${VITE_GIT_SHA1}`)
+          : new Worker(`${PUBLIC_URL}/web-workers/dx.worker.js?ts=${new Date().getTime()}&v=${pkg.version}&gitSHA1=${VITE_GIT_SHA1}`)
         if (typeof SharedWorker !== 'undefined' && this.metrixWorker instanceof SharedWorker) this.metrixWorker.port.start()
 
         // Etc.
@@ -56,7 +61,7 @@ class Singleton {
 
   public subscribeOnData<T>({ wName, cb }: { wName: string; cb: (d: T) => void; }) {
     // @ts-ignore
-    if (!this[wName]) throw new Error(`No worker ${wName} yet #1`)
+    if (!this[wName]) throw new Error(`No worker ${wName} yet #wws:1`)
 
     switch (true) {
       // @ts-ignore
@@ -76,7 +81,7 @@ class Singleton {
 
   public subscribeOnErr<T>({ wName, cb }: { wName: string; cb: (d: T) => void; }) {
     // @ts-ignore
-    if (!this[wName]) throw new Error(`No worker ${wName} yet #2`)
+    if (!this[wName]) throw new Error(`No worker ${wName} yet #wws:2`)
 
     switch (true) {
       // @ts-ignore
@@ -98,7 +103,7 @@ class Singleton {
   public post<T>(e: { wName: string; eType: string; data?: T; }) {
     const { wName, eType, data } = e
     // @ts-ignore
-    if (!this[wName]) throw new Error(`No worker ${wName} yet #3`)
+    if (!this[wName]) throw new Error(`No worker ${wName} yet #wws:3`)
 
     switch (true) {
       // @ts-ignore
@@ -119,7 +124,7 @@ class Singleton {
 
   public terminate({ wName, cb }: { wName: string; cb?: (d: any) => void; }) {
     // @ts-ignore
-    if (!this[wName]) throw new Error(`No worker ${wName} yet #4`)
+    if (!this[wName]) throw new Error(`No worker ${wName} yet #wws:4`)
 
     switch (true) {
       // @ts-ignore
@@ -140,7 +145,7 @@ class Singleton {
 
   public resetHistory({ wName }: { wName: string; }): void {
     // @ts-ignore
-    if (!this[wName]) throw new Error(`No worker ${wName} yet #5`)
+    if (!this[wName]) throw new Error(`No worker ${wName} yet #wws:5`)
 
     this.post<{ tsList: TTsListItem[] }>({
       wName,
@@ -150,9 +155,64 @@ class Singleton {
   public resetMxHistory() {
     this.resetHistory({ wName: 'metrixWorker' })
   }
+
+  public sendTheFullHistoryReport({ comment, network }: {
+    comment: string;
+    network: NViDevtools.TNetwork;
+  }): Promise<{ ok: boolean; message?: string; }> {
+    try {
+      if (!vi.common.stateValue)
+        throw new Error('Отправка истории на данном этапе не предусмотрена (значение vi.common.stateValue не определено) #wws:6')
+
+      this.post<{
+        input: {
+          ts: number;
+          room: string;
+          metrixEventType: NEvents.EMetrixClientOutgoing;
+          reportType: EReportType;
+          stateValue: EStep;
+          appVersion: string;
+          stepDetails?: {
+            [key: string]: any;
+            commentByUser: string;
+            network: NViDevtools.TNetwork;
+          };
+          gitSHA1: string;
+          uniquePageLoadKey: string;
+          uniqueUserDataLoadKey: string;
+        }
+      }>({
+        wName: 'metrixWorker',
+        eType: NEvents.ECustom.CLIENT_TO_WORKER_MESSAGE,
+        data: {
+          input: {
+            ts: new Date().getTime(),
+            room: 'FOR_EXAMPLE',
+            metrixEventType: NEvents.EMetrixClientOutgoing.SP_XHR_HISTORY_REPORT_EV,
+            reportType: EReportType.WARNING,
+            stateValue: vi.common.stateValue,
+            appVersion: vi.common.appVersion,
+            stepDetails: {
+              commentByUser: comment,
+              network: structuredClone(network, { lossy: true, json: true }),
+            },
+            gitSHA1: VITE_GIT_SHA1,
+            uniquePageLoadKey: vi.uniquePageLoadKey,
+            uniqueUserDataLoadKey: vi.uniqueUserDataLoadKey,
+          },
+        },
+      })
+
+      return Promise.resolve({ ok: true, message: 'Sent to Worker' })
+    } catch (err: any) {
+      if (this.isDebugEnabled) groupLog({ namespace: 'wws err', items: [err] })
+      
+      return Promise.reject({ ok: false, message: err?.message || 'No err.message' })
+    }
+  }
 }
 
 export const wws = Singleton.getInstance({
   noSharedWorkers: false,
-  isDebugEnabled: false,
+  isDebugEnabled: true,
 })

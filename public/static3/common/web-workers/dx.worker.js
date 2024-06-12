@@ -244,6 +244,34 @@ const isNewNativeEvent = ({ newCode: n, prevCode: p }) => {
         if (dbg.workerEvs.fromServer.isEnabled) log({ label: '⚡ Socket received response from server', msgs: [e] })
         self.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA, ...e })
       },
+      // -- NOTE: New report exp
+      [NES.Socket.Metrix.EClientIncoming.SP_MX_SERVER_ON_XHR_FULL_HISTORY_REPORT_OK]: function (e) {
+        // const { message, result, yourData } = e
+        const dataForMemory = e
+        _perfInfo.tsList.push({
+          descr: `[sock-cus:sp-rep-res]<-s:ok: ${NES.Socket.Metrix.EClientIncoming.SP_MX_SERVER_ON_XHR_FULL_HISTORY_REPORT_OK}`,
+          p: performance.now(),
+          ts: new Date().getTime(),
+          data: dataForMemory,
+          name: 'Socket получил данные (ok)',
+        })
+        if (dbg.workerEvs.fromServer.isEnabled) log({ label: '⚡ Socket received response from server', msgs: [e] })
+        self.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA, ...e, code: 'ui_message_success' })
+      },
+      [NES.Socket.Metrix.EClientIncoming.SP_MX_SERVER_ON_XHR_FULL_HISTORY_REPORT_ERR]: function (e) {
+        // const { message, result, yourData } = e
+        const dataForMemory = e
+        _perfInfo.tsList.push({
+          descr: `[sock-cus:sp-rep-res]<-s:err: ${NES.Socket.Metrix.EClientIncoming.SP_MX_SERVER_ON_XHR_FULL_HISTORY_REPORT_ERR}`,
+          p: performance.now(),
+          ts: new Date().getTime(),
+          data: dataForMemory,
+          name: 'Socket получил данные (err)',
+        })
+        if (dbg.workerEvs.fromServer.isEnabled) log({ label: '⚡ Socket received response from server', msgs: [e] })
+        self.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA, ...e, code: 'ui_message_danger' })
+      },
+      // --
       [NES.Socket.ECustom.DONT_RECONNECT]: function(e) {
         const { yourData: { _wService, ...restYourData }, ...rest } = e
         const dataForMemory = { yourData: restYourData, ...rest }

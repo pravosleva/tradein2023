@@ -30,8 +30,9 @@ import { IoMdRefresh } from 'react-icons/io'
 import { getCapitalizedFirstLetter } from '~/utils/aux-ops'
 import { useMetrix } from '~/common/hooks'
 import { getReadableSnakeCase } from '~/utils/aux-ops'
-import { wws } from '~/utils/wws'
+import { wws } from '~/utils/wws/wws'
 import { vi } from '~/common/vi'
+import 'react-image-lightbox/style.css'
 
 function App() {
   const [state, send] = useMachine(stepMachine)

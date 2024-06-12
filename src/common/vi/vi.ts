@@ -1,14 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { proxy } from 'valtio'
+import { initialStepMachineContextFormat, initialContractFormState } from '../xstate/stepMachine/initialState'
 import { NSP } from '~/utils/httpClient'
 import { TReqStateCode, TResponseDetailsInfo, TRequestDetailsInfo } from '~/utils/httpClient/API'
-import { getRandomString, mutateObject } from '~/utils/aux-ops'
+import { getRandomString } from '~/utils/aux-ops'
+import {
+  TStepMachineContextFormat,
+  TContractForm,
+  EStep,
+  // EAppModeMenu1, EAppModeMenu2,
+} from '../xstate/stepMachine/types'
+import { mutateObject } from '~/utils/aux-ops'
 import clsx from 'clsx'
-import { initialStepMachineContextFormat, initialContractFormState } from './xstate/stepMachine/initialState'
-import { TStepMachineContextFormat, TContractForm, EStep } from './xstate/stepMachine/types'
-import pkg from '../../package.json'
+import pkg from '../../../package.json' 
+// import { TItem } from '../components/tailwind'
+import { NViDevtools } from './types'
 
-const defaultXHRState = {
+const defaultXHRState: NViDevtools.TNetworkXHR = {
   total: {
     pending: 0,
     rejected_req: 0,
@@ -23,7 +31,7 @@ class Singleton {
   private _stepMachineState: TStepMachineContextFormat
   private _contractFormState: TContractForm
   private _contractFormLastEditedFieldInfo: {
-    name: string | null;
+    name?: string;
   }
   private _common: {
     stateValue: EStep | null;
@@ -31,20 +39,12 @@ class Singleton {
     devtools: {
       isUIEnabled: boolean;
       network: {
-        xhr: {
-          total: {
-            [key in TReqStateCode]: number;
-          };
-          state: {
-            [key: string]: { // NOTE: url as key
-              [key: string]: { // NOTE: ts as key
-                code: TReqStateCode;
-                __resDetails?: TResponseDetailsInfo;
-                __reqDetails?: TRequestDetailsInfo;
-              };
-            };
-          };
+        __reportsLimit: number;
+        socket: {
+          __isConnectionIgnoredForUI: boolean,
+          isConnected: boolean;
         };
+        xhr: NViDevtools.TNetworkXHR;
       };
     };
   }
@@ -58,7 +58,7 @@ class Singleton {
     this._stepMachineState = proxy(initialStepMachineContextFormat)
     this._contractFormState = proxy(initialContractFormState)
     this._contractFormLastEditedFieldInfo = proxy({
-      name: null,
+      // name: undefined,
     })
     this._common = proxy({
       stateValue: null,
@@ -66,6 +66,13 @@ class Singleton {
       devtools: {
         isUIEnabled: false,
         network: {
+          // -- NOTE: Could be disabled by developer upon app initialization (you can set this value to 0)
+        __reportsLimit: 1,
+        // --
+          socket: {
+            __isConnectionIgnoredForUI: false, // NOTE: Dont touch!
+            isConnected: false,
+          },
           xhr: defaultXHRState,
         },
       },
@@ -79,6 +86,9 @@ class Singleton {
 
   // -- NOTE: HTTP debug service
   public enableDebugUI() {
+    this._common.devtools.isUIEnabled = true
+  }
+  public disableDebugUI() {
     this._common.devtools.isUIEnabled = true
   }
   public __fixXHRTotalCounters({ code }: { code: TReqStateCode }) {
@@ -165,7 +175,20 @@ class Singleton {
     })
   }
   // --
-
+  /*
+  public setAppMode (value: EAppModeMenu1 | null) {
+    this._stepMachineState.appMode.currentMode = value
+  }
+  public resetAppModeState () {
+    this.setAppMode(null)
+  }
+  public setAppMode2 (value: EAppModeMenu2 | null) {
+    this._stepMachineState.appMode2.currentMode = value
+  }
+  public resetAppMode2State () {
+    this.setAppMode2(null)
+  }
+  */
   public setUserDataResponse ({ res, reqState }: {
     res: NSP.TUserDataResponse | null;
     reqState: 'stopped' | 'pending' | 'success' | 'error';
@@ -176,8 +199,58 @@ class Singleton {
 
     this._stepMachineState.initApp.result.isLogged = res?.ok || false
   }
-  public setImeiStepResponse (res: NSP.TImeiResponse | null) {
+  /*
+  public setCheckDeviceChargeItem ({ item, _data }: {
+    item: TItem;
+    _data: { diag_key: string };
+  }) {
+    this._stepMachineState.checkDeviceCharge.form
+    if (!this._stepMachineState.checkDeviceCharge.form.state)
+      this._stepMachineState.checkDeviceCharge.form.state = { [_data.diag_key]: item.value }
+    else this._stepMachineState.checkDeviceCharge.form.state[_data.diag_key] = item.value
+
+    // TODO?: isReady is unnecessary yet...
+  }
+  */
+  public setImeiStepResponse ({ res, reqState }: {
+    res: NSP.TImeiResponse | null;
+    reqState: 'stopped' | 'pending' | 'success' | 'error';
+  }) {
+    console.log('-- imei step res')
+    console.log(res)
     this._stepMachineState.imei.response = res
+    this._stepMachineState.imei.result.state = reqState
+  }
+  /*
+  public setCheckByEmployeeStepItem ({ item, _data, expectedPropsLen }: {
+    item: TItem;
+    _data: { diag_key: string };
+    expectedPropsLen: number;
+  }) {
+    // console.log({ item, _data, expectedPropsLen })
+    if (!this._stepMachineState.checkByEmployee.form.state)
+      this._stepMachineState.checkByEmployee.form.state = { [_data.diag_key]: item.value }
+    else this._stepMachineState.checkByEmployee.form.state[_data.diag_key] = item.value
+
+    // console.log('-- final form')
+    // console.log(this._stepMachineState.checkByEmployee.form.state)
+
+    this._stepMachineState.checkByEmployee.form.isReady = expectedPropsLen === Object.keys(this._stepMachineState.checkByEmployee.form.state).length
+  }
+  public setCheckFMIPResponse ({ res, reqState }: {
+    res: NSP.TCheckFMIPResponse | null;
+    reqState: 'stopped' | 'pending' | 'success' | 'error';
+  }) {
+    this._stepMachineState.checkFMIP.response = res
+    this._stepMachineState.checkFMIP.result.state = reqState
+  }
+  */
+  public setPhotoStatusResponse ({ res, reqState }: {
+    res: NSP.TPhotoStatusResponse | null;
+    reqState: 'stopped' | 'pending' | 'success' | 'error';
+  }) {
+    this._stepMachineState.photoStatus.response = res
+    this._stepMachineState.photoStatus.result.state = reqState
   }
   public setContractStepResponse (res: NSP.TStandartMinimalResponse | null) {
     this._stepMachineState.contract.response = res
@@ -188,7 +261,19 @@ class Singleton {
   public resetState() {
     try {
       // TODO: Doesnt work -> this._stepMachineState = initialStepMachineContextFormat
+      // this._stepMachineState.imei.value = ''
       for (const key in this._contractFormState) delete this._contractFormState[key]
+      // this._contractFormLastEditedFieldInfo.name = null
+      // this._stepMachineState.appMode.currentMode = null
+      // this._stepMachineState.photoStatus = initialStepMachineContextFormat.photoStatus
+      // this._stepMachineState.appMode2.currentMode = null
+      // this._stepMachineState.checkPhone = initialStepMachineContextFormat.checkPhone
+      // this._stepMachineState.checkFMIP = initialStepMachineContextFormat.checkFMIP
+      // this._stepMachineState.imei = initialStepMachineContextFormat.imei
+      // this._stepMachineState.checkDeviceCharge = initialStepMachineContextFormat.checkDeviceCharge
+      // this._stepMachineState.checkByEmployee = initialStepMachineContextFormat.checkByEmployee
+      // this._stepMachineState.contract = initialStepMachineContextFormat.contract
+      // this._stepMachineState.photoLink = initialStepMachineContextFormat.photoLink
       // NOTE: Etc. 4/4
 
       // NOTE: Exp

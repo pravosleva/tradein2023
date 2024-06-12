@@ -4,7 +4,7 @@ import axios, { AxiosError, AxiosInstance, AxiosResponse, CancelToken, InternalA
 import clsx from 'clsx'
 // import axiosRetry from 'axios-retry'
 // @ts-ignore
-import * as rax from 'retry-axios'
+import * as rax from 'retry-axios' // NOTE: See also https://www.npmjs.com/package/retry-axios
 import { groupLog, TGroupLogProps } from '~/utils/groupLog'
 import { Counter } from '~/utils'
 import { vi } from '~/common/vi'
@@ -14,6 +14,7 @@ const VITE_BASE_API_URL = import.meta.env.VITE_BASE_API_URL
 const isDev = process.env.NODE_ENV === 'development'
 const isLocalProd = import.meta.env.VITE_LOCAL_PROD === '1'
 const isStaging = isDev || isLocalProd
+// const isProd = process.env.NODE_ENV === 'production'
 const auxFrontHeaderName = '__front_ts'
 const counter = Counter(1)
 
@@ -224,7 +225,6 @@ export class API {
 
   universalAxiosResponseHandler(validator: (data: any) => boolean) {
     return (axiosRes: AxiosResponse) => {
-
       try {
         if (!validator(axiosRes)) {
           // console.log('- case 1: axiosRes')

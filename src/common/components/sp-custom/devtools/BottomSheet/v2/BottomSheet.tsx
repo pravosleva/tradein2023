@@ -1,37 +1,39 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useState, useCallback, memo, useLayoutEffect } from 'react'
-// @ts-ignore
-// import __BottomSheet from 'react-animated-bottomsheet'
 import classes from './BottomSheet.module.scss'
 import clsx from 'clsx'
-// import { GiGears } from 'react-icons/gi'
-// import { FaGear } from 'react-icons/fa6'
 import { FaTools } from 'react-icons/fa'
 import baseClasses from '~/App.module.scss'
 import { vi } from '~/common/vi'
 import { useSnapshot } from 'valtio'
 import { CollapsibleBox } from '~/common/components/sp-custom/devtools/CollapsibleBox'
 import { getNormalizedDateTime4 } from '~/utils/time-ops'
-// import { MdError } from 'react-icons/md'
-import {
-  // FaCheck,
-  // FaCheckCircle,
-} from 'react-icons/fa'
-// import { FaCheck } from 'react-icons/fa6'
 import { IoIosCheckmarkCircleOutline, IoIosCloseCircle, IoIosWarning } from 'react-icons/io'
-// import { IoWarningOutline } from 'react-icons/io5'
 import { MdTimelapse } from 'react-icons/md'
-import { useSearchParams } from '~/common/hooks'
+// import { useSearchParams } from '~/common/hooks'
 import pkg from '../../../../../../../package.json'
 const VITE_GIT_SHA1 = import.meta.env.VITE_GIT_SHA1
 import { Sheet } from 'react-modal-sheet'
-import { Button } from '~/common/components/sp-custom/Button'
-// import { IoMdClose } from 'react-icons/io'
+import { Button } from '~/common/components/sp-custom'
 import { FaPowerOff } from 'react-icons/fa'
+import {
+  useQueryParam,
+  NumberParam,
+  // StringParam,
+} from 'use-query-params'
+import { useProxy } from 'valtio/utils'
+// import { groupLog } from '~/utils'
 
 // NOTE: See also https://www.npmjs.com/package/react-modal-sheet
 
 export const BottomSheet = memo(() => {
+  const [debugModeParam] = useQueryParam('debug', NumberParam)
+  const devtoolsViProxy = useProxy(vi.common.devtools)
+  useLayoutEffect(() => {
+    devtoolsViProxy.isUIEnabled = debugModeParam === 1
+  }, [debugModeParam])
+  
   const [isOpened, setIsOpened] = useState<boolean>(false)
   const handleOpen = useCallback(() => {
     setIsOpened(true)
@@ -43,13 +45,13 @@ export const BottomSheet = memo(() => {
   const debugViSnap = useSnapshot(vi.common.devtools)
   const isDebugUIEnabled = debugViSnap.isUIEnabled
 
-  const { get } = useSearchParams()
-  const shouldDebugUIBeEnabled = get('debug') === '1'
+  // const { get } = useSearchParams()
+  // const shouldDebugUIBeEnabled = get('debug') === '1'
 
-  useLayoutEffect(() => {
-    if (shouldDebugUIBeEnabled) vi.enableDebugUI()
-  }, [shouldDebugUIBeEnabled])
-
+  // useLayoutEffect(() => {
+  //   if (shouldDebugUIBeEnabled) vi.enableDebugUI()
+  // }, [shouldDebugUIBeEnabled])
+  
   return (
     <>
       {
@@ -122,6 +124,7 @@ export const BottomSheet = memo(() => {
                   <FaPowerOff className={baseClasses.truncate} />
                 </Button>
               </h2>
+
               <div
                 className={clsx(
                   classes.wrapper,
@@ -141,115 +144,119 @@ export const BottomSheet = memo(() => {
                   level={1}
                 >
                   {
-                    Object.keys(xhrViSnap).map((key) => (
-                      <CollapsibleBox
-                        title={key}
-                        key={key}
-                        level={2}
-                      >
-                        {
-                          key === 'total' ? (
-                            <pre
-                              className={clsx(baseClasses.preStyled, 'bg-spBlueMain', 'text-xs')}
-                              style={{
-                                padding: '8px',
-                                // maxHeight: '305px',
-                                // overflowY: 'auto',
-                                // backgroundColor: 'gray',
-                                color: '#FFF',
-                                overflowY: 'hidden',
-                                fontWeight: 'bold',
-                              }}
-                            >
-                              {/* @ts-ignore */}
-                              {JSON.stringify(xhrViSnap[key], null, 2)}
-                            </pre>
-                          ) :
-                          // @ts-ignore
-                          Object.keys(xhrViSnap[key]).map((url) => {
-                            // @ts-ignore
-                            const isOk = key === 'state' && Object.keys(xhrViSnap[key][url]).every((tsstr) => xhrViSnap[key]?.[url]?.[tsstr]?.__resDetails?.res?.ok === true)
-                            const hasPending = key === 'state' && Object.keys(xhrViSnap[key][url]).some((tsstr) => xhrViSnap[key]?.[url]?.[tsstr]?.code === 'pending')
-
-                            let hasLastErrored = false
-                            if (key === 'state') {
-                              const lastTs = Object.keys(xhrViSnap[key]?.[url]).reduce((acc, cur) => {
-                                const ts = Number(cur)
-                                if (ts > acc) acc = ts
-                                return acc
-                              }, 0)
-                              hasLastErrored = !xhrViSnap[key]?.[url]?.[String(lastTs)].__resDetails?.res.ok
-                            }
-                            // IoIosWarning
-                            const hasErrored = !isOk
-                            return (
-                              <CollapsibleBox
-                                title={url}
-                                key={url}
-                                level={3}
-                                StartIcon={
-                                hasPending
-                                ? <MdTimelapse />
-                                : hasLastErrored
-                                  ? <IoIosCloseCircle color='red' />
-                                  : hasErrored
-                                    ? <IoIosWarning color='yellow' />
-                                    : <IoIosCheckmarkCircleOutline />
-                                // : !isOk
-                                //   ? <IoIosCloseCircleOutline color='red' />
-                                //   : <IoIosCheckmarkCircleOutline />
-                                }
+                    Object.keys(xhrViSnap).map((key) => {
+                      // @ts-ignore
+                      if (typeof xhrViSnap[key] === 'boolean') return null
+                      return (
+                        <CollapsibleBox
+                          title={key}
+                          key={key}
+                          level={2}
+                        >
+                          {
+                            key === 'total' ? (
+                              <pre
+                                className={clsx(baseClasses.preStyled, 'bg-spBlueMain', 'text-xs')}
+                                style={{
+                                  padding: '8px',
+                                  // maxHeight: '305px',
+                                  // overflowY: 'auto',
+                                  // backgroundColor: 'gray',
+                                  color: '#FFF',
+                                  overflowY: 'hidden',
+                                  fontWeight: 'bold',
+                                }}
                               >
-                                {
-                                  // @ts-ignore
-                                  Object.keys(xhrViSnap[key][url]).map((tsstr) => (
-                                    <CollapsibleBox
-                                      title={getNormalizedDateTime4(Number(tsstr))}
-                                      key={tsstr}
-                                      level={4}
-                                      StartIcon={
-                                        key === 'state'
-                                        ? xhrViSnap[key]?.[url]?.[tsstr]?.code === 'pending'
-                                          ? <MdTimelapse />
-                                          : xhrViSnap[key]?.[url]?.[tsstr]?.__resDetails?.res?.ok === true
-                                            ? <IoIosCheckmarkCircleOutline />
-                                            : <IoIosCloseCircle color='red' />
-                                        : undefined
-                                      }
-                                    >
-                                      <pre
-                                        className={clsx(
-                                          baseClasses.preStyled,
-                                          {
-                                            // @ts-ignore
-                                            'bg-spBlueMain': xhrViSnap[key]?.[url]?.[tsstr]?.__resDetails?.res?.ok === true,
-                                            // @ts-ignore
-                                            'bg-spRed': xhrViSnap[key]?.[url]?.[tsstr]?.__resDetails?.res?.ok !== true,
-                                          },
-                                          'text-xs',
-                                        )}
-                                        style={{
-                                          padding: '8px',
-                                          // maxHeight: '305px',
-                                          // overflowY: 'auto',
-                                          // backgroundColor: 'gray',
-                                          color: '#FFF',
-                                          overflowY: 'hidden',
-                                          fontWeight: 'bold',
-                                        }}
+                                {/* @ts-ignore */}
+                                {JSON.stringify(xhrViSnap[key], null, 2)}
+                              </pre>
+                            ) :
+                            // @ts-ignore
+                            Object.keys(xhrViSnap[key]).map((url) => {
+                              // @ts-ignore
+                              const isOk = key === 'state' && Object.keys(xhrViSnap[key][url]).every((tsstr) => xhrViSnap[key]?.[url]?.[tsstr]?.__resDetails?.res?.ok === true)
+                              const hasPending = key === 'state' && Object.keys(xhrViSnap[key][url]).some((tsstr) => xhrViSnap[key]?.[url]?.[tsstr]?.code === 'pending')
+
+                              let hasLastErrored = false
+                              if (key === 'state') {
+                                const lastTs = Object.keys(xhrViSnap[key]?.[url]).reduce((acc, cur) => {
+                                  const ts = Number(cur)
+                                  if (ts > acc) acc = ts
+                                  return acc
+                                }, 0)
+                                hasLastErrored = !xhrViSnap[key]?.[url]?.[String(lastTs)].__resDetails?.res.ok
+                              }
+                              // IoIosWarning
+                              const hasErrored = !isOk
+                              return (
+                                <CollapsibleBox
+                                  title={url}
+                                  key={url}
+                                  level={3}
+                                  StartIcon={
+                                  hasPending
+                                  ? <MdTimelapse />
+                                  : hasLastErrored
+                                    ? <IoIosCloseCircle color='red' />
+                                    : hasErrored
+                                      ? <IoIosWarning color='yellow' />
+                                      : <IoIosCheckmarkCircleOutline />
+                                  // : !isOk
+                                  //   ? <IoIosCloseCircleOutline color='red' />
+                                  //   : <IoIosCheckmarkCircleOutline />
+                                  }
+                                >
+                                  {
+                                    // @ts-ignore
+                                    Object.keys(xhrViSnap[key][url]).map((tsstr) => (
+                                      <CollapsibleBox
+                                        title={getNormalizedDateTime4(Number(tsstr))}
+                                        key={tsstr}
+                                        level={4}
+                                        StartIcon={
+                                          key === 'state'
+                                          ? xhrViSnap[key]?.[url]?.[tsstr]?.code === 'pending'
+                                            ? <MdTimelapse />
+                                            : xhrViSnap[key]?.[url]?.[tsstr]?.__resDetails?.res?.ok === true
+                                              ? <IoIosCheckmarkCircleOutline />
+                                              : <IoIosCloseCircle color='red' />
+                                          : undefined
+                                        }
                                       >
-                                        {/* @ts-ignore */}
-                                        {JSON.stringify(xhrViSnap[key][url][tsstr], null, 2)}
-                                      </pre>
-                                    </CollapsibleBox>
-                                  ))
-                                }
-                              </CollapsibleBox>
-                            )
-                          })
-                        }
-                      </CollapsibleBox>
-                    ))
+                                        <pre
+                                          className={clsx(
+                                            baseClasses.preStyled,
+                                            {
+                                              // @ts-ignore
+                                              'bg-spBlueMain': xhrViSnap[key]?.[url]?.[tsstr]?.__resDetails?.res?.ok === true,
+                                              // @ts-ignore
+                                              'bg-mtsRed': xhrViSnap[key]?.[url]?.[tsstr]?.__resDetails?.res?.ok !== true,
+                                            },
+                                            'text-xs',
+                                          )}
+                                          style={{
+                                            padding: '8px',
+                                            // maxHeight: '305px',
+                                            // overflowY: 'auto',
+                                            // backgroundColor: 'gray',
+                                            color: '#FFF',
+                                            overflowY: 'hidden',
+                                            fontWeight: 'bold',
+                                          }}
+                                        >
+                                          {/* @ts-ignore */}
+                                          {JSON.stringify(xhrViSnap[key][url][tsstr], null, 2)}
+                                        </pre>
+                                      </CollapsibleBox>
+                                    ))
+                                  }
+                                </CollapsibleBox>
+                              )
+                            })
+                          }
+                        </CollapsibleBox>
+                      )
+                    })
                   }
                 </CollapsibleBox>
               </div>

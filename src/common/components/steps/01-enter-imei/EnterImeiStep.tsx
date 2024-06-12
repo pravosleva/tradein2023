@@ -2,10 +2,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // import { stepMachine, EStep } from '~/common/xstate/stepMachine'
 import { memo, useMemo, useRef, useEffect, useState, useCallback } from 'react'
-import { Alert, Input } from '~/common/components/sp-custom'
+import {
+  Alert,
+  ImageGalleryAsGrid,
+  Input,
+  ReportMessageForDevs,
+} from '~/common/components/sp-custom'
 import { ContentWithControls, TControlBtn } from '~/common/components/sp-custom/ContentWithControls'
 import baseClasses from '~/App.module.scss'
 import { RadioGroup } from '~/common/components/tailwind'
+
+const VITE_PUBLIC_URL = import.meta.env.VITE_PUBLIC_URL
+const PUBLIC_URL = VITE_PUBLIC_URL || ''
 
 type TProps = {
   value: string;
@@ -139,17 +147,13 @@ export const EnterImeiStep = memo(({
           marginTop: '8px',
           display: 'flex',
           flexDirection: 'column',
-          // gap: '8px',
-          gap: '0px',
+          gap: '16px',
         }}
       >
         <Alert
           type='danger'
         >
           IMEI устройства можно проверить запросом USSD-команды <code className={baseClasses.inlineCode} style={{ fontSize: '15px' }}>*#06#</code> в приложении «Телефон»
-          <br />
-          <br />
-          Отсканируйте штрихкод сканером или введите IMEI устройства вручную
         </Alert>
 
         {/* <div
@@ -174,6 +178,21 @@ export const EnterImeiStep = memo(({
             alt='tg'
           />
         </div> */}
+        <ReportMessageForDevs />
+        <ImageGalleryAsGrid
+          items={[
+            {
+              title: 'Tst img 1.',
+              caption: 'Desrc 1',
+              src: `${PUBLIC_URL}/static3/img/hints/exp-danger.jpg`,
+            },
+            {
+              title: 'Tst img 2.',
+              caption: 'Descr 2',
+              src: `${PUBLIC_URL}/static3/img/hints/exp-development.jpg`,
+            },
+          ]}
+        />
       </div>
     </ContentWithControls>
   )

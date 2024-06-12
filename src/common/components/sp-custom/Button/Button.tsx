@@ -29,7 +29,7 @@ import {
 //   Secondary = 'secondary',
 //   Default = 'default',
 // }
-export type TColor = 'default' | 'primary' | 'secondary' | 'success' | 'black';
+export type TColor = 'default' | 'primary' | 'secondary' | 'success' | 'black' | 'mtsRed' | 'mtsGray';
 export type TVariant = 'filled' | 'outlined';
 
 export interface IButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -40,6 +40,7 @@ export interface IButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEleme
   variant: TVariant;
   EnabledEndIcon?: React.ReactNode;
   EnabledStartIcon?: React.ReactNode;
+  DisabledStartIcon?: React.ReactNode;
   allowDefaultEnabledEndIconArrowRight?: boolean;
   allowDefaultEnabledEndIconCheck?: boolean;
 }
@@ -52,6 +53,7 @@ export const Button = React.forwardRef(({
   variant,
   EnabledEndIcon,
   EnabledStartIcon,
+  DisabledStartIcon,
   allowDefaultEnabledEndIconArrowRight,
   allowDefaultEnabledEndIconCheck,
   ..._nativeProps
@@ -76,16 +78,26 @@ export const Button = React.forwardRef(({
     EnabledEndIcon,
   ])
   const StartIcon = useMemo(() => {
-    if (nativeProps.disabled) return null
-    switch (true) {
-      case !!EnabledStartIcon:
-        return EnabledStartIcon
+    switch (nativeProps.disabled) {
+      case true:
+        switch (true) {
+          case !!DisabledStartIcon:
+            return DisabledStartIcon
+          default:
+            return null
+        }
       default:
-        return null
+        switch (true) {
+          case !!EnabledStartIcon:
+            return EnabledStartIcon
+          default:
+            return null
+        }
     }
   }, [
     nativeProps.disabled,
     EnabledStartIcon,
+    DisabledStartIcon,
   ])
 
   return (
@@ -103,6 +115,7 @@ export const Button = React.forwardRef(({
         // 'font-medium',
         'font-bold',
         'text-md',
+        // 'rounded-md',
         'py-2',
         'px-5',
 
@@ -115,7 +128,9 @@ export const Button = React.forwardRef(({
           // ['focus:outline-spBlueMain']: color === 'primary',
           ['focus:outline-spBlue2']: color === 'primary',
           ['focus:outline-slate-300']: color === 'default',
-          ['focus:outline-spGreen']: color === 'success'
+          ['focus:outline-spGreen']: color === 'success',
+          ['focus:outline-mtsRed']: color === 'mtsRed',
+          ['focus:outline-mtsGray']: color === 'mtsGray',
         },
       )}
       {...nativeProps}

@@ -37,17 +37,26 @@ class Singleton extends API {
     return Singleton.instance
   }
 
-  async sendIMEI({ IMEI, rules }: {
+  async sendIMEI({
+    IMEI,
+    // mts_tradein_mode,
+    rules,
+  }: {
     rules?: NResponseValidate.TRules<NSP.TImeiResponse>;
     IMEI: string;
-    // kz_2022?: boolean;
+    // mts_tradein_mode: EAppModeMenu1;
+    kz_2022?: boolean;
   }): Promise<NSP.TImeiResponse | NSP.TStandartMinimalResponse> {
     if (!IMEI) return Promise.reject({ ok: false, message: 'Заполните IMEI' })
 
     this.sendIMEICancelTokenSource.cancel('axios request canceled')
     this.sendIMEICancelTokenSource = axios.CancelToken.source()
 
-    const postData = { IMEI }
+    const postData = {
+      IMEI,
+      // kz_2022: true,
+      // mts_tradein_mode,
+    }
     // @ts-ignore
     if (isDev || isLocalProd) postData._add_data = {
       phone: {
@@ -57,11 +66,11 @@ class Singleton extends API {
 
         vendor: 'Samsung',
         model: 'Galaxy S22',
-        photo: 'https://smartprice.ru/static/img/smartprice/models/samsung/galaxy-s22/01.jpg',
+        photo: 'models/samsung/galaxy-s22/01.jpg',
         
         // vendor: 'Apple',
         // model: 'iPhone 12 Pro',
-        // photo: 'https://smartprice.ru/static/img/smartprice/models/apple/iphone-12-pro/color_graphite_01.jpg',
+        // photo: 'models/apple/iphone-12-pro/color_graphite_01.jpg',
       },
       // ok: false,
       // message: 'FRONT tst',
@@ -321,4 +330,4 @@ class Singleton extends API {
   }
 }
 
-export const httpClient = Singleton.getInstance({ isDebugEnabled: true })
+export const httpClient = Singleton.getInstance({ isDebugEnabled: false })

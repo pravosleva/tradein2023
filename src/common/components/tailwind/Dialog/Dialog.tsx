@@ -131,6 +131,7 @@ export function Dialog({
                       controls.map(({
                         id, label, onClick, isDisabled,
                         btn,
+                        DisabledStartIcon,
                       }) => (
                         <Button
                           // className='basis-1/3'
@@ -138,6 +139,7 @@ export function Dialog({
                           {...btn}
                           onClick={onClick}
                           disabled={isDisabled}
+                          DisabledStartIcon={DisabledStartIcon}
                         >
                           {label}
                         </Button>

@@ -16,18 +16,35 @@ const withCustomEmitters = ({
       
       // -- NOTE: Level 2: Different app event types
       switch (true) {
+        // --- NOTE: Special report by user (UI testing by Alexey)
+        case eventData?.input?.metrixEventType === NES.Socket.Metrix.EClientOutgoing.SP_XHR_HISTORY_REPORT_EV: {
+          log({ label: 'c->[w:port:listener:eventType:report]->socket', msgs: [input] })
+          let outputData = {
+            ...input,
+            specialClientKey,
+            _wService: {
+              _perfInfo,
+            },
+          }
+          socket.emit(input.metrixEventType, outputData, (r) => {
+            log({ label: 'c->w:port:listener:eventType:report->socket->[cb]', msgs: [r] })
+          })
+          break
+        }
+        // ---
         case eventData?.input?.metrixEventType === NES.Socket.Metrix.EClientOutgoing.SP_MX_EV: {
           let outputData = {
             ...input,
             specialClientKey,
           }
 
-          // --- NOTE: Level 3: Internal app state handlers
+          // ---- NOTE: Level 3: Internal app state handlers
           switch (true) {
             // === NOTE: Hard logs
             case eventData?.input.stateValue === NES.Custom.Client.EStepMachine.AppInitErr:
             case eventData?.input.stateValue === NES.Custom.Client.EStepMachine.SendImeiErr:
             case eventData?.input.stateValue === NES.Custom.Client.EStepMachine.EnterMemoryAndColor:
+            case eventData?.input.stateValue === NES.Custom.Client.EStepMachine.SendCheckFMIPOn:
             case eventData?.input.stateValue === NES.Custom.Client.EStepMachine.PrePriceTable:
             case eventData?.input.stateValue === NES.Custom.Client.EStepMachine.CheckPhone:
             case eventData?.input.stateValue === NES.Custom.Client.EStepMachine.GetPhotoLink:
@@ -37,6 +54,8 @@ const withCustomEmitters = ({
             // case eventData?.input.stateValue === NES.Custom.Client.EStepMachine.ContractSending:
             case eventData?.input.stateValue === NES.Custom.Client.EStepMachine.ContractError:
             case eventData?.input.stateValue === NES.Custom.Client.EStepMachine.Final:
+            case eventData?.input.stateValue === NES.Custom.Client.EStepMachine.FinalScenarioErr:
+            case eventData?.input.stateValue === NES.Custom.Client.EStepMachine.ActPrint:
               socket.emit(input.metrixEventType, {
                 ...outputData,
                 _wService: {
@@ -57,7 +76,7 @@ const withCustomEmitters = ({
               break
             // ===
           }
-          // ---
+          // ----
 
         }
         default: break

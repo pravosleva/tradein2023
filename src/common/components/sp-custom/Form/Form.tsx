@@ -2,24 +2,29 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import baseClasses from '~/App.module.scss'
-import { Input } from '~/common/components/sp-custom'
+import { Input, Textarea } from '~/common/components/sp-custom'
 import { useForm } from 'react-hook-form'
 import { useLayoutEffect, Fragment, useState, useCallback, useRef, memo } from 'react'
 import clsx from 'clsx'
-import { PhoneInput } from '~/common/components/sp-custom'
+import { Alert, PhoneInput } from '~/common/components/sp-custom'
 import { CountryData as ICountryEvent } from 'react-phone-input-2'
 import { ECountryCode } from '~/common/xstate/stepMachine'
 // import useDynamicRefs from 'use-dynamic-refs'
 
-type TFieldType = 'text' | 'number' | 'tel'
+type TFieldType = 'text' | 'text-multiline' | 'number' | 'tel'
 type TField = {
   label: string;
   initValue?: any; // string | number;
   type: TFieldType;
-  validate: ({ value, options }: {
+  limit?: number;
+  descr?: string;
+  validate: ({ value, options, cfg }: {
     value: any;
     options?: {
       currentCountryInfo?: ICountryEvent;
+    };
+    cfg?: {
+      [key: string]: any;
     };
   }) => ({
     ok: boolean;
@@ -69,7 +74,7 @@ export const Form = memo(({
   const lastNameRef = useRef<HTMLInputElement>(null)
   useLayoutEffect(() => {
     if (lastNameRef?.current) lastNameRef?.current?.focus()
-    else console.warn(lastNameRef?.current)
+    // else console.warn(lastNameRef?.current)
   }, [])
 
   const {
@@ -81,7 +86,7 @@ export const Form = memo(({
     //   // defaultValues,
     //   isDirty,
     //   // isValid,
-    //   // ...restFormStateProps
+    //   ...restFormStateProps
     // },
     // clearErrors,
     watch,
@@ -151,8 +156,8 @@ export const Form = memo(({
                 options = { currentCountryInfo: currentCountryInfoRef.current }
                 // console.log(options)
               }
-              const validationResult = schema[key].validate({ value: state[key], options })
-              // if (key === 'phone') console.log(validationResult)
+              const validationResult = schema[key].validate({ value: state[key], options, cfg: schema[key] })
+              // if (key === 'comment') console.log(validationResult)
               if (!validationResult.ok) {
                 // counters.fail += 1
                 errsObj[key] = validationResult.reason
@@ -209,7 +214,7 @@ export const Form = memo(({
     <>
       <div
         // onSubmit={handleSubmit(onSubmit)}
-        // className={baseClasses.specialActionsGrid}
+        // className={baseClasses.specialActionsGrid2}
         className={clsx(
           'grid',
           'gap-3',
@@ -270,7 +275,86 @@ export const Form = memo(({
                     </div>
                   </Fragment>
                 )
-              case 'text':
+              case 'text-multiline': {
+                const { ref, ...rest } = register(key, { required: schema[key].isRequired, maxLength: schema[key].limit || 100, minLength: 3 })
+                return (
+                  <Fragment key={key}>
+                    <div
+                      className={clsx(baseClasses.stack2)}
+                    >
+                      {/* <label htmlFor={key}>{schema[key].label}</label> */}
+                      {
+                        !!schema[key].descr && (
+                          <Alert type='danger'>
+                            {schema[key].descr}
+                          </Alert>
+                        )
+                      }
+                      <Textarea
+                        // @ts-ignore
+                        ref={(e) => {
+                          ref(e)
+                          // @ts-ignore
+                          if (key === 'comment') lastNameRef.current = e // you can still assign to ref
+                        }}
+                        style={{
+                          width: '100%',
+                          maxHeight: '230px',
+                          minHeight: '100px',
+                        }}
+                        // isErrored={!!__errsState[key]}
+                        isSuccess={__okState[key] === true}
+                        // isErrored={!!__errsState[key]}
+                        id={key}
+                        // aria-invalid={errors[key] ? 'true' : 'false'}
+                        placeholder={schema[key].label}
+                        {...rest}
+                        // multiple
+                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                          setAuxStateValue(key, e.target.value)
+                          setValue(key, e.target.value)
+                        }}
+                      />
+                      {/* use role="alert" to announce the error message */}
+                      {/* {errors.name && errors.name.type === "required" && (
+                        <span role="alert">This is required</span>
+                      )}
+                      {errors.name && errors.name.type === "maxLength" && (
+                        <span role="alert">Max length exceeded</span>
+                      )} */}
+                      {/* !!__errsState[key] && (
+                        <span>{__errsState[key]}</span>
+                      ) */}
+                      {
+                        !!schema[key]?.limit
+                        && typeof schema[key]?.limit === 'number'
+                        && typeof __auxState[key]?.length === 'number'
+                          && (typeof __auxState[key]?.length === 'number')
+                            ? (
+                              <span
+                                style={{ fontSize: 'small' }}
+                                className={clsx([
+                                  {
+                                    // @ts-ignore
+                                    ['text-mtsRed']: __auxState[key]?.length > schema[key]?.limit,
+                                    // @ts-ignore
+                                    ['text-mtsGray']: __auxState[key]?.length <= schema[key]?.limit,
+                                  }
+                                ])}
+                              >
+                                {__auxState[key]?.length || 0} / {schema[key]?.limit}
+                              </span>
+                            ) : (
+                              <span style={{ fontSize: 'small' }}>
+                                0 / {schema[key]?.limit}
+                              </span>
+                            )
+                      }
+                    </div>
+                  </Fragment>
+                )
+              }
+              case 'text': 
               default: {
                 const { ref, ...rest } = register(key, { required: schema[key].isRequired, maxLength: 30, minLength: 3 })
                 return (

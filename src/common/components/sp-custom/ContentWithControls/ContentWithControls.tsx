@@ -7,17 +7,19 @@ import classes from './ContentWithControls.module.scss'
 import useDynamicRefs from 'use-dynamic-refs'
 import { useLayoutEffect } from 'react'
 
+export type TBtnUISettings = {
+  color: TColor;
+  variant: TVariant;
+};
 export type TControlBtn = {
   id: string;
   label: string;
-  btn: {
-    color: TColor;
-    variant: TVariant;
-  },
+  btn: TBtnUISettings;
   onClick: () => void;
   isDisabled?: boolean;
   EnabledEndIcon?: React.ReactNode;
   EnabledStartIcon?: React.ReactNode;
+  DisabledStartIcon?: React.ReactNode;
   allowDefaultEnabledEndIconArrowRight?: boolean;
   allowDefaultEnabledEndIconCheck?: boolean;
 }
@@ -62,15 +64,9 @@ export const ContentWithControls = ({
 
   return (
     <ErrorBoundary>
-      <div className={baseClasses.stack4}>
+      <div className={baseClasses.stack}>
         <ResponsiveBlock
-          className={clsx(
-            classes.stickyTopHeader,
-            'backdrop-blur--lite',
-            // baseClasses.boxShadowBottomMobileOnly,
-            // baseClasses.panelRoundedBottomMobile,
-            'fade-in',
-          )}
+          className={clsx(classes.stickyTopHeader, 'backdrop-blur--lite', 'fade-in')}
         >
           <ResponsiveBlock
             isPaddedMobile
@@ -158,11 +154,8 @@ export const ContentWithControls = ({
                   'backdrop-blur--lite',
                   {
                     [classes.stickyBottomControls]: isStickyBottomControls,
-                    [baseClasses.boxShadowTopMobileOnly]: isStickyBottomControls,
-                    [baseClasses.panelRoundedTopMobile]: isStickyBottomControls,
-                    [baseClasses.slideUpMobileMediumSpeed]: isStickyBottomControls,
                   },
-                  // 'fade-in',
+                  'fade-in',
                 )}
               >
                 <ResponsiveBlock
@@ -171,8 +164,8 @@ export const ContentWithControls = ({
                 >
                   <div
                     className={clsx({
-                      [baseClasses.specialActionsGrid]: controlsAsGrid,
-                      [baseClasses.stack]: !controlsAsGrid,
+                      [baseClasses.specialActionsGrid2]: controlsAsGrid,
+                      [baseClasses.stack2]: !controlsAsGrid,
                     })}>
                   {
                     controls.map(({
@@ -183,6 +176,7 @@ export const ContentWithControls = ({
                       btn,
                       EnabledEndIcon,
                       EnabledStartIcon,
+                      DisabledStartIcon,
                       allowDefaultEnabledEndIconArrowRight,
                       allowDefaultEnabledEndIconCheck,
                     }) => (
@@ -195,6 +189,7 @@ export const ContentWithControls = ({
                         disabled={isDisabled}
                         EnabledEndIcon={EnabledEndIcon}
                         EnabledStartIcon={EnabledStartIcon}
+                        DisabledStartIcon={DisabledStartIcon}
                         allowDefaultEnabledEndIconArrowRight={allowDefaultEnabledEndIconArrowRight}
                         allowDefaultEnabledEndIconCheck={allowDefaultEnabledEndIconCheck}
                       >

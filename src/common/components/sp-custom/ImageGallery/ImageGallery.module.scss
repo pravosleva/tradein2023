@@ -1,0 +1,10 @@
+.wrapper {
+  position: absolute;
+  // border: '1px dashed red',
+  & > .ReactGridGallery > div {
+    gap: 16px;
+  }
+  & > .ReactGridGallery img {
+    max-width: 100%;
+  }
+}
