@@ -90,6 +90,7 @@ const NES = {
         // LAB_TEST: 'lab:client:tst-action',
         SP_MX_EV: 'sp-mx:offline-tradein:c:event',
         SP_XHR_HISTORY_REPORT_EV: 'sp-history:offline-tradein:c:report',
+        _SP_XHR_HISTORY_REPORT_EV_DEPRECATED: 'sp-xhr-history:offline-tradein:c:report',
       },
       EClientIncoming: {
         // LAB_TEST: 'lab:server:tst-action',
