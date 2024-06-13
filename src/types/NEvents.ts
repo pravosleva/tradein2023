@@ -31,5 +31,6 @@ export namespace NEvents {
   export enum EWorkerToClientEventCode {
     UI_MESSAGE_DANGER = 'ui_message_danger',
     UI_MESSAGE_SUCCESS = 'ui_message_success',
+    UI_MESSAGE_INFO = 'ui_message_info',
   }
 }

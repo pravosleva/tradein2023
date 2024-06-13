@@ -3,6 +3,7 @@
 const withCustomEmitters = ({
   eventData,
   socket,
+  _cb,
 }) => {
   const {
     __eType,
@@ -19,6 +20,7 @@ const withCustomEmitters = ({
         // --- NOTE: Special report by user (UI testing by Alexey)
         case eventData?.input?.metrixEventType === NES.Socket.Metrix.EClientOutgoing.SP_HISTORY_REPORT_EV:
         case eventData?.input?.metrixEventType === NES.Socket.Metrix.EClientOutgoing._SP_HISTORY_REPORT_EV_DEPRECATED: {
+          if (typeof _cb === 'function') _cb({ eventData, _message: 'case 1' })
           log({ label: 'c->[w:port:listener:eventType:report]->socket', msgs: [input] })
           let outputData = {
             ...input,

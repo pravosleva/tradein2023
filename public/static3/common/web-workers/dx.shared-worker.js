@@ -127,12 +127,17 @@ const isNewNativeEvent = ({ newCode: n, prevCode: p }) => {
       })
       if (!validationResult.ok) {
         if (dbg.workerEvs.fromClient.isEnabled) log({
-          label: `⛔ Event ${e.__eType} blocked |${!!validationResult.reason ? ` ${validationResult.reason}` : ''} ${socket.connected ? '✅' : '⭕'}`,
+          label: `⛔ Event ${e.__eType} blocked |${!!validationResult?.reason ? ` ${validationResult.reason}` : ''} ${socket.connected ? '✅' : '⭕'}`,
           msgs: [e.input, validationResult],
         })
         port.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA, message: `Shared Worker incoming event validate is not Ok: ${validationResult?.reason || 'No reason'}`, code: 'ui_message_danger' })
         return
-      }
+      } else
+        if (dbg.workerEvs.fromClient.isEnabled) port.postMessage({
+          __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA,
+          message: `Shared Worker validated new __eType event: ${e.data.__eType}`,
+          code: 'ui_message_success',
+        })
       // --
 
       if (dbg.workerEvs.fromClient.isEnabled) log({
@@ -180,6 +185,21 @@ const isNewNativeEvent = ({ newCode: n, prevCode: p }) => {
                 // specialClientKey: fingerprint.uniqueClientKey,
               },
               socket,
+              _cb: ({ eventData, _message }) => {
+                const { __eType, ...restData } = eventData
+                if (dbg.workerEvs.fromClient.isEnabled) {
+                  if (!!_message) port.postMessage({
+                    __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA,
+                    message: `withCustomEmitters _cb: ${_message}`,
+                    code: 'ui_message_info',
+                  })
+                  port.postMessage({
+                    __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA,
+                    message: `Ok: ${restData.input.metrixEventType}`,
+                    code: 'ui_message_info',
+                  })
+                }
+              },
             })
             // --
           }

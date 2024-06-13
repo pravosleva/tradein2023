@@ -58,6 +58,9 @@ export const useMetrix = ({ isDebugEnabled }: TProps) => {
   const showSuccess = useCallback(({ message }: { message: string }) => {
     showNotif(message || 'No message', { variant: 'default' })
   }, [showNotif])
+  const showInfo = useCallback(({ message }: { message: string }) => {
+    showNotif(message || 'No message', { variant: 'info' })
+  }, [showNotif])
 
   // NOTE: 1.1 Use wws.subscribeOnData once only!
   useLayoutEffect(() => {
@@ -85,6 +88,10 @@ export const useMetrix = ({ isDebugEnabled }: TProps) => {
               case e.data.code === NEvents.EWorkerToClientEventCode.UI_MESSAGE_SUCCESS:
                 if (isDebugEnabled) groupLog({ namespace: 'ui msg ok', items: [e.data] })
                 showSuccess({ message: e.data.message || 'Ok' })
+                break
+              case e.data.code === NEvents.EWorkerToClientEventCode.UI_MESSAGE_INFO:
+                if (isDebugEnabled) groupLog({ namespace: 'ui msg info', items: [e.data] })
+                showInfo({ message: e.data.message || 'Ok' })
                 break
               default:
                 break

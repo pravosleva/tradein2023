@@ -109,7 +109,7 @@ const isNewNativeEvent = ({ newCode: n, prevCode: p }) => {
     })
     if (!validationResult.ok) {
       if (dbg.workerEvs.fromClient.isEnabled) log({
-        label: `⛔ Event ${e.__eType} blocked |${!!validationResult.reason ? ` ${validationResult.reason}` : ''} ${socket.connected ? '✅' : '⭕'}`,
+        label: `⛔ Event ${e.__eType} blocked |${!!validationResult?.reason ? ` ${validationResult.reason}` : ''} ${socket.connected ? '✅' : '⭕'}`,
         msgs: [e.input, validationResult],
       })
       self.postMessage({
@@ -118,7 +118,12 @@ const isNewNativeEvent = ({ newCode: n, prevCode: p }) => {
         code: 'ui_message_danger',
       })
       return
-    }
+    } else
+      if (dbg.workerEvs.fromClient.isEnabled) self.postMessage({
+        __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA,
+        message: `Worker validated new __eType event: ${e.data.__eType}`,
+        code: 'ui_message_success',
+      })
 
     if (dbg.workerEvs.fromClient.isEnabled) log({
       label: `message received SharedWorker take evt by client ${socket.connected ? '✅' : '⭕'}`,
@@ -165,6 +170,21 @@ const isNewNativeEvent = ({ newCode: n, prevCode: p }) => {
               // specialClientKey: fingerprint.uniqueClientKey,
             },
             socket,
+            _cb: ({ eventData, _message }) => {
+              const { __eType, ...restData } = eventData
+                if (dbg.workerEvs.fromClient.isEnabled) {
+                  if (!!_message) self.postMessage({
+                    __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA,
+                    message: `withCustomEmitters _cb: ${_message}`,
+                    code: 'ui_message_info',
+                  })
+                  self.postMessage({
+                    __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA,
+                    message: `Ok: ${restData.input.metrixEventType}`,
+                    code: 'ui_message_info',
+                  })
+                }
+            },
           })
           // --
         }
