@@ -130,12 +130,12 @@ const isNewNativeEvent = ({ newCode: n, prevCode: p }) => {
           label: `⛔ Event ${e.__eType} blocked |${!!validationResult?.reason ? ` ${validationResult.reason}` : ''} ${socket.connected ? '✅' : '⭕'}`,
           msgs: [e.input, validationResult],
         })
-        port.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA, message: `Shared Worker incoming event validate is not Ok: ${validationResult?.reason || 'No reason'}`, code: 'ui_message_danger' })
+        port.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA, message: `[DEBUG] ERR: Shared Worker incoming event validate is not Ok: ${validationResult?.reason || 'No reason'}`, code: 'ui_message_danger' })
         return
       } else
         if (dbg.workerEvs.fromClient.isEnabled) port.postMessage({
           __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA,
-          message: `Shared Worker validated new __eType event: ${e.data.__eType}`,
+          message: `[DEBUG] Ok: Shared Worker validated new __eType event: ${e.data.__eType}`,
           code: 'ui_message_success',
         })
       // --
@@ -190,12 +190,12 @@ const isNewNativeEvent = ({ newCode: n, prevCode: p }) => {
                 if (dbg.workerEvs.fromClient.isEnabled) {
                   if (!!_message) port.postMessage({
                     __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA,
-                    message: `withCustomEmitters _cb: ${_message}`,
+                    message: `[DEBUG] withCustomEmitters _cb: ${_message}`,
                     code: 'ui_message_info',
                   })
                   port.postMessage({
                     __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA,
-                    message: `Ok: ${restData.input.metrixEventType}`,
+                    message: `[DEBUG] Ok: ${restData.input.metrixEventType}`,
                     code: 'ui_message_info',
                   })
                 }
