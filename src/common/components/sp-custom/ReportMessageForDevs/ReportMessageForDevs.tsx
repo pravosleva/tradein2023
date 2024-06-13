@@ -58,7 +58,7 @@ export const ReportMessageForDevs = memo(({ isDebugEnabled }: TProps) => {
                     devtoolsViSnap.network.socket.isConnected ? (
                       <div>Вы можете сообщить нам о нестандартном поведении Web приложения, если заметили что-то подобное</div>
                     ) : (
-                      <div>Некоторые функции пока не доступны в Вашей сети</div>
+                      <div>Некоторые функции пока не доступны в рамках Вашей сети</div>
                     )
                   }
                 </div>
