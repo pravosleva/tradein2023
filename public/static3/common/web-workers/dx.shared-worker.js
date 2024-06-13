@@ -115,7 +115,7 @@ const isNewNativeEvent = ({ newCode: n, prevCode: p }) => {
                   break
                 case !Object.values(NES.Custom.EType).includes(val):
                   result.ok = false
-                  result.reason = 'Double check the unknown event, plz'
+                  result.reason = `Double check the unknown event, plz // Possible __eType events: ${Object.values(NES.Custom.EType).join(', ')}`
                   break
                 default:
                   break
@@ -130,6 +130,7 @@ const isNewNativeEvent = ({ newCode: n, prevCode: p }) => {
           label: `⛔ Event ${e.__eType} blocked |${!!validationResult.reason ? ` ${validationResult.reason}` : ''} ${socket.connected ? '✅' : '⭕'}`,
           msgs: [e.input, validationResult],
         })
+        port.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA, message: `Shared Worker incoming event validate is not Ok: ${validationResult?.reason || 'No reason'}`, code: 'ui_message_danger' })
         return
       }
       // --
