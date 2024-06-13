@@ -20,8 +20,8 @@ const withCustomEmitters = ({
         // --- NOTE: Special report by user (UI testing by Alexey)
         case eventData?.input?.metrixEventType === NES.Socket.Metrix.EClientOutgoing.SP_HISTORY_REPORT_EV:
         case eventData?.input?.metrixEventType === NES.Socket.Metrix.EClientOutgoing._SP_HISTORY_REPORT_EV_DEPRECATED: {
-          if (typeof _cb === 'function') _cb({ eventData, _message: 'case 1' })
-          log({ label: 'c->[w:port:listener:eventType:report]->socket', msgs: [input] })
+          if (typeof _cb === 'function') _cb({ eventData, _message: 'level 2.1' })
+          // log({ label: 'c->[w:port:listener:eventType:report]->socket', msgs: [input] })
           let outputData = {
             ...input,
             // specialClientKey,
@@ -29,8 +29,9 @@ const withCustomEmitters = ({
               _perfInfo,
             },
           }
-          socket.emit(input.metrixEventType, outputData, (r) => {
-            log({ label: 'c->w:port:listener:eventType:report->socket->[cb]', msgs: [r] })
+          socket.emit(input.metrixEventType, outputData, (socketEvent) => {
+            log({ label: 'c->w:port:listener:eventType:report->socket->[cb]', msgs: [socketEvent] })
+            if (typeof _cb === 'function') _cb({ eventData, _message: 'level 2.1/done: socket sent [hello from cb]', socketEvent })
           })
           break
         }
@@ -59,13 +60,15 @@ const withCustomEmitters = ({
             case eventData?.input.stateValue === NES.Custom.Client.EStepMachine.Final:
             case eventData?.input.stateValue === NES.Custom.Client.EStepMachine.FinalScenarioErr:
             case eventData?.input.stateValue === NES.Custom.Client.EStepMachine.ActPrint:
+              if (typeof _cb === 'function') _cb({ eventData, _message: 'level 3.1' })
               socket.emit(input.metrixEventType, {
                 ...outputData,
                 _wService: {
                   _perfInfo,
                 },
-              }, (r) => {
-                log({ label: 'c->sw:port:listener:metrixEventType:detailed->s->[cb]', msgs: [r] })
+              }, (socketEvent) => {
+                log({ label: 'c->sw:port:listener:metrixEventType:detailed->s->[cb]', msgs: [socketEvent] })
+                if (typeof _cb === 'function') _cb({ eventData, _message: 'level 3.1/done: socket sent [hello from cb]', socketEvent })
               })
               break
             // ===
@@ -73,8 +76,10 @@ const withCustomEmitters = ({
             // case eventData?.input.stateValue === NES.Custom.Client.EStepMachine.AppInit:
             // case eventData?.input.stateValue === NES.Custom.Client.EStepMachine.ContractSending:
             default:
-              socket.emit(input.metrixEventType, outputData, (r) => {
-                log({ label: 'c->sw:port:listener:metrixEventType:default->s->[cb]', msgs: [r] })
+              if (typeof _cb === 'function') _cb({ eventData, _message: 'level 3.2' })
+              socket.emit(input.metrixEventType, outputData, (socketEvent) => {
+                log({ label: 'c->sw:port:listener:metrixEventType:default->s->[cb]', msgs: [socketEvent] })
+                if (typeof _cb === 'function') _cb({ eventData, _message: 'level 3.2/done: socket sent [hello from cb]', socketEvent })
               })
               break
             // ===

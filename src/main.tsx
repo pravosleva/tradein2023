@@ -13,12 +13,12 @@ import './index.css'
 ReactDOM.createRoot(document.getElementById('root')!).render(
   // <React.StrictMode>
   <SnackbarProvider
-    maxSnack={4}
+    maxSnack={5}
     autoHideDuration={60000}
-    preventDuplicate
+    // preventDuplicate
     anchorOrigin={{
       vertical: 'bottom',
-      horizontal: 'center',
+      horizontal: 'right',
     }}
     style={{
       borderRadius: '8px',

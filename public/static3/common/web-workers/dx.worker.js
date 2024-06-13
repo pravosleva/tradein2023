@@ -114,14 +114,14 @@ const isNewNativeEvent = ({ newCode: n, prevCode: p }) => {
       })
       self.postMessage({
         __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA,
-        message: `[DEBUG] ERR: Worker incoming event validate is not Ok: ${validationResult?.reason || 'No reason'}`,
+        message: `[DEBUG] ERR: Worker incoming event validate is not Ok: ${validationResult?.reason || 'No reason'} | ${e.data.input.metrixEventType} | ${e.data.input.stateValue}`,
         code: 'ui_message_danger',
       })
       return
     } else
       if (dbg.workerEvs.fromClient.isEnabled) self.postMessage({
         __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA,
-        message: `[DEBUG] OK: Worker validated new __eType event: ${e.data.__eType}`,
+        message: `[DEBUG] OK: Worker validated new __eType event: ${e.data.__eType} | ${e.data.input.metrixEventType} | ${e.data.input.stateValue}`,
         code: 'ui_message_success',
       })
 
@@ -147,46 +147,49 @@ const isNewNativeEvent = ({ newCode: n, prevCode: p }) => {
         self.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_RESET_HISTORY_OK, data: { tsList: _perfInfo.tsList } })
         break
       default: {
-        const {
-          data: {
-            // __eType,
-            input,
-          }
-        } = e
-  
-        if (!!input?.metrixEventType) {
-          _perfInfo.tsList.push({
-            descr: `c->[w:listener:metrixEventType]->s: ${input.metrixEventType}`,
-            p: performance.now(),
-            ts: new Date().getTime(),
-            data: e.data,
-            name: 'Worker Получил ивент от клиента для отправки на сервер',
-          })
+        try {
+          const {
+            data: {
+              // __eType,
+              input,
+            }
+          } = e
+    
+          if (!!input?.metrixEventType) {
+            _perfInfo.tsList.push({
+              descr: `c->[w:listener:metrixEventType]->s: ${input.metrixEventType}`,
+              p: performance.now(),
+              ts: new Date().getTime(),
+              data: e.data,
+              name: 'Worker Получил ивент от клиента для отправки на сервер',
+            })
 
-          // -- NOTE: Middlewares section
-          withCustomEmitters({
-            eventData: {
-              ...(e.data || {}),
-              // specialClientKey: fingerprint.uniqueClientKey,
-            },
-            socket,
-            _cb: ({ eventData, _message }) => {
-              const { __eType, ...restData } = eventData
-                if (dbg.workerEvs.fromClient.isEnabled) {
-                  if (!!_message) self.postMessage({
-                    __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA,
-                    message: `[DEBUG] withCustomEmitters _cb: ${_message}`,
-                    code: 'ui_message_info',
-                  })
-                  self.postMessage({
-                    __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA,
-                    message: `[DEBUG] OK: ${restData.input.metrixEventType}`,
-                    code: 'ui_message_info',
-                  })
-                }
-            },
+            // -- NOTE: Middlewares section
+            withCustomEmitters({
+              eventData: {
+                ...(e.data || {}),
+                // specialClientKey: fingerprint.uniqueClientKey,
+              },
+              socket,
+              _cb: ({ eventData, _message }) => {
+                const { __eType, ...restData } = eventData
+                  if (dbg.workerEvs.fromClient.isEnabled) {
+                    self.postMessage({
+                      __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA,
+                      message: `[DEBUG] OK: withCustomEmitters _cb: ${_message || 'No _message'} | ${restData.input.metrixEventType} | ${restData.input.stateValue}`,
+                      code: 'ui_message_info',
+                    })
+                  }
+              },
+            })
+            // --
+          }
+        } catch (err) {
+          self.postMessage({
+            __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA,
+            message: `[DEBUG] ERR: FUCKUP! ${err.message || 'No _message'} | ${restData.input.metrixEventType} | ${restData.input.stateValue}`,
+            code: 'ui_message_danger',
           })
-          // --
         }
         break
       } 

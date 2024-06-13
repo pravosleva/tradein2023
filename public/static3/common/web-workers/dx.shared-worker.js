@@ -130,12 +130,12 @@ const isNewNativeEvent = ({ newCode: n, prevCode: p }) => {
           label: `⛔ Event ${e.__eType} blocked |${!!validationResult?.reason ? ` ${validationResult.reason}` : ''} ${socket.connected ? '✅' : '⭕'}`,
           msgs: [e.input, validationResult],
         })
-        port.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA, message: `[DEBUG] ERR: Shared Worker incoming event validate is not Ok: ${validationResult?.reason || 'No reason'}`, code: 'ui_message_danger' })
+        port.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA, message: `[DEBUG] ERR: Shared Worker incoming event validate is not Ok: ${validationResult?.reason || 'No reason'} | ${e.data.input.metrixEventType} | ${e.data.input.stateValue}`, code: 'ui_message_danger' })
         return
       } else
         if (dbg.workerEvs.fromClient.isEnabled) port.postMessage({
           __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA,
-          message: `[DEBUG] Ok: Shared Worker validated new __eType event: ${e.data.__eType}`,
+          message: `[DEBUG] OK: Shared Worker validated new __eType event: ${e.data.__eType} | ${e.data.input.metrixEventType} | ${e.data.input.stateValue}`,
           code: 'ui_message_success',
         })
       // --
@@ -162,46 +162,49 @@ const isNewNativeEvent = ({ newCode: n, prevCode: p }) => {
           port.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_RESET_HISTORY_OK, data: { tsList: _perfInfo.tsList } })
           break
         default: {
-          const {
-            data: {
-              // __eType,
-              input,
-            }
-          } = e
-    
-          if (!!input?.metrixEventType) {
-            _perfInfo.tsList.push({
-              descr: `c->[sw:port:listener:metrixEventType]->s: ${input.metrixEventType}`,
-              p: performance.now(),
-              ts: new Date().getTime(),
-              data: e.data,
-              name: 'SharedWorker получил ивент мертики для отправки на сервер',
-            })
+          try {
+            const {
+              data: {
+                // __eType,
+                input,
+              }
+            } = e
+      
+            if (!!input?.metrixEventType) {
+              _perfInfo.tsList.push({
+                descr: `c->[sw:port:listener:metrixEventType]->s: ${input.metrixEventType}`,
+                p: performance.now(),
+                ts: new Date().getTime(),
+                data: e.data,
+                name: 'SharedWorker получил ивент мертики для отправки на сервер',
+              })
 
-            // -- NOTE: Middlewares section
-            withCustomEmitters({
-              eventData: {
-                ...(e.data || {}),
-                // specialClientKey: fingerprint.uniqueClientKey,
-              },
-              socket,
-              _cb: ({ eventData, _message }) => {
-                const { __eType, ...restData } = eventData
-                if (dbg.workerEvs.fromClient.isEnabled) {
-                  if (!!_message) port.postMessage({
-                    __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA,
-                    message: `[DEBUG] withCustomEmitters _cb: ${_message}`,
-                    code: 'ui_message_info',
-                  })
-                  port.postMessage({
-                    __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA,
-                    message: `[DEBUG] Ok: ${restData.input.metrixEventType}`,
-                    code: 'ui_message_info',
-                  })
-                }
-              },
+              // -- NOTE: Middlewares section
+              withCustomEmitters({
+                eventData: {
+                  ...(e.data || {}),
+                  // specialClientKey: fingerprint.uniqueClientKey,
+                },
+                socket,
+                _cb: ({ eventData, _message }) => {
+                  const { __eType, ...restData } = eventData
+                  if (dbg.workerEvs.fromClient.isEnabled) {
+                    port.postMessage({
+                      __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA,
+                      message: `[DEBUG] OK: withCustomEmitters _cb: ${_message || 'No _message'} | ${restData.input.metrixEventType} | ${restData.input.stateValue}`,
+                      code: 'ui_message_info',
+                    })
+                  }
+                },
+              })
+              // --
+            }
+          } catch (err) {
+            port.postMessage({
+              __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA,
+              message: `[DEBUG] ERR: FUCKUP! ${err.message || 'No _message'} | ${restData.input.metrixEventType} | ${restData.input.stateValue}`,
+              code: 'ui_message_danger',
             })
-            // --
           }
           break
         } 
@@ -307,7 +310,7 @@ const isNewNativeEvent = ({ newCode: n, prevCode: p }) => {
           data: dataForMemory,
           name: 'Socket получил данные (ok)',
         })
-        if (dbg.workerEvs.fromServer.isEnabled) log({ label: '⚡ Socket receive sp-report-answer:ok event from server', msgs: [e] })
+        if (dbg.workerEvs.fromServer.isEnabled) log({ label: '⚡ Socket receive sp-mx event from server', msgs: [e] })
         port.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA, ...e, code: 'ui_message_success' })
       },
       [NES.Socket.Metrix.EClientIncoming.SP_MX_SERVER_ON_HISTORY_REPORT_ANSWER_ERR]: function (e) {
@@ -320,7 +323,7 @@ const isNewNativeEvent = ({ newCode: n, prevCode: p }) => {
           data: dataForMemory,
           name: 'Socket получил данные (err)',
         })
-        if (dbg.workerEvs.fromServer.isEnabled) log({ label: '⚡ Socket receive sp-report-answer:err event from server', msgs: [e] })
+        if (dbg.workerEvs.fromServer.isEnabled) log({ label: '⚡ Socket receive sp-mx event from server', msgs: [e] })
         port.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA, ...e, code: 'ui_message_danger' })
       },
       // --
