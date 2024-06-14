@@ -40,8 +40,9 @@ export const ReportMessageForDevs = memo(({ isDebugEnabled }: TProps) => {
   return (
     <>
       {
-        !devtoolsViProxy.network.socket.__isConnectionIgnoredForUI
-        && devtoolsViSnap.network.__reportsLimit > 0
+        !devtoolsViProxy.network.isReportsByUserDisabled
+        && !devtoolsViProxy.network.socket.__isConnectionIgnoredForUI
+        && devtoolsViSnap.network.__reportsByUserLimit > 0
         && (
           <>
             <Alert type='warning'>
@@ -155,7 +156,7 @@ export const ReportMessageForDevs = memo(({ isDebugEnabled }: TProps) => {
                             .catch((err) => {
                               showError({ message: err.message || 'ERR' })
                             })
-                          devtoolsViProxy.network.__reportsLimit -= 1
+                          devtoolsViProxy.network.__reportsByUserLimit -= 1
                           return Promise.resolve({ ok: true })
                         },
                         onError: ({ message }) => {

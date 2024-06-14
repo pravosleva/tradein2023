@@ -39,7 +39,8 @@ class Singleton {
     devtools: {
       isUIEnabled: boolean;
       network: {
-        __reportsLimit: number;
+        __reportsByUserLimit: number;
+        isReportsByUserDisabled: boolean;
         socket: {
           __isConnectionIgnoredForUI: boolean,
           isConnected: boolean;
@@ -67,7 +68,8 @@ class Singleton {
         isUIEnabled: false,
         network: {
           // -- NOTE: Could be disabled by developer upon app initialization (you can set this value to 0)
-        __reportsLimit: 1,
+        __reportsByUserLimit: 1,
+        isReportsByUserDisabled: false,
         // --
           socket: {
             __isConnectionIgnoredForUI: false, // NOTE: Dont touch!
@@ -216,8 +218,6 @@ class Singleton {
     res: NSP.TImeiResponse | null;
     reqState: 'stopped' | 'pending' | 'success' | 'error';
   }) {
-    console.log('-- imei step res')
-    console.log(res)
     this._stepMachineState.imei.response = res
     this._stepMachineState.imei.result.state = reqState
   }

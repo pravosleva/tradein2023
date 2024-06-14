@@ -311,6 +311,8 @@ const isNewNativeEvent = ({ newCode: n, prevCode: p }) => {
           name: 'Socket will not be reconnected',
         })
         if (dbg.workerEvs.fromServer.isEnabled) log({ label: '🚫 Socket receive custom decline event from server', msgs: [e] })
+        
+        self.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA, ...e, code: 'socket_must_die' })
         socket.io.reconnectionAttempts(0)
       },
     },

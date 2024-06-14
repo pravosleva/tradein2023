@@ -32,5 +32,6 @@ export namespace NEvents {
     UI_MESSAGE_DANGER = 'ui_message_danger',
     UI_MESSAGE_SUCCESS = 'ui_message_success',
     UI_MESSAGE_INFO = 'ui_message_info',
+    SOCKET_MUST_DIE = 'socket_must_die',
   }
 }

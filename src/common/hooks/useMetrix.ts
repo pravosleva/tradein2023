@@ -93,6 +93,14 @@ export const useMetrix = ({ isDebugEnabled }: TProps) => {
                 if (isDebugEnabled) groupLog({ namespace: 'ui msg info', items: [e.data] })
                 showInfo({ message: e.data.message || 'Ok' })
                 break
+              case e.data.code === NEvents.EWorkerToClientEventCode.SOCKET_MUST_DIE:
+                // NOTE: Reports will stop when the socket dies
+                devtoolsViProxy.network.isReportsByUserDisabled = true
+                if (isDebugEnabled) {
+                  groupLog({ namespace: 'socket must die', items: [e.data] })
+                  showInfo({ message: e.data.message || 'Ok' })
+                }
+                break
               default:
                 break
             }

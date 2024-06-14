@@ -17,7 +17,8 @@ export namespace NViDevtools {
     };
   };
   export type TNetwork = {
-    __reportsLimit: number;
+    __reportsByUserLimit: number;
+    isReportsByUserDisabled: boolean;
     socket: {
       __isConnectionIgnoredForUI: boolean,
       isConnected: boolean;
