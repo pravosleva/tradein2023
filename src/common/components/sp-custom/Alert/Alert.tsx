@@ -44,9 +44,9 @@ export const Alert = ({
     >
       <div style={{ width: '100%' }}>
         {!!header && (
-          <span
+          <b
             // className="font-medium"
-          >{header}</span>
+          >{header}</b>
         )}
         {children}
       </div>

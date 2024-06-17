@@ -66,12 +66,12 @@ export const fetchIMEIMachine = async (context: TStepMachineContextFormat, _ev: 
                 const _msgs = []
                 if (!fullResponse?.condition) {
                   _msgs.push(
-                    `В случае { "go_to_final_step": true }, ответ должен соделжать непустое поле "condition", получено ${clsx(fullResponse?.condition || 'empty', `(${typeof fullResponse?.condition})`)}`
+                    `В случае { "go_to_final_step": true }, ответ должен содержать непустое поле "condition", получено ${clsx(fullResponse?.condition || 'empty', `(${typeof fullResponse?.condition})`)}`
                   )
                 }
                 if (!fullResponse?.condition_limit_reason) {
                   _msgs.push(
-                    `В случае { "go_to_final_step": true }, ответ должен соделжать непустое поле "condition_limit_reason", получено ${clsx(fullResponse?.condition_limit_reason || 'empty', `(${typeof fullResponse?.condition_limit_reason})`)}`
+                    `В случае { "go_to_final_step": true }, ответ должен содержать непустое поле "condition_limit_reason", получено ${clsx(fullResponse?.condition_limit_reason || 'empty', `(${typeof fullResponse?.condition_limit_reason})`)}`
                   )
                 }
                 if (_msgs.length > 0) {
