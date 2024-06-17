@@ -1,6 +1,6 @@
 // @import '~/scss-vars/monitors.scss';
 @import '~/scss-vars/colors.scss';
-// @import '~/scss-vars/common.scss';
+@import '~/scss-vars/common.scss';
 @import '~/scss-vars/sizes.scss';
 
 .grid {
@@ -35,7 +35,7 @@
     max-width: 100px;
     max-height: 100px;
     object-fit: cover;
-    border-radius: #{$size-rad-1}px;
+    border-radius: $common-control-elements-radius;
     filter: grayscale(100%);
   }
   img:hover {
