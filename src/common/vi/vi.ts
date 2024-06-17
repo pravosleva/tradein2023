@@ -43,6 +43,7 @@ class Singleton {
         isReportsByUserDisabled: boolean;
         socket: {
           __isConnectionIgnoredForUI: boolean,
+          __wasThereAFirstConnection: boolean;
           isConnected: boolean;
         };
         xhr: NViDevtools.TNetworkXHR;
@@ -72,7 +73,10 @@ class Singleton {
         isReportsByUserDisabled: false,
         // --
           socket: {
-            __isConnectionIgnoredForUI: false, // NOTE: Dont touch!
+            // --- NOTE: Dont touch!
+            __isConnectionIgnoredForUI: false,
+            __wasThereAFirstConnection: false,
+            // ---
             isConnected: false,
           },
           xhr: defaultXHRState,

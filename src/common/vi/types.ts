@@ -21,6 +21,7 @@ export namespace NViDevtools {
     isReportsByUserDisabled: boolean;
     socket: {
       __isConnectionIgnoredForUI: boolean,
+      __wasThereAFirstConnection: boolean,
       isConnected: boolean;
     };
     xhr: TNetworkXHR;

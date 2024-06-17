@@ -42,6 +42,7 @@ export const ReportMessageForDevs = memo(({ isDebugEnabled }: TProps) => {
       {
         !devtoolsViProxy.network.isReportsByUserDisabled
         && !devtoolsViProxy.network.socket.__isConnectionIgnoredForUI
+        && devtoolsViSnap.network.socket.__wasThereAFirstConnection
         && devtoolsViSnap.network.__reportsByUserLimit > 0
         && (
           <>

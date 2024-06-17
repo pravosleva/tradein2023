@@ -108,6 +108,7 @@ export const useMetrix = ({ isDebugEnabled }: TProps) => {
 
             break
           case NEvents.ECustom.WORKER_TO_CLIENT_CONN:
+            devtoolsViProxy.network.socket.__wasThereAFirstConnection = true
             if (!devtoolsViProxy.network.socket.__isConnectionIgnoredForUI) devtoolsViProxy.network.socket.isConnected = true
 
             if (isDebugEnabled) groupLog({
