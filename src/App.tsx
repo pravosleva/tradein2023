@@ -8,7 +8,7 @@ import { stepMachine, EStep, ECountryCode } from '~/common/xstate/stepMachine'
 import { useMachine } from '@xstate/react'
 import { useLayoutEffect, useMemo, useRef } from 'react'
 // import { Spinner } from '~/common/components/tailwind'
-import { ContentWithControls, ResponsiveBlock } from '~/common/components/sp-custom'
+import { Alert, BottomSheet, ContentWithControls, Loader, ResponsiveBlock, ReportMessageForDevs } from '~/common/components/sp-custom'
 import { BaseLayout } from '~/common/components/layout/BaseLayout'
 import {
   // InitStep,
@@ -20,7 +20,6 @@ import {
   ContractStep,
 } from '~/common/components/steps'
 import clsx from 'clsx'
-import { Alert, BottomSheet, Loader } from '~/common/components/sp-custom'
 import {
   getTranslatedConditionCode,
   getTranslatedConditionSuffixCode,
@@ -133,6 +132,7 @@ function App() {
                 )
               }
             </Alert>
+            <ReportMessageForDevs />
           </ContentWithControls>
         )
       case EStep.EnterMemoryAndColor:
@@ -567,7 +567,7 @@ function App() {
             ]}
             isStickyBottomControls
           >
-            <div className={classes.stack}>
+            <div className={classes.stack2}>
               <ContractStep
                 // NOTE: Корректный features.country_code будет в любом случае,
                 // иначе пользователь не продвинулся бы далее EStep.AppInit
@@ -580,6 +580,7 @@ function App() {
                 }}
               />
               {/* <pre className={classes.preStyled}>{JSON.stringify(state.context.contract, null, 2)}</pre> */}
+              <ReportMessageForDevs />
             </div>
           </ContentWithControls>
         )
@@ -618,6 +619,7 @@ function App() {
                 contractResponse: state.context.contract.response,
               }, null, 2)}</pre>
             </Alert>
+            <ReportMessageForDevs />
           </ContentWithControls>
         )
       case EStep.Final:
@@ -666,7 +668,8 @@ function App() {
             ]}
             isStickyBottomControls
           >
-            Договор подписан
+            <div>Договор подписан</div>
+            <ReportMessageForDevs />
           </ContentWithControls>
         )
       default:
