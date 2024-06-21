@@ -34,6 +34,7 @@ type TIncomingData = {
   code?: NEvents.EWorkerToClientEventCode;
   __eType: string;
   message?: string;
+  _message?: string;
   result?: {
     isOk: boolean;
     message?: string;
@@ -82,24 +83,17 @@ export const useMetrix = ({ isDebugEnabled }: TProps) => {
             // -- NOTE: App logic exp
             switch (true) {
               case e.data.code === NEvents.EWorkerToClientEventCode.UI_MESSAGE_DANGER:
-                if (isDebugEnabled) groupLog({ namespace: 'ui msg err', items: [e.data] })
-                showError({ message: e.data.message || 'Ooops! Что-то пошло не так...' })
+                showError({ message: (isDebugEnabled ? e.data?._message : e.data?.message) || 'UI Message event code: danger (no message)' })
                 break
               case e.data.code === NEvents.EWorkerToClientEventCode.UI_MESSAGE_SUCCESS:
-                if (isDebugEnabled) groupLog({ namespace: 'ui msg ok', items: [e.data] })
-                showSuccess({ message: e.data.message || 'Ok' })
+                showSuccess({ message: (isDebugEnabled ? e.data?._message : e.data?.message) || 'UI Message event code: success (no message)' })
                 break
               case e.data.code === NEvents.EWorkerToClientEventCode.UI_MESSAGE_INFO:
-                if (isDebugEnabled) groupLog({ namespace: 'ui msg info', items: [e.data] })
-                showInfo({ message: e.data.message || 'Ok' })
+                showInfo({ message: (isDebugEnabled ? e.data?._message : e.data?.message) || 'UI message event code: info (no message)' })
                 break
               case e.data.code === NEvents.EWorkerToClientEventCode.SOCKET_MUST_DIE:
-                // NOTE: Reports will stop when the socket dies
                 devtoolsViProxy.network.isReportsByUserDisabled = true
-                if (isDebugEnabled) {
-                  groupLog({ namespace: 'socket must die', items: [e.data] })
-                  showInfo({ message: e.data.message || 'Ok' })
-                }
+                if (isDebugEnabled) showInfo({ message: (isDebugEnabled ? e.data?._message : e.data?.message) || 'UI message event code: socket_must_die (no message)' })
                 break
               default:
                 break

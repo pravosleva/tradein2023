@@ -214,5 +214,5 @@ class Singleton {
 
 export const wws = Singleton.getInstance({
   noSharedWorkers: false,
-  isDebugEnabled: true,
+  isDebugEnabled: false,
 })
