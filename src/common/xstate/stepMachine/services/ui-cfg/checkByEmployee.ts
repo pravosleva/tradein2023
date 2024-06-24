@@ -1,33 +1,8 @@
+import { TQuizByVendorFormat } from './types'
+
 // const VITE_PUBLIC_URL = import.meta.env.VITE_PUBLIC_URL
 // const PUBLIC_URL = VITE_PUBLIC_URL || ''
 
-export type TGalleryImage = {
-  src: string;
-  title?: string;
-  caption?: string;
-}
-export type TDescr = {
-  howDoesItWorks: {
-    link?: {
-      label: string;
-      galleryImages: TGalleryImage[];
-    };
-    btn?: {
-      label: string;
-      galleryImages: TGalleryImage[];
-    };
-  };
-};
-type TQuizByVendorFormat = {
-  [key: string]: {
-    label: string;
-    options: {
-      label: string;
-      value: string;
-    }[];
-    descr?: TDescr;
-  };
-};
 export const checkByEmployeeCfg: {
   [key: string]: TQuizByVendorFormat; // NOTE: Vendor
   DEFAULT: TQuizByVendorFormat;

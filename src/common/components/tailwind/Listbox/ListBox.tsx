@@ -1,10 +1,12 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Fragment, useState, useCallback, useLayoutEffect, useRef } from 'react'
 import { Listbox as ListboxHui, Transition } from '@headlessui/react'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 import clsx from 'clsx'
 import inputClasses from '~/common/components/sp-custom/Input/Input.module.scss'
+import { TDescr } from '~/common/xstate/stepMachine/services/ui-cfg'
 
-type TItem = {
+export type TItem = {
   id: string;
   label: string;
   value: string;
@@ -17,6 +19,10 @@ export type TListboxProps = {
   isDisabled?: boolean;
   // shoudHaveAttention?: boolean;
   makeAutofocus?: boolean;
+
+  // -- NOTE: Additional props special for SmartPrice UX requirements
+  _spUX?: TDescr;
+  // --
 }
 
 // const people = [
@@ -79,7 +85,8 @@ export const Listbox = ({
               'relative',
               'w-full',
               'cursor-default',
-              'rounded-md',
+              // 'rounded-lg',
+              // 'rounded-md',
               'bg-white',
               'py-2',
               'pl-4',
@@ -87,12 +94,16 @@ export const Listbox = ({
               'text-left',
               // 'shadow-md',
               'focus:outline-none',
-              'focus-visible:border-slate-300',
-              'focus-visible:ring-2',
-              'focus-visible:ring-slate-300',
-              'focus-visible:ring-offset-2',
-              'focus-visible:ring-offset-slate-300',
+              // 'focus-visible:border-slate-300',
+              // 'focus-visible:ring-2',
+              // 'focus-visible:ring-slate-300',
+              // 'focus-visible:ring-offset-2',
+              // 'focus-visible:ring-offset-slate-300',
               // 'sm:text-sm',
+
+              // 'focus-visible:ring-gray-300',
+              // 'focus-visible:ring-offset-2',
+              // 'focus-visible:ring-offset-gray-300',
 
               // 'disabled:opacity-50',
               // 'disabled:cursor-not-allowed',
@@ -103,7 +114,10 @@ export const Listbox = ({
               },
             )}
           >
-            <span className="block truncate">{selected?.label || placeholder}</span>
+            <span
+              className="block truncate"
+              style={{ opacity: selected?.label ? 1 : 0.5 }}
+            >{selected?.label || placeholder}</span>
             <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
               <ChevronUpDownIcon
                 className="h-5 w-5 text-gray-400"
@@ -147,7 +161,7 @@ export const Listbox = ({
             >
               {items.map((item, i) => (
                 <ListboxHui.Option
-                  key={`${item.value}-${i}`}
+                  key={`${item.id}-${item.label}-${item.value}-${i}`}
                   // className={({ active }) =>
                   //   `relative cursor-default select-none py-2 pl-10 pr-4 ${
                   //     active ? 'bg-amber-100 text-amber-900' : 'text-gray-900'
@@ -157,12 +171,14 @@ export const Listbox = ({
                     'relative',
                     'cursor-pointer',
                     'select-none',
+                    'font-bold',
                     'py-3',
                     'pl-4',
                     'pr-8',
                     {
                       // ['bg-slate-100 text-slate-900']: active,
-                      ['bg-spBlueMain text-white']: active,
+                      // ['bg-spBlueMain text-white']: active,
+                      ['bg-mtsRed text-white']: active,
                       // ['text-gray-900']: !active,
                     },
                   )}
@@ -171,9 +187,9 @@ export const Listbox = ({
                   {({ selected }) => (
                     <>
                       <span
-                        className={`block truncate ${
-                          selected ? 'font-medium' : 'font-normal'
-                        }`}
+                        // className={`block truncate ${
+                        //   selected ? 'font-medium' : 'font-normal'
+                        // }`}
                       >
                         {item.label}
                       </span>

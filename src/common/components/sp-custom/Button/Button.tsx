@@ -12,13 +12,19 @@ import baseClasses from '~/App.module.scss'
 // import { FaBeer } from 'react-icons/fa'
 import {
   // FaArrowRightLong,
-  FaArrowRight,
+  // FaArrowRight,
+  // FaArrowLeft,
   FaCheck,
 } from 'react-icons/fa6'
+import {
+  FaArrowLeft, FaArrowRight,
+  // FaCheck,
+  // FaCheckCircle,
+} from 'react-icons/fa'
 // import { FaCheck } from 'react-icons/fa'
 // import { IoMdCheckmarkCircleOutline } from 'react-icons/io'
 // import { FaCheckCircle } from 'react-icons/fa'
-
+import { TColor, TVariant } from './types'
 
 // export enum EVariant {
 //   Filled = 'filled',
@@ -29,8 +35,6 @@ import {
 //   Secondary = 'secondary',
 //   Default = 'default',
 // }
-export type TColor = 'default' | 'primary' | 'secondary' | 'success' | 'black' | 'mtsRed' | 'mtsGray';
-export type TVariant = 'filled' | 'outlined';
 
 export interface IButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   // title: string;
@@ -38,10 +42,17 @@ export interface IButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEleme
   color: TColor;
   fullWidth?: boolean;
   variant: TVariant;
+
+  EndIcon?: React.ReactNode;
   EnabledEndIcon?: React.ReactNode;
+  DisabledEndIcon?: React.ReactNode;
+
+  StartIcon?: React.ReactNode;
   EnabledStartIcon?: React.ReactNode;
   DisabledStartIcon?: React.ReactNode;
+
   allowDefaultEnabledEndIconArrowRight?: boolean;
+  allowDefaultEnabledStartIconArrowLeft?: boolean;
   allowDefaultEnabledEndIconCheck?: boolean;
 }
 
@@ -51,17 +62,26 @@ export const Button = React.forwardRef(({
   color,
   fullWidth,
   variant,
+
+  EndIcon,
   EnabledEndIcon,
+  DisabledEndIcon,
+
+  StartIcon,
   EnabledStartIcon,
   DisabledStartIcon,
+
   allowDefaultEnabledEndIconArrowRight,
   allowDefaultEnabledEndIconCheck,
+  allowDefaultEnabledStartIconArrowLeft,
   ..._nativeProps
 }: IButtonProps, ref) => {
   const { className, ...nativeProps } = _nativeProps
-  const EndIcon = useMemo(() => {
-    if (nativeProps.disabled) return null
+  const _EndIcon = useMemo(() => {
+    if (nativeProps.disabled) return EndIcon || DisabledEndIcon || null
     switch (true) {
+      case !!EndIcon:
+        return EndIcon
       case !!EnabledEndIcon:
         return EnabledEndIcon
       case allowDefaultEnabledEndIconArrowRight:
@@ -72,15 +92,20 @@ export const Button = React.forwardRef(({
         return null
     }
   }, [
+    EndIcon,
     allowDefaultEnabledEndIconArrowRight,
     allowDefaultEnabledEndIconCheck,
     nativeProps.disabled,
     EnabledEndIcon,
+    DisabledEndIcon,
   ])
-  const StartIcon = useMemo(() => {
+  const _StartIcon = useMemo(() => {
+
     switch (nativeProps.disabled) {
       case true:
         switch (true) {
+          case !!StartIcon:
+            return StartIcon
           case !!DisabledStartIcon:
             return DisabledStartIcon
           default:
@@ -88,40 +113,54 @@ export const Button = React.forwardRef(({
         }
       default:
         switch (true) {
+          case !!StartIcon:
+            return StartIcon
           case !!EnabledStartIcon:
             return EnabledStartIcon
+          case allowDefaultEnabledStartIconArrowLeft:
+            return <FaArrowLeft />
           default:
             return null
         }
     }
   }, [
+    StartIcon,
+    allowDefaultEnabledStartIconArrowLeft,
     nativeProps.disabled,
     EnabledStartIcon,
     DisabledStartIcon,
   ])
+  const isVariantAsBnt = useMemo(() => variant !== 'unstyled' && variant !== 'link', [variant])
+  const isVariantAsLink = useMemo(() => variant === 'link', [variant])
 
   return (
     <button
       // @ts-ignore
       ref={ref}
       className={clsx(
-        classes.spBtn,
-        classes[`spBtn_${variant}`],
-        classes[`spBtn_${variant}_${color}`],
         {
+          [classes.spBtn]: isVariantAsBnt,
+          [classes[`spBtn_${variant}`]]: isVariantAsBnt,
           [classes.spBtn_fullWidth]: fullWidth,
+          [clsx([
+            'py-2',
+            'px-5',
+            'focus:outline',
+            'focus:outline-3',
+            'focus:outline-offset-4',
+          ])]: isVariantAsBnt,
+          'underline hover:underline': isVariantAsLink,
         },
+        // 'focus:outline',
+        // 'focus:outline-3',
+        // 'focus:outline-offset-4',
+        classes[`spBtn_${variant}_${color}`],
         baseClasses.truncate,
         // 'font-medium',
         'font-bold',
         'text-md',
         // 'rounded-md',
-        'py-2',
-        'px-5',
 
-        'focus:outline',
-        'focus:outline-3',
-        'focus:outline-offset-4',
         // 'focus:outline-spBlueMain',
         className,
         {
@@ -141,11 +180,12 @@ export const Button = React.forwardRef(({
           justifyContent: 'center',
           alignItems: 'center',
           gap: '8px',
+          // border: '1px solid red'
         }}
       >
-        {StartIcon}
+        {_StartIcon}
         <span className={baseClasses.truncate}>{children}</span>
-        {EndIcon}
+        {_EndIcon}
       </span>
     </button>
   )

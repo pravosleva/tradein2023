@@ -66,12 +66,13 @@ class Singleton extends API {
 
         vendor: 'Samsung',
         model: 'Galaxy S22',
-        photo: 'models/samsung/galaxy-s22/01.jpg',
         
         // vendor: 'Apple',
         // model: 'iPhone 12 Pro',
-        // photo: 'models/apple/iphone-12-pro/color_graphite_01.jpg',
       },
+      photo: 'models/samsung/galaxy-s22/01.jpg',
+      // photo: 'models/apple/iphone-12-pro/color_graphite_01.jpg',
+
       // ok: false,
       // message: 'FRONT tst',
 

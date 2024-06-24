@@ -450,9 +450,10 @@ export const useMetrix = ({ isDebugEnabled }: TProps) => {
         break
       case EStep.Final:
         customData.stepDetails = {
-          contract: {
-            response: structuredClone(smViSnap.contract.response, { lossy: true, json: true }),
-          }
+          // contract: {
+          //   response: structuredClone(smViSnap.contract.response, { lossy: true, json: true }),
+          // },
+          network: structuredClone(devtoolsViProxy.network, { lossy: true, json: true }),
         }
         customData.reportType = EReportType.SUCCESS
         break
@@ -528,6 +529,7 @@ export const useMetrix = ({ isDebugEnabled }: TProps) => {
     // smViSnap.checkFMIP.result,
     // smViSnap.photoStatus.response,
     // smViSnap.photoStatus.result,
+    devtoolsViProxy.network,
   ])
 
   // NOTE: 2. Send event for each change

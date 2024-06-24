@@ -84,6 +84,10 @@ export namespace NSP {
     subsidies: any[]; // TODO
     sim_check_enabled: boolean;
   };
+  export type TAcceptResponse = {
+    ok: boolean;
+    message?: string;
+  };
   export type TPhotoLinkResponse = {
     ok: boolean;
     qr: string;

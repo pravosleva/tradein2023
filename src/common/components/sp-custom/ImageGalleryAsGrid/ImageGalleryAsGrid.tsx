@@ -1,6 +1,6 @@
 import { useMemo, useState, memo, useCallback } from 'react'
 import Lightbox from 'react-image-lightbox'
-import { TGalleryImage } from '~/common/xstate/stepMachine/services/ui-cfg/checkByEmployee'
+import { TGalleryImage } from '~/common/xstate/stepMachine/services/ui-cfg'
 import {
   FaArrowLeft,
   FaArrowRight,

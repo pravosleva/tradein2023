@@ -156,6 +156,72 @@
       background: $color-mts-gray;
     }
   }
+  &_unstyled, &_link {
+    background-color: #fff;
+
+    &_default {
+      // border-color: lightgray;
+      border-color: $color-tw-slate-300;
+      // color: lightgray;
+      color: $color-tw-slate-300;
+    }
+    &_default:hover {
+      box-shadow: 0px 14px 30px -8px #cbd5e1; // slate-300
+    }
+
+    &_primary {
+      border-color: $color-blue-main;
+      color: $color-blue-main;
+    }
+    &_primary:hover {
+      box-shadow: 0px 14px 30px -8px rgba(38, 114, 182, 0.5);
+      background: $color-blue-main;
+      border-color: $color-blue-main;
+      color: #fff;
+    }
+
+    &_secondary {
+      border-color: gray;
+      color: gray;
+    }
+
+    &_success {
+      border-color: $color-green-dark;
+      color: $color-green-dark;
+    }
+    &_success:hover {
+      background: #49C77C;
+      border-color: #49C77C;
+      box-shadow: 0px 14px 30px -8px rgba(4, 156, 119, 0.5);
+    }
+
+    &_black {
+      border-color: #000;
+      color: #000;
+    }
+    &_black:hover {
+      background: #000;
+      color: #fff;
+      // box-shadow: none !important;
+    }
+
+    &_mtsRed {
+      border-color: $color-mts-red;
+      color: $color-mts-red;
+    }
+    &_mtsRed:hover, &_mtsRed:focus {
+      // box-shadow: 0px 14px 30px -8px rgba(255, 115, 142, 0.5);
+      color: #000;
+    }
+
+    &_mtsGray {
+      border-color: $color-mts-gray;
+      color: $color-mts-gray;
+    }
+    &_mtsGray:hover {
+      background: #FFF;
+    }
+  }
 
   &_fullWidth {
     width: 100%;

@@ -5,8 +5,7 @@
   outline: unset;
   // border: 2px solid lightgray;
   // border: 2px solid $color-tw-slate-300;
-  // border-radius: 8px;
-  border: $common-control-elements-border-width solid $color-tw-slate-300;
+  border: $common-control-elements-border-width solid $color-mts-gray-light;
   border-radius: $common-control-elements-radius;
   cursor: pointer;
   // padding: 5px 10px;
@@ -45,17 +44,18 @@
     --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(4px + var(--tw-ring-offset-width)) var(--tw-ring-color);
     box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
     // --tw-ring-color: rgb(0 0 0 / 0.1);
-    --tw-ring-color: #cbd5e1; // stale-300
+    // --tw-ring-color: #cbd5e1; // stale-300
+    --tw-ring-color: $color-mts-gray-light;
   }
 
   &::placeholder {
-    color: $color-tw-slate-300
+    // color: $color-tw-slate-300;
+    color: $color-mts-gray-light;
   }
-  
 }
 
 .borderedRed {
-  border: 2px solid $color-red;
+  border: $common-control-elements-border-width solid $color-red;
 }
 .borderedGreen {
   border-color: $color-green-dark !important;

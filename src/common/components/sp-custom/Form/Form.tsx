@@ -310,7 +310,7 @@ export const Form = memo(({
                         placeholder={schema[key].label}
                         {...rest}
                         // multiple
-                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                        onChange={(e) => {
                           setAuxStateValue(key, e.target.value)
                           setValue(key, e.target.value)
                         }}

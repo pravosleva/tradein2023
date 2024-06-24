@@ -8,6 +8,7 @@ import classes from './PhoneInput.module.scss'
 import inputClasses from '~/common/components/sp-custom/Input/Input.module.scss'
 
 const borderWidth = 1
+const borderRadius = 10
 
 interface IProps {
   defaultCountryCode?: string;
@@ -78,7 +79,8 @@ export const PhoneInput = React.forwardRef(({
     },
     inputStyle: {
       borderWidth: `${borderWidth}px`,
-      borderColor: '#cbd5e1', // stale-300
+      // borderColor: '#cbd5e1', // stale-300
+      borderColor: '#BCBBC4', // mtsGrayLight
       // padding: '1px',
       // border: '2px solid lightgray',
       // padding: '5px 10px',
@@ -88,14 +90,14 @@ export const PhoneInput = React.forwardRef(({
       // letterSpacing: '0.05em',
     },
     buttonStyle: {
-      borderRadius: '10px 0 0 10px',
+      borderRadius: `${borderRadius}px 0 0 ${borderRadius}px`,
       borderWidth: `${borderWidth}px`,
       // borderColor: '#cbd5e1', // stale-300
     },
     dropdownStyle: {
       // border: '2px solid lightgray',
       maxWidth: '220px',
-      borderRadius: '10px',
+      borderRadius: `${borderRadius}px`,
     },
     // searchStyle: {},
   }

@@ -204,6 +204,7 @@ function App() {
             autofocusControlBtnId={
               can({ type: 'goNext' }) ? 'next' : undefined
             }
+            imeiResponse={state.context.imei.response}
           />
         )
       case EStep.PrePriceTable:

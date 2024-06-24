@@ -1,8 +1,9 @@
 import { useLayoutEffect, memo } from 'react'
-import { ContentWithControls, TControlBtn } from '~/common/components/sp-custom'
+import { ContentWithControls, LazyImage, ReportMessageForDevs, TControlBtn } from '~/common/components/sp-custom'
 import baseClasses from '~/App.module.scss'
 import clsx from 'clsx'
 import { Listbox, TListboxProps } from '~/common/components/tailwind'
+import { NSP } from '~/utils/httpClient'
 
 type TProps = {
   header: string;
@@ -16,6 +17,7 @@ type TProps = {
   listboxes: (TListboxProps & { isEnabled: boolean; id: string; })[];
   defaultAutofocusId?: string;
   autofocusControlBtnId?: string;
+  imeiResponse: null | NSP.TImeiResponse;
 }
 
 export const EnterMemoryAndColorStep = memo(({
@@ -27,6 +29,7 @@ export const EnterMemoryAndColorStep = memo(({
   listboxes,
   defaultAutofocusId,
   autofocusControlBtnId,
+  imeiResponse,
 }: TProps) => {
 
   useLayoutEffect(() => {
@@ -65,6 +68,21 @@ export const EnterMemoryAndColorStep = memo(({
         }
       </div>
       {/* <pre className={baseClasses.preStyled}>{JSON.stringify(state.context.imei.response, null, 2)}</pre> */}
+      {
+        !!imeiResponse?.photo && (
+          <LazyImage
+            // src={isStaging ? `https://smartprice.ru/static/img/smartprice/${imeiResponse?.photo}` : `/static/img/smartprice/${imeiResponse?.photo}`}
+            src={`https://smartprice.ru/static/img/smartprice/${imeiResponse?.photo}`}
+            alt='p'
+            style={{
+              width: '200px',
+              height: '200px',
+              margin: '0 auto',
+            }}
+          />
+        )
+      }
+      <ReportMessageForDevs />
     </ContentWithControls>
   )
 })

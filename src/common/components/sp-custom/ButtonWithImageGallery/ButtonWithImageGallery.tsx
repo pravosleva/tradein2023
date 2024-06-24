@@ -5,7 +5,7 @@ import {
 // import baseClasses from '~/App.module.scss'
 // import clsx from 'clsx'
 import { Button, ImageGallery } from '~/common/components/sp-custom'
-import { TGalleryImage } from '~/common/xstate/stepMachine/services/ui-cfg/checkByEmployee'
+import { TGalleryImage } from '~/common/xstate/stepMachine/services/ui-cfg'
 
 type TProps = {
   label: string;

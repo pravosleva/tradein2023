@@ -5,7 +5,7 @@ import clsx from 'clsx'
 import { ErrorBoundary } from '~/common/components/tools'
 import classes from './ContentWithControls.module.scss'
 import useDynamicRefs from 'use-dynamic-refs'
-import { useLayoutEffect } from 'react'
+import { useLayoutEffect, memo } from 'react'
 
 export type TBtnUISettings = {
   color: TColor;
@@ -35,7 +35,7 @@ type TProps = {
   isStickyBottomControls?: boolean;
 }
 
-export const ContentWithControls = ({
+export const ContentWithControls = memo(({
   header,
   subheader,
   subheaderJsx,
@@ -206,4 +206,4 @@ export const ContentWithControls = ({
       </div>
     </ErrorBoundary>
   )
-}
+})

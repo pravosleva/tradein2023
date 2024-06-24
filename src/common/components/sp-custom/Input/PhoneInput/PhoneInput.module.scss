@@ -1,5 +1,4 @@
 @import '~/scss-vars/colors.scss';
-@import '~/scss-vars/common.scss';
 
 .phoneInputWrapper {
   box-sizing: border-box;
@@ -10,7 +9,7 @@
 
   .flagDropdown {
     .selectedFlag {
-      border: $common-control-elements-border-width solid red !important;
+      border: 1px solid red !important;
     }
   }
   // .buttonClass {
@@ -18,7 +17,7 @@
   // }
 
   .borderedGray {
-    border-color: $color-tw-slate-300 !important;
+    border-color: $color-mts-gray-light !important;
   }  
   .borderedRed {
     border-color: $color-red !important;
@@ -28,11 +27,11 @@
   }  
 
   & input {
-    border: $common-control-elements-border-width solid red;
+    border: 1px solid red;
     // border-color: $color-tw-slate-300;
     // padding: 8px 10px;
+    // padding: 10px 10px 10px 48px;
     // padding: 8px 10px 8px 48px !important;
-    // padding: 0px 10px 0px 48px !important;
     // line-height: 35px !important;
     font-size: 16px !important;
     // font-weight: bold;
@@ -44,7 +43,7 @@
   //   border: 1px solid red;
   // }
   & > div > * > div {
-    border-radius: $common-control-elements-radius 0 0 $common-control-elements-radius !important;
+    border-radius: 8px 0 0 8px !important;
   }
   // & > * > * > * > * {
   //   border: 1px solid red;

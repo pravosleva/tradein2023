@@ -1,4 +1,4 @@
-// import baseClasses from '~/App.module.scss'
+import baseClasses from '~/App.module.scss'
 import clsx from 'clsx'
 
 type TAlertType = 'info' | 'warning' | 'danger' | 'success' | 'default' | 'slate';
@@ -11,7 +11,7 @@ type TAlertProps = {
 const getColor = ({ type }: { type: TAlertType }): string => {
   switch (type) {
     case 'default':
-      return 'p-3 border-none text-gray-500 rounded-lg bg-gray-50'
+      return 'p-3 border-none text-gray-500 rounded-lg bg-gray-100'
     case 'slate':
       return 'p-3 border-none text-slate-600 rounded-lg bg-slate-100'
     case 'info':
@@ -42,13 +42,20 @@ export const Alert = ({
         wordBreak: 'break-word',
       }}
     >
-      <div style={{ width: '100%' }}>
+      <div
+        className={baseClasses.stack1}
+        style={{ width: '100%' }}
+      >
         {!!header && (
           <b
             // className="font-medium"
           >{header}</b>
         )}
-        {children}
+        {!!children && (
+          <div>
+            {children}
+          </div>
+        )}
       </div>
     </div>
   )
