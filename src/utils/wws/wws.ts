@@ -174,7 +174,7 @@ class Singleton {
           appVersion: string;
           stepDetails?: {
             [key: string]: any;
-            commentByUser: string;
+            comment: string;
             network: NViDevtools.TNetwork;
           };
           gitSHA1: string;
@@ -193,7 +193,7 @@ class Singleton {
             stateValue: vi.common.stateValue,
             appVersion: vi.common.appVersion,
             stepDetails: {
-              commentByUser: comment,
+              comment,
               network: structuredClone(network, { lossy: true, json: true }),
             },
             gitSHA1: VITE_GIT_SHA1,
