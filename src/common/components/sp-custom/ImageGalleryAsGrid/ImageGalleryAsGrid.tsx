@@ -62,6 +62,7 @@ export const ImageGalleryAsGrid = memo(({ items } : TProps) => {
               alt={item.title}
               src={item.src}
               onClick={handleClick(i)}
+              className='shadow-lg'
             />
           ))
         }

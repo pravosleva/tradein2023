@@ -178,7 +178,7 @@ export const Listbox = ({
                     {
                       // ['bg-slate-100 text-slate-900']: active,
                       // ['bg-spBlueMain text-white']: active,
-                      ['bg-mtsRed text-white']: active,
+                      ['bg-spBlueMain text-white']: active,
                       // ['text-gray-900']: !active,
                     },
                   )}
