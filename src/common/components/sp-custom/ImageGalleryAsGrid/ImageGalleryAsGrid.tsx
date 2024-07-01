@@ -7,6 +7,7 @@ import {
 } from 'react-icons/fa6'
 import { IoMdCloseCircle } from 'react-icons/io'
 import classes from './ImageGalleryAsGrid.module.scss'
+import { LazyImage } from '../Image/LazyImage'
 
 type TNormalizedItem = {
   src: string;
@@ -57,12 +58,16 @@ export const ImageGalleryAsGrid = memo(({ items } : TProps) => {
       <div className={classes.grid}>
         {
           normalizedItems.map((item, i) => (
-            <img
+            <LazyImage
               key={item.src}
               alt={item.title}
               src={item.src}
               onClick={handleClick(i)}
               className='shadow-lg'
+              style={{
+                width: '100px',
+                height: '100px',
+              }}
             />
           ))
         }
