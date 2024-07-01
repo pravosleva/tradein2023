@@ -4,12 +4,13 @@
 import { memo, useMemo, useRef, useEffect, useState, useCallback } from 'react'
 import {
   Alert,
+  CopyToClipboardWrapper,
   ImageGalleryAsGrid,
   Input,
   ReportMessageForDevs,
 } from '~/common/components/sp-custom'
 import { ContentWithControls, TControlBtn } from '~/common/components/sp-custom/ContentWithControls'
-import baseClasses from '~/App.module.scss'
+// import baseClasses from '~/App.module.scss'
 import { RadioGroup } from '~/common/components/tailwind'
 
 const VITE_PUBLIC_URL = import.meta.env.VITE_PUBLIC_URL
@@ -72,6 +73,11 @@ export const EnterImeiStep = memo(({
     // TODO: Set external state...
     setSelectedDeviceType(item)
   }, [])
+
+  const [_isUSSDCopied, setIsUSSDCopied] = useState(false)
+  const handleUSSDCopy = useCallback(() => {
+    setIsUSSDCopied(true)
+  }, [setIsUSSDCopied])
 
   const inputRef = useRef<HTMLInputElement>(null)
   const controls = useMemo<TControlBtn[]>(() => {
@@ -153,7 +159,7 @@ export const EnterImeiStep = memo(({
         <Alert
           type='danger'
         >
-          IMEI устройства можно проверить запросом USSD-команды <code className={baseClasses.inlineCode} style={{ fontSize: '15px' }}>*#06#</code> в приложении «Телефон»
+          IMEI устройства можно проверить запросом USSD-команды <CopyToClipboardWrapper text='*#06#' onCopy={handleUSSDCopy} /> в приложении «Телефон»
         </Alert>
 
         {/* <div
@@ -182,14 +188,14 @@ export const EnterImeiStep = memo(({
         <ImageGalleryAsGrid
           items={[
             {
-              title: 'Tst img 1.',
-              caption: 'Desrc 1',
-              src: `${PUBLIC_URL}/static3/img/hints/exp-danger.jpg`,
+              title: 'Example 1.',
+              caption: 'Huawei',
+              src: `${PUBLIC_URL}/static3/img/hints/imei/imei-huawei.png`,
             },
             {
-              title: 'Tst img 2.',
-              caption: 'Descr 2',
-              src: `${PUBLIC_URL}/static3/img/hints/exp-development.jpg`,
+              title: 'Example 2.',
+              caption: 'Apple',
+              src: `${PUBLIC_URL}/static3/img/hints/imei/imei-apple.jpeg`,
             },
           ]}
         />
