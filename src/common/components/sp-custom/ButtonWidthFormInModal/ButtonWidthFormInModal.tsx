@@ -28,7 +28,7 @@ type TControlBtnUIOnly = {
 
 type TFieldType = 'text' | 'text-multiline' | 'number'
 type TField = {
-  label: string;
+  label?: string;
   initValue?: any; // string | number;
   limit?: number;
   descr?: string;
@@ -40,6 +40,14 @@ type TField = {
     };
   }) => TValiateResult;
   isRequired?: boolean;
+  isDisabled?: boolean;
+  nativeRules?: {
+    placeholder?: string;
+    // min: number | string;
+    // max: number | string;
+    maxLength?: number;
+    minLength?: number;
+  };
 }
 type TProps = {
   // controls: TControlBtn[];
@@ -65,16 +73,15 @@ export const ButtonWidthFormInModal = memo(({
   isDebugEnabled,
 }: TProps) => {
   const initAppState = useSnapshot(vi.smState.initApp)
-  const defaultCountryCode = initAppState.response?.features.country_code
+  const defaultCountryCode = initAppState.response?.features?.country_code
 
   const [isModalOpened, setIsModalOpened] = useState(false)
   const handleOpenModal = useCallback(() => {
     setIsModalOpened(true)
   }, [])
   const handleCloseModal = useCallback(() => {
-    if (isDebugEnabled) console.log('modal will be closed')
     setIsModalOpened(false)
-  }, [isDebugEnabled])
+  }, [])
 
   const [externalForm, setExternalForm] = useState({})
   const [isFormReady, setIsFormReady] = useState(false)
@@ -111,15 +118,15 @@ export const ButtonWidthFormInModal = memo(({
             id: '2',
             label: submitBtn.label,
             btn: submitBtn.btn,
-            onClick: async () => {
-              await modal.onTarget({ state: externalForm })
+            onClick: () => {
+              modal.onTarget({ state: externalForm })
                 .then((result) => {
                   if (isDebugEnabled) {
                     const { ok, message } = result
                     groupLog({ namespace: 'ButtonWidthFormInModal.onClick (submit)', items: [ok, message] })
                   }
+                  handleCloseModal()
                 })
-                .then(handleCloseModal)
                 .catch(({ message }) => {
                   modal.onError({ message })
                 })

@@ -24,12 +24,52 @@ export const sendContractMachine = async (context: TStepMachineContextFormat, _e
   cleanupContractStep()
 
   // --
-  // TODO: form should be modified!
+  // NOTE: Form should be modified!
+  const dict: {
+    [key: string]: {
+      targetName: string;
+      getTargetValue: ({ formState }: {
+        formState: { [key: string]: any; } | null;
+      }) => any;
+    };
+  } = {
+    _INVERT_in_mailing_list: {
+      targetName: 'in_mailing_list',
+      getTargetValue: ({ formState }) =>
+        typeof formState?._INVERT_in_mailing_list === 'boolean'
+        ? !formState?._INVERT_in_mailing_list
+        : undefined,
+    },
+    email: {
+      targetName: 'email',
+      getTargetValue: ({ formState }) =>
+        typeof formState?._INVERT_in_mailing_list === 'boolean'
+        ? formState?._INVERT_in_mailing_list
+          ? ''
+          : formState?.email
+        : formState?.email,
+    },
+  }
   // --
 
   const res = await httpClient.sendContractData({
-    tradeinId: context.imei.response?.id,
-    form: context.contract.form.state,
+    tradeinId: context.imei.response?.id, // NOTE: Old context.baseSessionInfo.tradeinId,
+    // form: context.contract.form.state,
+    // -- NOTE: For example: _INVERT_in_mailing_list should be modfied...
+    form: context.contract.form.state
+      ? Object.keys(context.contract.form.state).reduce((acc: { [key: string]: any; }, key) => {
+        switch (true) {
+          case !!dict[key]:
+            acc[dict[key].targetName] = dict[key].getTargetValue({ formState: context.contract.form.state })
+            break
+          default:
+            acc[key] = context.contract.form.state?.[key]
+            break
+        }
+        return acc
+      }, {})
+      : {},
+    // --
     responseValidator: ({ res }) => res.ok === true,
   })
     .catch((err) => err)
@@ -43,6 +83,6 @@ export const sendContractMachine = async (context: TStepMachineContextFormat, _e
     return Promise.resolve(res)
   }
 
-  context.photoLink.result.state = 'error'
+  context.contract.result.state = 'error'
   return Promise.reject(res)
 }

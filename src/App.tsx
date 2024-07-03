@@ -17,7 +17,7 @@ import {
   PrePriceTableStep,
   UploadPhotoProcessStep,
   FinalPriceTableStep,
-  ContractStep,
+  ContractAdvancedStep,
 } from '~/common/components/steps'
 import clsx from 'clsx'
 import {
@@ -569,7 +569,7 @@ function App() {
             isStickyBottomControls
           >
             <div className={classes.stack2}>
-              <ContractStep
+              <ContractAdvancedStep
                 // NOTE: Корректный features.country_code будет в любом случае,
                 // иначе пользователь не продвинулся бы далее EStep.AppInit
                 defaultCountryCode={state.context.initApp.response?.features.country_code || ECountryCode.RU}
@@ -581,7 +581,6 @@ function App() {
                 }}
               />
               {/* <pre className={classes.preStyled}>{JSON.stringify(state.context.contract, null, 2)}</pre> */}
-              <ReportMessageForDevs />
             </div>
           </ContentWithControls>
         )

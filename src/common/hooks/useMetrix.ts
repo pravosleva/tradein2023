@@ -83,13 +83,13 @@ export const useMetrix = ({ isDebugEnabled }: TProps) => {
             // -- NOTE: App logic exp
             switch (true) {
               case e.data.code === NEvents.EWorkerToClientEventCode.UI_MESSAGE_DANGER:
-                if (isDebugEnabled) showError({ message: (isDebugEnabled ? e.data?._message : e.data?.message) || 'UI Message event code: danger (no message)' })
+                showError({ message: (isDebugEnabled ? e.data?._message : e.data?.message) || 'UI Message event code: danger (no message)' })
                 break
               case e.data.code === NEvents.EWorkerToClientEventCode.UI_MESSAGE_SUCCESS:
-                if (isDebugEnabled) showSuccess({ message: (isDebugEnabled ? e.data?._message : e.data?.message) || 'UI Message event code: success (no message)' })
+                showSuccess({ message: (isDebugEnabled ? e.data?._message : e.data?.message) || 'UI Message event code: success (no message)' })
                 break
               case e.data.code === NEvents.EWorkerToClientEventCode.UI_MESSAGE_INFO:
-                if (isDebugEnabled) showInfo({ message: (isDebugEnabled ? e.data?._message : e.data?.message) || 'UI message event code: info (no message)' })
+                showInfo({ message: (isDebugEnabled ? e.data?._message : e.data?.message) || 'UI message event code: info (no message)' })
                 break
               case e.data.code === NEvents.EWorkerToClientEventCode.SOCKET_MUST_DIE:
                 devtoolsViProxy.network.isReportsByUserDisabled = true

@@ -1,0 +1,22 @@
+@import '~/scss-vars/colors.scss';
+@import '~/scss-vars/common.scss';
+
+.relativeInputWrapper {
+  position: relative;
+}
+.absoluteValidityBadge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  border: $common-control-elements-border-width solid $color-mts-gray-light;
+
+  width: 20px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+
+  background-color: #FFF;
+  // font-size: 50px;
+}

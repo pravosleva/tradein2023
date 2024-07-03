@@ -2,6 +2,39 @@
 @import '~/scss-vars/common.scss';
 
 .spInput {
+  // &[type="date"]:invalid + span::after
+  // &:invalid + span::after {
+  //   // content: '✗';
+  //   // content: '🚫';
+  //   font-size: 12px;
+  //   color: $color-mts-gray-light;
+  // }
+  // &:valid + span::after {
+  //   // content: '✓';
+  //   // content: '🟢';
+  //   font-size: 12px;
+  //   color: $color-green-dark;
+  // }
+  background-color: #FFF;
+
+  // -- NOTE: Datepicker
+  &[type="date"]::-webkit-calendar-picker-indicator {
+    width: 15px;
+    height: 15px;
+    padding: 5px;
+    border-radius: 50%;
+    // background-color: #E8E8E8;
+    background-color: $color-mts-red;
+    cursor: pointer;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="15" viewBox="0 0 24 24"><path fill="%23FFFFFF" d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"/></svg>');
+  }
+  &[type="date"]::-webkit-calendar-picker-indicator:hover {
+    // color: #FFF;
+    // filter: invert(1);
+    background-color: $color-mts-gray-light;
+  }
+  // --
+
   outline: unset;
   // border: 2px solid lightgray;
   // border: 2px solid $color-tw-slate-300;
@@ -52,6 +85,46 @@
     // color: $color-tw-slate-300;
     color: $color-mts-gray-light;
   }
+
+  // -- NOTE: Checkbox: See also https://itchief.ru/html-and-css/styling-checkbox-and-radio
+  &[type="checkbox"] {
+    position: absolute;
+    z-index: -1;
+    opacity: 0;
+  }
+  &[type="checkbox"] + label {
+    border: 1px solid #fff;
+    display: inline-flex;
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+    cursor: pointer;
+  }
+  &[type="checkbox"] + label:before {
+    background-color: #FFF;
+    color: white;
+    content: " ";
+    display: block;
+    border-radius: 50%;
+    border: 2px solid $color-mts-red;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    line-height: 28px;
+    transition-duration: 0.4s;
+    transform: scale(0.7);
+  }
+  &[type="checkbox"]:checked + label:before {
+    // content: "✔";
+    // NOTE: See also https://yoksel.github.io/url-encoder/
+    background-image: url("data:image/svg+xml,%3Csvg stroke='currentColor' fill='%23FF0032' stroke-width='0' version='1.1' viewBox='0 0 16 16' height='1em' width='1em' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M14 0h-12c-1.1 0-2 0.9-2 2v12c0 1.1 0.9 2 2 2h12c1.1 0 2-0.9 2-2v-12c0-1.1-0.9-2-2-2zM7 12.414l-3.707-3.707 1.414-1.414 2.293 2.293 4.793-4.793 1.414 1.414-6.207 6.207z'%3E%3C/path%3E%3C/svg%3E");
+    color: $color-mts-red;
+    transform: scale(1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  // --
 }
 
 .borderedRed {

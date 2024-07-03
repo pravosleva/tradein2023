@@ -1,4 +1,4 @@
-import { memo, useCallback } from 'react'
+import { memo } from 'react'
 import baseClasses from '~/App.module.scss'
 import { vi } from '~/common/vi/vi'
 import { useSnapshot } from 'valtio'
@@ -12,11 +12,6 @@ import { BsEnvelopeExclamation } from 'react-icons/bs'
 // import { TbMailBolt } from 'react-icons/tb'
 import { MdOutlineWifiOff } from 'react-icons/md'
 import { wws } from '~/utils/wws/wws'
-import {
-  useSnackbar,
-  SnackbarMessage as TSnackbarMessage,
-  OptionsObject as IOptionsObject,
-} from 'notistack'
 
 type TProps = {
   isDebugEnabled?: boolean;
@@ -26,22 +21,14 @@ export const ReportMessageForDevs = memo(({ isDebugEnabled }: TProps) => {
   const devtoolsViSnap = useSnapshot(vi.common.devtools)
   const devtoolsViProxy = useProxy(vi.common.devtools)
 
-  const { enqueueSnackbar } = useSnackbar()
-  const showNotif = useCallback((msg: TSnackbarMessage, opts?: IOptionsObject) => {
-    if (!document.hidden) enqueueSnackbar(msg, opts)
-  }, [enqueueSnackbar])
-  const showError = useCallback(({ message }: { message: string }) => {
-    if (isDebugEnabled) showNotif(message || 'No message', { variant: 'error' })
-  }, [showNotif, isDebugEnabled])
-  const showSuccess = useCallback(({ message }: { message: string }) => {
-    if (isDebugEnabled) showNotif(message || 'No message', { variant: 'default' })
-  }, [showNotif, isDebugEnabled])
+  // NOTE:
+  // (лимит {devtoolsViProxy.network.__reportsByUserLimit})
 
   return (
     <>
       {
-        !devtoolsViProxy.network.isReportsByUserDisabled
-        && !devtoolsViProxy.network.socket.__isConnectionIgnoredForUI
+        !devtoolsViSnap.network.isReportsByUserDisabled
+        && !devtoolsViSnap.network.socket.__isConnectionIgnoredForUI
         && devtoolsViSnap.network.socket.__wasThereAFirstConnection
         && devtoolsViSnap.network.__reportsByUserLimit > 0
         && (
@@ -87,7 +74,6 @@ export const ReportMessageForDevs = memo(({ isDebugEnabled }: TProps) => {
                       }}
                     />
                     <ButtonWidthFormInModal
-                      // isDebugEnabled
                       controlBtn={{
                         // id: 'toggler-exp',
                         label: devtoolsViSnap.network.socket.isConnected ? 'Сообщить об ошибке' : 'Похоже, не в этот раз',
@@ -119,12 +105,12 @@ export const ReportMessageForDevs = memo(({ isDebugEnabled }: TProps) => {
                         DisabledStartIcon: <MdOutlineWifiOff />,
                       }}
                       modal={{
-                        header: 'Опишите коротко, что именно пошло не по сценарию',
+                        header: 'Опишите, что именно пошло не по сценарию',
                         formSchema: {
                           comment: {
                             type: 'text-multiline',
-                            label: 'Ваш комментарий',
-                            // descr: 'Опишите коротко, что именно пошло не по сценарию',
+                            // label: 'Ваш комментарий',
+                            descr: 'Пример: На шаге Проверьте устройство кнопка Продолжить не реагирует на действия пользователя',
                             limit: 200,
                             validate: ({ value, cfg }) => {
                               const limit = cfg?.limit
@@ -143,20 +129,16 @@ export const ReportMessageForDevs = memo(({ isDebugEnabled }: TProps) => {
                               }
                               return res
                             },
+                            nativeRules: {
+                              placeholder: 'Ваш комментарий',
+                            },
                             isRequired: true,
                             // initValue: vi.contractForm.lastName || undefined,
                           },
                         },
-                        onTarget: async ({ state }) => {
+                        onTarget: ({ state }) => {
                           if (isDebugEnabled) groupLog({ namespace: 'PrintActStep -> onTarget exp', items: [state] })
-                          await wws.sendTheFullHistoryReport({ comment: state.comment, network: devtoolsViProxy.network })
-                            .then(({ ok, message }) => {
-                              if (ok) showSuccess({ message: message || 'Ok' })
-                              else showError({ message: message || 'Not Ok' })
-                            })
-                            .catch((err) => {
-                              showError({ message: err.message || 'ERR' })
-                            })
+                          wws.sendTheFullHistoryReport({ comment: state.comment, network: devtoolsViProxy.network })
                           devtoolsViProxy.network.__reportsByUserLimit -= 1
                           return Promise.resolve({ ok: true })
                         },

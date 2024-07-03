@@ -10,10 +10,18 @@ import { Alert, PhoneInput } from '~/common/components/sp-custom'
 import { CountryData as ICountryEvent } from 'react-phone-input-2'
 import { ECountryCode } from '~/common/xstate/stepMachine'
 // import useDynamicRefs from 'use-dynamic-refs'
+import classes from './Form.module.scss'
+import inputClasses from '~/common/components/sp-custom/Input/Input.module.scss'
+// import {
+//   FiSlash,
+//   // FiCheckCircle,
+//   // FiCheck,
+// } from 'react-icons/fi'
+import { HiCheckCircle, HiMinusCircle } from 'react-icons/hi'
 
-type TFieldType = 'text' | 'text-multiline' | 'number' | 'tel'
+type TFieldType = 'text' | 'text-multiline' | 'number' | 'tel' | 'date' | 'email' | 'checkbox'
 type TField = {
-  label: string;
+  label?: string;
   initValue?: any; // string | number;
   type: TFieldType;
   limit?: number;
@@ -30,10 +38,19 @@ type TField = {
     ok: boolean;
     reason?: string;
   });
+  nativeRules?: {
+    placeholder?: string;
+    // min: number | string;
+    // max: number | string;
+    maxLength?: number;
+    minLength?: number;
+  };
   isRequired?: boolean;
+  isDisabled?: boolean;
 }
 
 type TProps = {
+  defaultFocusedKey?: string;
   onChangeField?: (e: any) => void;
   schema: {
     [key: string]: TField;
@@ -44,9 +61,11 @@ type TProps = {
   getValues: (data: any) => any;
   defaultCountryCode: ECountryCode;
   makeFocusOnFirstInput?: boolean;
+  __auxStateInitSpecialForKeys?: string[];
 }
 
 export const Form = memo(({
+  defaultFocusedKey,
   onChangeField,
   schema,
   // onSubmit,
@@ -55,6 +74,7 @@ export const Form = memo(({
   onFormNotReady,
   defaultCountryCode,
   // makeFocusOnFirstInput,
+  __auxStateInitSpecialForKeys,
 }: TProps) => {
   const currentCountryInfoRef = useRef<ICountryEvent | undefined>(undefined)
 
@@ -71,12 +91,6 @@ export const Form = memo(({
   //     }
   //   }
   // }, [makeFocusOnFirstInput, getRef, schema])
-  const lastNameRef = useRef<HTMLInputElement>(null)
-  useLayoutEffect(() => {
-    if (lastNameRef?.current) lastNameRef?.current?.focus()
-    // else console.warn(lastNameRef?.current)
-  }, [])
-
   const {
     register,
     // handleSubmit,
@@ -98,7 +112,9 @@ export const Form = memo(({
     // ... restProps
   } = useForm({
     values: Object.keys(schema).reduce((acc: any, key: string) => {
-      acc[key] = schema[key].initValue || ''
+      acc[key] = typeof schema[key].initValue !== 'undefined'
+        ? schema[key].initValue
+        : ''
       return acc
     }, {})
   })
@@ -118,8 +134,8 @@ export const Form = memo(({
   const rendersCounterRef = useRef<number>(0)
   useLayoutEffect(() => {
     if (rendersCounterRef.current === 0) {
-      const fieldsToInit = ['phone'].reduce((acc: any, cur: string) => {
-        if (schema[cur]?.initValue) acc.push(cur)
+      const fieldsToInit = (__auxStateInitSpecialForKeys || ['phone']).reduce((acc: any, cur: string) => {
+        if (typeof schema[cur]?.initValue !== 'undefined') acc.push(cur)
         return acc
       }, [])
     
@@ -133,14 +149,36 @@ export const Form = memo(({
     }
 
     rendersCounterRef.current += 1
-  }, [__setAuxState, schema])
+  }, [__setAuxState, schema, __auxStateInitSpecialForKeys])
+
+  const lastNameRef = useRef<HTMLInputElement>(null)
+  const retailerNameRef = useRef<HTMLInputElement>(null)
+  useLayoutEffect(() => {
+    if (rendersCounterRef.current > 1) return
+    else {
+      if (defaultFocusedKey && !!schema[defaultFocusedKey]) {
+        switch (defaultFocusedKey) {
+          case 'retailer_name':
+            if (retailerNameRef?.current) retailerNameRef?.current?.focus()
+            break
+          case 'last_name':
+            if (lastNameRef?.current) lastNameRef?.current?.focus()
+            break
+          default:
+            console.warn(`Init focus: Не настроено для ${defaultFocusedKey}`)
+            break
+        }
+      }
+      rendersCounterRef.current += 1
+    }
+  }, [defaultFocusedKey, schema])
 
   // NOTE: Callback version of watch. It's your responsibility to unsubscribe when done.
   
   useLayoutEffect(() => {
-    const subscription = watch(( state, { name /*, type */ }) => {
+    const subscription = watch(( state, { name, /* type */ }) => {
       // -- NOTE: Aux external store for restore form
-      if (onChangeField) onChangeField({ name, value: state[String(name)] })
+      if (onChangeField && !!name) onChangeField({ name, value: state[String(name)] })
       // --
 
       // console.log({ state, name, type })
@@ -229,46 +267,69 @@ export const Form = memo(({
               case 'tel':
                 return (
                   <Fragment key={key}>
-                    <div
-                      // className={clsx(baseClasses.stack1)}
-                    >
-                      {/* <label
-                        htmlFor={key}
-                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                      >{schema[key].label}</label> */}
-                      <PhoneInput
-                        // @ts-ignore
-                        // ref={setRef(key)}
-                        // ruOnly
-                        defaultCountryCode={defaultCountryCode}
-                        // key={key}
-                        // isErrored={!!__errsState[key]}
-                        isSuccess={__okState[key] === true}
-                        value={__auxState.phone}
-                        // @ts-ignore
-                        onChange={(val: string, _countryEvent: TCountryEvent) => {
-                          // console.log('--')
-                          // console.log(`${currentCountryInfoRef.current?.countryCode} -> ${_countryEvent.countryCode}`)
-                          currentCountryInfoRef.current = _countryEvent
-                          // console.log('--')
-                          // setAuxStateValue("phoneNumber", formatPhoneNumberIntl(e))
-                          const rusSymbolsToChangeP7 = ['7', '+7', '8', '+8']
-                          const rusSymbolsToChangeP79 = ['9', '+9']
-                          // TODO? const rusSymbolsToChangeP791 = ['78']
-                          if (rusSymbolsToChangeP7.includes(val)) {
-                            setAuxStateValue('phone', '+7' || '');
-                            setValue('phone', '7')
-                            return;
-                          }
-                          if (rusSymbolsToChangeP79.includes(val)) {
-                            setAuxStateValue('phone', '+79' || '');
-                            setValue('phone', '79')
-                            return;
-                          }
-                          setAuxStateValue('phone', `+${val}` || '');
-                          setValue('phone', val)
-                        }}
-                      />
+                    <div className={clsx(baseClasses.stack1)}>
+                      {
+                        !!schema[key].label && (
+                          <label
+                            htmlFor={key}
+                            // className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                          ><b>{schema[key].label}</b></label>
+                        )
+                      }
+                      <div className={classes.relativeInputWrapper}>
+                        <PhoneInput
+                          id={key}
+                          // @ts-ignore
+                          // ref={setRef(key)}
+                          // ruOnly
+                          defaultCountryCode={defaultCountryCode}
+                          // key={key}
+                          // isErrored={!!__errsState[key]}
+                          isSuccess={__okState[key] === true}
+                          value={__auxState.phone}
+                          // @ts-ignore
+                          onChange={(val: string, _countryEvent: TCountryEvent) => {
+                            // console.log('--')
+                            // console.log(`${currentCountryInfoRef.current?.countryCode} -> ${_countryEvent.countryCode}`)
+                            currentCountryInfoRef.current = _countryEvent
+                            // console.log('--')
+                            // setAuxStateValue("phoneNumber", formatPhoneNumberIntl(e))
+                            const rusSymbolsToChangeP7 = ['7', '+7', '8', '+8']
+                            const rusSymbolsToChangeP79 = ['9', '+9']
+                            // TODO? const rusSymbolsToChangeP791 = ['78']
+                            if (rusSymbolsToChangeP7.includes(val)) {
+                              setAuxStateValue('phone', '+7' || '')
+                              setValue('phone', '7')
+                              return;
+                            }
+                            if (rusSymbolsToChangeP79.includes(val)) {
+                              setAuxStateValue('phone', '+79' || '');
+                              setValue('phone', '79')
+                              return;
+                            }
+                            setAuxStateValue('phone', `+${val}` || '')
+                            setValue('phone', val)
+                          }}
+                        />
+                        {/* <span
+                          className={clsx([
+                            classes.absoluteValidityBadge,
+                            {
+                              [inputClasses.borderedGreen]: __okState[key] === true && schema[key].isRequired,
+                            },
+                          ])}
+                        /> */}
+                        <span
+                          className={clsx([
+                            classes.absoluteValidityBadge,
+                            {
+                              [inputClasses.borderedGreen]: __okState[key] === true && schema[key].isRequired,
+                            },
+                          ])}
+                        >
+                          {__okState[key] ? <HiCheckCircle className='text-spGreen' fontSize='20px' /> : <HiMinusCircle className='text-mtsRed' fontSize='20px' />}
+                        </span>
+                      </div>
                       {/* !!__errsState[key] && (
                         <span>{__errsState[key]}</span>
                       ) */}
@@ -276,45 +337,64 @@ export const Form = memo(({
                   </Fragment>
                 )
               case 'text-multiline': {
-                const { ref, ...rest } = register(key, { required: schema[key].isRequired, maxLength: schema[key].limit || 100, minLength: 3 })
+                const { ref, ...rest } = register(key, { required: schema[key].isRequired, maxLength: schema[key].limit || 100, minLength: schema[key].nativeRules?.minLength })
                 return (
                   <Fragment key={key}>
                     <div
-                      className={clsx(baseClasses.stack2)}
+                      className={clsx(baseClasses.stack1)}
                     >
-                      {/* <label htmlFor={key}>{schema[key].label}</label> */}
                       {
-                        !!schema[key].descr && (
-                          <Alert type='danger'>
-                            {schema[key].descr}
-                          </Alert>
+                        !!schema[key].label && (
+                          <label htmlFor={key}><b>{schema[key].label}</b></label>
                         )
                       }
-                      <Textarea
-                        // @ts-ignore
-                        ref={(e) => {
-                          ref(e)
+                      <div className={classes.relativeInputWrapper}>
+                        <Textarea
                           // @ts-ignore
-                          if (key === 'comment') lastNameRef.current = e // you can still assign to ref
-                        }}
-                        style={{
-                          width: '100%',
-                          maxHeight: '230px',
-                          minHeight: '100px',
-                        }}
-                        // isErrored={!!__errsState[key]}
-                        isSuccess={__okState[key] === true}
-                        // isErrored={!!__errsState[key]}
-                        id={key}
-                        // aria-invalid={errors[key] ? 'true' : 'false'}
-                        placeholder={schema[key].label}
-                        {...rest}
-                        // multiple
-                        onChange={(e) => {
-                          setAuxStateValue(key, e.target.value)
-                          setValue(key, e.target.value)
-                        }}
-                      />
+                          ref={(e) => {
+                            ref(e)
+                            // @ts-ignore
+                            if (key === 'comment') lastNameRef.current = e // you can still assign to ref
+                          }}
+                          style={{
+                            width: '100%',
+                            maxHeight: '230px',
+                            minHeight: '100px',
+                          }}
+                          // isErrored={!!__errsState[key]}
+                          isSuccess={__okState[key] === true}
+                          // isErrored={!!__errsState[key]}
+                          id={key}
+                          // aria-invalid={errors[key] ? 'true' : 'false'}
+                          placeholder={schema[key].nativeRules?.placeholder || ''}
+                          {...rest}
+                          // multiple
+                          onChange={(e) => {
+                            setAuxStateValue(key, e.target.value)
+                            setValue(key, e.target.value)
+                          }}
+                          required={schema[key].isRequired}
+                          disabled={schema[key].isDisabled}
+                        />
+                        {/* <span
+                          className={clsx([
+                            classes.absoluteValidityBadge,
+                            {
+                              [inputClasses.borderedGreen]: __okState[key] === true && schema[key].isRequired,
+                            },
+                          ])}
+                        /> */}
+                        <span
+                          className={clsx([
+                            classes.absoluteValidityBadge,
+                            {
+                              [inputClasses.borderedGreen]: __okState[key] === true && schema[key].isRequired,
+                            },
+                          ])}
+                        >
+                          {__okState[key] ? <HiCheckCircle className='text-spGreen' fontSize='20px' /> : <HiMinusCircle className='text-mtsRed' fontSize='20px' />}
+                        </span>
+                      </div>
                       {/* use role="alert" to announce the error message */}
                       {/* {errors.name && errors.name.type === "required" && (
                         <span role="alert">This is required</span>
@@ -350,34 +430,192 @@ export const Form = memo(({
                               </span>
                             )
                       }
+                      {
+                        !!schema[key].descr && (
+                          <Alert type='danger'>
+                            {schema[key].descr}
+                          </Alert>
+                        )
+                      }
                     </div>
                   </Fragment>
                 )
               }
-              case 'text': 
-              default: {
-                const { ref, ...rest } = register(key, { required: schema[key].isRequired, maxLength: 30, minLength: 3 })
+              case 'date': {
+                const { ref, ...rest } = register(key, { required: schema[key].isRequired })
                 return (
                   <Fragment key={key}>
                     <div
                       className={clsx(baseClasses.stack1)}
                     >
-                      {/* <label htmlFor={key}>{schema[key].label}</label> */}
+                      {
+                        !!schema[key].label && (
+                          <label htmlFor={key}><b>{schema[key].label}</b></label>
+                        )
+                      }
+                      <div className={classes.relativeInputWrapper}>
+                        <Input
+                          // type={__auxFocusState[key] ? schema[key].type : 'text'}
+                          type={schema[key].type}
+                          ref={ref}
+                          // onFocus={() => handleFocusDateInput(key)}
+                          // @ts-ignore
+                          // onBlur={() => handleBlurDateInput(key)}
+                          style={{ width: '100%' }}
+                          // isErrored={!!__errsState[key]}
+                          isSuccess={__okState[key] === true && schema[key].isRequired}
+                          id={key}
+                          // aria-invalid={errors[key] ? 'true' : 'false'}
+                          placeholder={schema[key].nativeRules?.placeholder}
+                          {...rest}
+                          value={__auxState[key] || ''}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            // console.log('--')
+                            // console.log(e.target.value)
+                            // console.log('--')
+                            setAuxStateValue(key, e.target.value)
+                            setValue(key, e.target.value)
+                          }}
+                          required={schema[key].isRequired}
+                          disabled={schema[key].isDisabled}
+                        />
+                        {/* <span
+                          className={clsx([
+                            classes.absoluteValidityBadge,
+                            {
+                              [inputClasses.borderedGreen]: __okState[key] === true && schema[key].isRequired,
+                            },
+                          ])}
+                        /> */}
+                        <span
+                          className={clsx([
+                            classes.absoluteValidityBadge,
+                            {
+                              [inputClasses.borderedGreen]: __okState[key] === true && schema[key].isRequired,
+                            },
+                          ])}
+                        >
+                          {__okState[key] ? <HiCheckCircle className='text-spGreen' fontSize='20px' /> : <HiMinusCircle className='text-mtsRed' fontSize='20px' />}
+                        </span>
+                      </div>
+                      {/* use role="alert" to announce the error message */}
+                      {/* {errors.name && errors.name.type === "required" && (
+                        <span role="alert">This is required</span>
+                      )}
+                      {errors.name && errors.name.type === "maxLength" && (
+                        <span role="alert">Max length exceeded</span>
+                      )} */}
+                      {/* !!__errsState[key] && (
+                        <span>{__errsState[key]}</span>
+                      ) */}
+                    </div>
+                  </Fragment>
+                )
+              }
+              case 'checkbox': {
+                const { ref, ...rest } = register(key, { required: schema[key].isRequired })
+                return (
+                  <Fragment key={key}>
+                    <div className={clsx(baseClasses.row2)}>
                       <Input
+                        type={schema[key].type}
                         // @ts-ignore
                         ref={(e) => {
                           ref(e)
-                          // @ts-ignore
-                          if (key === 'lastName') lastNameRef.current = e // you can still assign to ref
                         }}
-                        style={{ width: '100%' }}
+                        // style={{ width: '100%' }}
                         // isErrored={!!__errsState[key]}
-                        isSuccess={__okState[key] === true}
+                        isSuccess={__okState[key] === true && schema[key].isRequired}
                         id={key}
                         // aria-invalid={errors[key] ? 'true' : 'false'}
-                        placeholder={schema[key].label}
+                        placeholder={schema[key].nativeRules?.placeholder || ''}
                         {...rest}
+                        minLength={schema[key].nativeRules?.minLength}
+                        required={schema[key].isRequired}
+                        disabled={schema[key].isDisabled}
+                        value={__auxState[key]}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setAuxStateValue(key, e.target.checked)
+                          setValue(key, e.target.checked)
+                        }}
                       />
+                      {
+                        !!schema[key].label && (
+                          <label htmlFor={key}><b>{schema[key].label}</b></label>
+                        )
+                      }
+                    </div>
+                  </Fragment>
+                )
+              }
+              case 'text':
+              case 'number':
+              case 'email':
+              default: {
+                const { ref, ...rest } = register(key, {
+                  required: schema[key].isRequired,
+                  maxLength: schema[key].nativeRules?.maxLength,
+                  minLength: schema[key].nativeRules?.minLength,
+                })
+                return (
+                  <Fragment key={key}>
+                    <div className={clsx(baseClasses.stack1)}>
+                      {
+                        !!schema[key].label && (
+                          <label htmlFor={key}><b>{schema[key].label}</b></label>
+                        )
+                      }
+                      <div className={classes.relativeInputWrapper}>
+                        <Input
+                          type={schema[key].type}
+                          // @ts-ignore
+                          ref={(e) => {
+                            ref(e)
+                            // -- NOTE: // you can still assign to ref
+                            switch (key) {
+                              case 'last_name':
+                                // @ts-ignore
+                                lastNameRef.current = e
+                                break
+                              case 'retailer_name':
+                                // @ts-ignore
+                                retailerNameRef.current = e
+                                break
+                              default:
+                                break
+                            }
+                            // --
+                          }}
+                          style={{ width: '100%' }}
+                          // isErrored={!!__errsState[key]}
+                          isSuccess={__okState[key] === true && schema[key].isRequired}
+                          id={key}
+                          // aria-invalid={errors[key] ? 'true' : 'false'}
+                          placeholder={schema[key].nativeRules?.placeholder || ''}
+                          {...rest}
+                          minLength={schema[key].nativeRules?.minLength}
+                          required={schema[key].isRequired}
+                          disabled={schema[key].isDisabled}
+                        />
+                        {/* <span
+                          className={clsx([
+                            classes.absoluteValidityBadge,
+                            {
+                              [inputClasses.borderedGreen]: __okState[key] === true && schema[key].isRequired,
+                            },
+                          ])}
+                        /> */}
+                        <span
+                          className={clsx([
+                            classes.absoluteValidityBadge,
+                            {
+                              [inputClasses.borderedGreen]: __okState[key] === true && schema[key].isRequired,
+                            },
+                          ])}
+                        >
+                          {__okState[key] ? <HiCheckCircle className='text-spGreen' fontSize='20px' /> : <HiMinusCircle className='text-mtsRed' fontSize='20px' />}
+                        </span>
+                      </div>
                       {/* use role="alert" to announce the error message */}
                       {/* {errors.name && errors.name.type === "required" && (
                         <span role="alert">This is required</span>
@@ -396,6 +634,7 @@ export const Form = memo(({
           })
         }
         {/* <Input type="submit" /> */}
+        {/* <pre>{JSON.stringify(__okState, null, 2)}</pre>  */}
       </div>
       {/* <pre>{JSON.stringify(__errsState, null, 2)}</pre> */}
       {/* <button onClick={tst}>tst</button> */}
