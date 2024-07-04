@@ -518,7 +518,7 @@ export const Form = memo(({
                   <Fragment key={key}>
                     <div
                       className={clsx(baseClasses.row2)}
-                      style={{ minHeight: '30px', alignItems: 'center' }}
+                      style={{ minHeight: '30px', alignItems: 'center', flexWrap: 'wrap' }}
                     >
                       <Input
                         type={schema[key].type}
