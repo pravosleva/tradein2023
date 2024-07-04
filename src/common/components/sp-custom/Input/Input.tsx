@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import React from 'react'
+import { memo, forwardRef } from 'react'
 import clsx from 'clsx'
 import classes from './Input.module.scss'
 
@@ -13,7 +13,7 @@ interface IInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 }
 
 // NOTE: See also about forwardRef https://legacy.reactjs.org/docs/forwarding-refs.html
-export const Input = React.forwardRef(({
+export const Input = memo(forwardRef(({
   children,
   // color,
   // isErrored,
@@ -46,4 +46,4 @@ export const Input = React.forwardRef(({
       {children}
     </input>
   )
-})
+}))

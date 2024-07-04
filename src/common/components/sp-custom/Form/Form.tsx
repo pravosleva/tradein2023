@@ -516,7 +516,10 @@ export const Form = memo(({
                 const { ref, ...rest } = register(key, { required: schema[key].isRequired })
                 return (
                   <Fragment key={key}>
-                    <div className={clsx(baseClasses.row2)}>
+                    <div
+                      className={clsx(baseClasses.row2)}
+                      style={{ minHeight: '30px' }}
+                    >
                       <Input
                         type={schema[key].type}
                         // @ts-ignore
