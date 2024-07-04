@@ -117,6 +117,9 @@ export const PhoneInput = React.forwardRef(({
         value={value}
         onChange={onChange}
         {...customizedOriginalProps}
+        inputProps={{
+          autoComplete: 'none',
+        }}
       />
     </div>
   )
