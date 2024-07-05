@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
+import { useLayoutEffect, memo } from 'react'
 import baseClasses from '~/App.module.scss'
 import { Button, ResponsiveBlock, TColor, TVariant } from '~/common/components/sp-custom'
 import clsx from 'clsx'
 import { ErrorBoundary } from '~/common/components/tools'
 import classes from './ContentWithControls.module.scss'
 import useDynamicRefs from 'use-dynamic-refs'
-import { useLayoutEffect, memo } from 'react'
 
 export type TBtnUISettings = {
   color: TColor;

@@ -31,6 +31,7 @@ import { useMetrix } from '~/common/hooks'
 import { getReadableSnakeCase } from '~/utils/aux-ops'
 import { wws } from '~/utils/wws/wws'
 import { vi } from '~/common/vi'
+import ConfettiExplosion from 'react-confetti-explosion'
 import 'react-image-lightbox/style.css'
 
 function App() {
@@ -668,7 +669,15 @@ function App() {
             ]}
             isStickyBottomControls
           >
-            <div>Договор подписан</div>
+            <div style={{ display: 'inline-flex', gap: '8px' }}>
+              <span>Договор подписан</span>
+              <ConfettiExplosion
+                force={0.8}
+                duration={3000}
+                particleCount={250}
+                // width={1000}
+              />
+            </div>
             <ReportMessageForDevs />
           </ContentWithControls>
         )
