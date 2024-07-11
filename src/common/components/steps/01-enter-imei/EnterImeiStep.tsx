@@ -7,7 +7,7 @@ import {
   CopyToClipboardWrapper,
   ImageGalleryAsGrid,
   Input,
-  ReportMessageForDevs,
+  // ReportMessageForDevs,
 } from '~/common/components/sp-custom'
 import { ContentWithControls, TControlBtn } from '~/common/components/sp-custom/ContentWithControls'
 // import baseClasses from '~/App.module.scss'
@@ -184,7 +184,7 @@ export const EnterImeiStep = memo(({
             alt='tg'
           />
         </div> */}
-        <ReportMessageForDevs />
+        {/* <ReportMessageForDevs /> */}
         <ImageGalleryAsGrid
           items={[
             {

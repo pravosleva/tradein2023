@@ -17,7 +17,7 @@ import {
   PrePriceTableStep,
   UploadPhotoProcessStep,
   FinalPriceTableStep,
-  ContractAdvancedStep,
+  ContractStep,
 } from '~/common/components/steps'
 import clsx from 'clsx'
 import {
@@ -236,6 +236,7 @@ function App() {
               },
             ]}
             isStickyBottomControls
+            autofocusBtnId='1'
           >
             {
               state.context.imei.response ? (
@@ -485,6 +486,7 @@ function App() {
               },
             ]}
             isStickyBottomControls
+            autofocusBtnId='1'
           >
             {
               state.context.imei.response && state.context.checkPhone.response ? (
@@ -569,7 +571,7 @@ function App() {
             isStickyBottomControls
           >
             <div className={classes.stack2}>
-              <ContractAdvancedStep
+              <ContractStep
                 // NOTE: Корректный features.country_code будет в любом случае,
                 // иначе пользователь не продвинулся бы далее EStep.AppInit
                 defaultCountryCode={state.context.initApp.response?.features.country_code || ECountryCode.RU}
