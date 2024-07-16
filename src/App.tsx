@@ -528,7 +528,12 @@ function App() {
                 </ResponsiveBlock>
               )
             }
-            <ReportMessageForDevs />
+            <ResponsiveBlock
+              isPaddedMobile
+              isLimitedForDesktop
+            >
+              <ReportMessageForDevs />
+            </ResponsiveBlock>
           </ContentWithControls>
         )
       case EStep.Contract:
