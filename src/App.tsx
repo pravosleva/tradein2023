@@ -489,7 +489,7 @@ function App() {
             autofocusBtnId='1'
           >
             {
-              state.context.imei.response && state.context.checkPhone.response ? (
+              state.context.imei.response && state.context.checkPhone.response && state.context.photoStatus.response ? (
                 <FinalPriceTableStep
                   imeiResponse={state.context.imei.response}
                   checkPhoneResponse={state.context.checkPhone.response}
@@ -498,8 +498,7 @@ function App() {
                     selectedColor: state.context.color.selectedItem,
                     selectedMemory: state.context.memory.selectedItem,
                   }}
-                  conditionCodeValidator={({ value }) => value === state.context.checkPhone.response?.condition }
-                  
+                  conditionCodeValidator={({ value }) => value === state.context.photoStatus.response?.condition }
                   finalPriceTableProps={{
                     subsidiesStruct2: {
                       tableHeader: 'Сумма с учетом дополнительной скидки при покупке следующих моделей',
@@ -523,6 +522,7 @@ function App() {
                     <pre className={classes.preStyled}>{JSON.stringify({
                       'imei.response': state.context.imei.response ? 'OK' : String(state.context.imei.response),
                       'checkPhone.response': state.context.checkPhone.response,
+                      'photoStatus.response': state.context.photoStatus.response,
                     }, null, 2)}</pre>
                   </Alert>
                 </ResponsiveBlock>
