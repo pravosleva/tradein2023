@@ -6,7 +6,7 @@ import { possibleConditionCodes as defaultPossibleConditionCodes } from './utils
 export type TPriceTableProps = {
   imeiResponse: NSP.TImeiResponse;
   checkPhoneResponse: NSP.TCheckPhoneResponse | null;
-  // photoStatusResponse: NSP.TPhotoStatusResponse;
+  photoStatusResponse: NSP.TPhotoStatusResponse | null;
   byUser: {
     selectedColor: TSelectedItem | null;
     selectedMemory: TSelectedItem | null;
@@ -35,7 +35,7 @@ type TActualValuesResult = {
 type TSynthProps = {
   imeiResponse: NSP.TImeiResponse;
   checkPhoneResponse: NSP.TCheckPhoneResponse | null;
-  // photoStatusResponse: NSP.TPhotoStatusResponse;
+  photoStatusResponse: NSP.TPhotoStatusResponse | null;
   byUser: {
     selectedColor: TSelectedItem | null;
     selectedMemory: TSelectedItem | null;
@@ -46,14 +46,16 @@ const getSynthesis = ({
   byUser,
   imeiResponse,
   checkPhoneResponse,
-  // photoStatusResponse,
+  photoStatusResponse,
   possibleConditionCodes,
 }: TSynthProps): TActualValuesResult => {
   const result: TActualValuesResult = {
     color: imeiResponse.phone.color || byUser.selectedColor?.value,
     memory: imeiResponse.phone.memory || byUser.selectedMemory?.value,
-    condition: possibleConditionCodes.find(({ value }) => checkPhoneResponse?.condition === value)?.value, // TODO? || checkPhoneResponse?.condition,
-
+    condition: possibleConditionCodes.find(({ value }) => photoStatusResponse
+      ? photoStatusResponse?.condition === value
+      : checkPhoneResponse?.condition === value
+    )?.value,
     // phone: NSP.TPhone;
     model: imeiResponse.phone.model || '',
     deviceType: imeiResponse.phone.type || '',
@@ -68,7 +70,7 @@ export const PriceTable = ({
   byUser,
   imeiResponse,
   checkPhoneResponse,
-  // photoStatusResponse,
+  photoStatusResponse,
   possibleConditionCodes = defaultPossibleConditionCodes,
   conditionCodeValidator,
   finalPriceTableProps,
@@ -77,7 +79,7 @@ export const PriceTable = ({
     byUser,
     imeiResponse,
     checkPhoneResponse,
-    // photoStatusResponse,
+    photoStatusResponse,
     possibleConditionCodes,
   })
   const html = getPriceTableHtml({

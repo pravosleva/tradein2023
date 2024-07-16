@@ -243,7 +243,7 @@ function App() {
                 <PrePriceTableStep
                   imeiResponse={state.context.imei.response}
                   checkPhoneResponse={state.context.checkPhone.response}
-                  // photoStatusResponse={state.context.}
+                  photoStatusResponse={null}
                   byUser={{
                     selectedColor: state.context.color.selectedItem,
                     selectedMemory: state.context.memory.selectedItem,
@@ -528,6 +528,7 @@ function App() {
                 </ResponsiveBlock>
               )
             }
+            <ReportMessageForDevs />
           </ContentWithControls>
         )
       case EStep.Contract:
