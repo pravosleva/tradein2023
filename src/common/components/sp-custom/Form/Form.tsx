@@ -221,33 +221,6 @@ export const Form = memo(({
     return () => subscription.unsubscribe()
   }, [watch, schema, onFormReady, onFormNotReady, onChangeField, __setErrsState, __setOkState])
 
-  // const tst = () => {
-  //   const values = getValues()
-  //   _getValues({ values, isDirty, isValid })
-  // }
-
-  // useEffect(() => {
-  //   const subscription = watch((state) => {
-  //     for (const key in schema) {
-  //       // console.log(key,schema[key].isRequired )
-  //       switch (key) {
-  //         default:
-  //           if (schema[key].isRequired) {
-  //             if (schema[key].validate(state[key])) {
-  //               _setErrValue(key, undefined)
-  //             } else {
-  //               _setErrValue(key, 'Заполните это поле')
-  //             }
-  //           } else {
-  //             _setErrValue(key, undefined)
-  //           }
-  //           break
-  //       }
-  //     }
-  //   })
-  //   return () => subscription.unsubscribe()
-  // }, [_setErrValue, schema, watch])
-
   return (
     <>
       <div
@@ -298,16 +271,16 @@ export const Form = memo(({
                             const rusSymbolsToChangeP79 = ['9', '+9']
                             // TODO? const rusSymbolsToChangeP791 = ['78']
                             if (rusSymbolsToChangeP7.includes(val)) {
-                              setAuxStateValue('phone', '+7' || '')
+                              setAuxStateValue('phone', '+7')
                               setValue('phone', '7')
                               return;
                             }
                             if (rusSymbolsToChangeP79.includes(val)) {
-                              setAuxStateValue('phone', '+79' || '');
+                              setAuxStateValue('phone', '+79');
                               setValue('phone', '79')
                               return;
                             }
-                            setAuxStateValue('phone', `+${val}` || '')
+                            setAuxStateValue('phone', !!val ? `+${val}` : '')
                             setValue('phone', val)
                           }}
                         />

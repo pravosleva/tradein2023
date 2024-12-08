@@ -6,6 +6,7 @@ import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6'
 import queryString from 'query-string'
 import { SnackbarProvider, closeSnackbar } from 'notistack'
 import { RiCloseFill } from 'react-icons/ri'
+import { StepMachineContext } from '~/common/xstate/stepMachine'
 import App from './App.tsx'
 import './import-fonts.css'
 import './index.css'
@@ -30,20 +31,22 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       </button>
     )}
   >
-    <HashRouter>
-      <QueryParamProvider 
-        adapter={ReactRouter6Adapter}
-        // NOTE: See also https://www.npmjs.com/package/query-string#api
-        options={{
-          searchStringToObject: (searchStr) => queryString.parse(searchStr, { arrayFormat: 'separator', arrayFormatSeparator: ',' }),
-          objectToSearchString: (obj) => queryString.stringify(obj, { arrayFormat: 'separator', arrayFormatSeparator: ',' }),
-        }}
-      >
-        <Routes>
-          <Route path="/" element={<App />} />
-        </Routes>
-      </QueryParamProvider>
-    </HashRouter>
+    <StepMachineContext>
+      <HashRouter>
+        <QueryParamProvider 
+          adapter={ReactRouter6Adapter}
+          // NOTE: See also https://www.npmjs.com/package/query-string#api
+          options={{
+            searchStringToObject: (searchStr) => queryString.parse(searchStr, { arrayFormat: 'separator', arrayFormatSeparator: ',' }),
+            objectToSearchString: (obj) => queryString.stringify(obj, { arrayFormat: 'separator', arrayFormatSeparator: ',' }),
+          }}
+        >
+          <Routes>
+            <Route path="/" element={<App />} />
+          </Routes>
+        </QueryParamProvider>
+      </HashRouter>
+    </StepMachineContext>
   </SnackbarProvider>
   // </React.StrictMode>,
 )

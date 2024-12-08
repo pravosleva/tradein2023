@@ -4,8 +4,7 @@
 // import reactLogo from '~/assets/react.svg'
 // import viteLogo from '/vite.svg'
 import classes from '~/App.module.scss'
-import { stepMachine, EStep, ECountryCode } from '~/common/xstate/stepMachine'
-import { useMachine } from '@xstate/react'
+import { EStep, ECountryCode, useStepMachineContext } from '~/common/xstate/stepMachine'
 import { useLayoutEffect, useMemo, useRef } from 'react'
 // import { Spinner } from '~/common/components/tailwind'
 import { Alert, BottomSheet, ContentWithControls, Loader, ResponsiveBlock, ReportMessageForDevs } from '~/common/components/sp-custom'
@@ -34,14 +33,9 @@ import { vi } from '~/common/vi'
 import 'react-image-lightbox/style.css'
 
 function App() {
-  const [state, send] = useMachine(stepMachine)
-  const can = state.can.bind(state)
-  const colorAndMemoryHasDetectedOnServer = useMemo(() => !!state.context.imei.response?.phone?.memory && !!state.context.imei.response?.phone?.color, [
-    state.context.imei.response?.phone?.memory,
-    state.context.imei.response?.phone?.color,
-  ])
+  const { stateContext, stateValue, colorAndMemoryHasDetectedOnServer, send, can } = useStepMachineContext()
   const Step = useMemo(() => {
-    switch (state.value) {
+    switch (stateValue) {
       case EStep.AppInit:
         return (
           <ContentWithControls
@@ -70,11 +64,11 @@ function App() {
           >
             <Alert
               type='danger'
-              header={state.context.initApp.uiMsg || undefined}
+              header={stateContext.initApp.uiMsg || undefined}
             >
               {
-                state.context.initApp.response && state.context.initApp.response._showDetailsInUi && (
-                  <pre className={classes.preStyled}>{JSON.stringify(state.context.initApp.response._fromServer || state.context.initApp.response, null, 2)}</pre>
+                stateContext.initApp.response && stateContext.initApp.response._showDetailsInUi && (
+                  <pre className={classes.preStyled}>{JSON.stringify(stateContext.initApp.response._fromServer || stateContext.initApp.response, null, 2)}</pre>
                 )
               }
             </Alert>
@@ -83,7 +77,7 @@ function App() {
       case EStep.EnterImei:
         return (
           <EnterImeiStep
-            value={state.context.imei.value}
+            value={stateContext.imei.value}
             onChangeIMEI={(e: React.FormEvent<HTMLInputElement>) => {
               send({ type: 'SET_IMEI', value: e.currentTarget.value })
               vi.smState.imei.value = e.currentTarget.value
@@ -93,7 +87,7 @@ function App() {
             // onPrev={() => send({ type: 'goPrev' })}
             isPrevBtnDisabled={!can({ type: 'goPrev' })}
             makeAutofocusOnComplete
-            hasDeviceTypePseudoChoice={state.context.initApp.response?.features.smartwatch_allowed}
+            hasDeviceTypePseudoChoice={stateContext.initApp.response?.features.smartwatch_allowed}
           />
         )
       case EStep.SendImei:
@@ -103,7 +97,7 @@ function App() {
             controls={[]}
             isStickyBottomControls
           >
-            {/* <div>{state.context.imei.result.state}</div> */}
+            {/* <div>{stateContext.imei.result.state}</div> */}
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}><Loader /></div>
           </ContentWithControls>
         )
@@ -124,11 +118,11 @@ function App() {
           >
             <Alert
               type='danger'
-              header={state.context.imei.uiMsg || undefined}
+              header={stateContext.imei.uiMsg || undefined}
             >
               {
-                state.context.imei.response && state.context.imei.response._showDetailsInUi && (    
-                  <pre className={classes.preStyled}>{JSON.stringify(state.context.imei.response._fromServer || state.context.imei.response, null, 2)}</pre>
+                stateContext.imei.response && stateContext.imei.response._showDetailsInUi && (    
+                  <pre className={classes.preStyled}>{JSON.stringify(stateContext.imei.response._fromServer || stateContext.imei.response, null, 2)}</pre>
                 )
               }
             </Alert>
@@ -143,13 +137,13 @@ function App() {
               cb: () => send({ type: 'goNext' }),
             }}
             header={clsx(
-              state.context.imei.response?.phone.vendor,
-              state.context.imei.response?.phone.model || '⚠️ Модель устройства не определена',
+              stateContext.imei.response?.phone.vendor,
+              stateContext.imei.response?.phone.model || '⚠️ Модель устройства не определена',
             )}
             subheader={clsx(
-              !(!!state.context.imei.response?.phone.color || !!state.context.color.selectedItem || state.context.imei.response?.phone.memory || !!state.context.memory.selectedItem) && 'Выберите параметры',
-              getReadableSnakeCase(state.context.imei.response?.phone.color || '') || state.context.color.selectedItem?.label,
-              state.context.imei.response?.phone.memory || state.context.memory.selectedItem?.label,
+              !(!!stateContext.imei.response?.phone.color || !!stateContext.color.selectedItem || stateContext.imei.response?.phone.memory || !!stateContext.memory.selectedItem) && 'Выберите параметры',
+              getReadableSnakeCase(stateContext.imei.response?.phone.color || '') || stateContext.color.selectedItem?.label,
+              stateContext.imei.response?.phone.memory || stateContext.memory.selectedItem?.label,
             )}
             nextBtn={{
               id: 'next',
@@ -169,12 +163,12 @@ function App() {
             defaultAutofocusId={
               can({ type: 'goNext' })
               ? undefined
-              : !!state.context.imei.response?.phone.memory && !!state.context.imei.response?.phone.color
+              : !!stateContext.imei.response?.phone.memory && !!stateContext.imei.response?.phone.color
                 ? undefined
                 : (
-                  !!state.context.imei.response?.phone.memory && !state.context.imei.response?.phone.color
+                  !!stateContext.imei.response?.phone.memory && !stateContext.imei.response?.phone.color
                   ? 'col'
-                  : !state.context.imei.response?.phone.memory
+                  : !stateContext.imei.response?.phone.memory
                     ? 'mem'
                     : undefined
                   )
@@ -183,28 +177,28 @@ function App() {
               {
                 id: 'mem',
                 placeholder: 'Выберите память',
-                isEnabled: !state.context.imei.response?.phone.memory,
-                selectedId: state.context.memory.selectedItem?.value,
+                isEnabled: !stateContext.imei.response?.phone.memory,
+                selectedId: stateContext.memory.selectedItem?.value,
                 onItemSelect: ({ item }) => send({ type: 'SET_MEMORY', value: item }),
-                items: state.context.memory.dynamicList.length > 0
-                  ? state.context.memory.dynamicList
-                  : state.context.imei.result.memoryList,
-                isDisabled: state.context.memory.dynamicList.length === 0 && state.context.imei.result.memoryList.length === 0,
+                items: stateContext.memory.dynamicList.length > 0
+                  ? stateContext.memory.dynamicList
+                  : stateContext.imei.result.memoryList,
+                isDisabled: stateContext.memory.dynamicList.length === 0 && stateContext.imei.result.memoryList.length === 0,
               },
               {
                 id: 'col',
                 placeholder: 'Выберите цвет',
-                isEnabled: !state.context.imei.response?.phone.color,
-                selectedId: state.context.color.selectedItem?.value,
+                isEnabled: !stateContext.imei.response?.phone.color,
+                selectedId: stateContext.color.selectedItem?.value,
                 onItemSelect: ({ item }) => send({ type: 'SET_COLOR', value: item }),
-                items: state.context.color.dynamicList,
-                isDisabled: state.context.imei.response?.phone.memory ? state.context.color.dynamicList.length === 0 : !state.context.memory.selectedItem,
+                items: stateContext.color.dynamicList,
+                isDisabled: stateContext.imei.response?.phone.memory ? stateContext.color.dynamicList.length === 0 : !stateContext.memory.selectedItem,
               },
             ]}
             autofocusControlBtnId={
               can({ type: 'goNext' }) ? 'next' : undefined
             }
-            imeiResponse={state.context.imei.response}
+            imeiResponse={stateContext.imei.response}
           />
         )
       case EStep.PrePriceTable:
@@ -213,10 +207,10 @@ function App() {
             hasChildrenFreeWidth
             header='Предварительная сумма скидки'
             subheader={clsx(
-              state.context.imei.response?.phone.vendor,
-              state.context.imei.response?.phone.model || '⚠️ Модель устройства не определена',
-              getReadableSnakeCase(state.context.imei.response?.phone.color || '') || state.context.color.selectedItem?.label,
-              state.context.imei.response?.phone.memory || state.context.memory.selectedItem?.label,
+              stateContext.imei.response?.phone.vendor,
+              stateContext.imei.response?.phone.model || '⚠️ Модель устройства не определена',
+              getReadableSnakeCase(stateContext.imei.response?.phone.color || '') || stateContext.color.selectedItem?.label,
+              stateContext.imei.response?.phone.memory || stateContext.memory.selectedItem?.label,
             )}
             controls={[
               {
@@ -239,14 +233,14 @@ function App() {
             autofocusBtnId='1'
           >
             {
-              state.context.imei.response ? (
+              stateContext.imei.response ? (
                 <PrePriceTableStep
-                  imeiResponse={state.context.imei.response}
-                  checkPhoneResponse={state.context.checkPhone.response}
+                  imeiResponse={stateContext.imei.response}
+                  checkPhoneResponse={stateContext.checkPhone.response}
                   photoStatusResponse={null}
                   byUser={{
-                    selectedColor: state.context.color.selectedItem,
-                    selectedMemory: state.context.memory.selectedItem,
+                    selectedColor: stateContext.color.selectedItem,
+                    selectedMemory: stateContext.memory.selectedItem,
                   }}
                   conditionCodeValidator={() => true}
                 />
@@ -258,8 +252,8 @@ function App() {
                   >
                     <div>Отсутствуют ожидаемые ответы от сервера</div>
                     <pre className={classes.preStyled}>{JSON.stringify({
-                      'imei.response': state.context.imei.response ? 'OK' : String(state.context.imei.response),
-                      'checkPhone.response': state.context.checkPhone.response ? 'OK' : String(state.context.checkPhone.response),
+                      'imei.response': stateContext.imei.response ? 'OK' : String(stateContext.imei.response),
+                      'checkPhone.response': stateContext.checkPhone.response ? 'OK' : String(stateContext.checkPhone.response),
                     }, null, 2)}</pre>
                   </Alert>
                 </ResponsiveBlock>
@@ -273,10 +267,10 @@ function App() {
             header='Подождите...'
             subheader={[
               clsx(
-                state.context.imei.response?.phone.vendor,
-                state.context.imei.response?.phone.model || '⚠️ Модель устройства не определена',
-                getReadableSnakeCase(state.context.imei.response?.phone.color || '') || state.context.color.selectedItem?.label,
-                state.context.imei.response?.phone.memory || state.context.memory.selectedItem?.label,
+                stateContext.imei.response?.phone.vendor,
+                stateContext.imei.response?.phone.model || '⚠️ Модель устройства не определена',
+                getReadableSnakeCase(stateContext.imei.response?.phone.color || '') || stateContext.color.selectedItem?.label,
+                stateContext.imei.response?.phone.memory || stateContext.memory.selectedItem?.label,
               ),
               '/phone/check',
             ]}
@@ -292,20 +286,20 @@ function App() {
             isStickyBottomControls
           >
             {
-              state.context.checkPhone.result.state === 'pending' ? (
+              stateContext.checkPhone.result.state === 'pending' ? (
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}><Loader /></div>
               ) : (
                 <Alert
-                  type={state.context.checkPhone.result.state === 'error' ? 'danger' : 'info'}
-                  header={state.context.checkPhone.result.state}
+                  type={stateContext.checkPhone.result.state === 'error' ? 'danger' : 'info'}
+                  header={stateContext.checkPhone.result.state}
                 >
-                  <div>{state.context.checkPhone.uiMsg}</div>
+                  <div>{stateContext.checkPhone.uiMsg}</div>
                 </Alert>
               )
             }
             {
-              !!state.context.checkPhone.response && (
-                <pre className={classes.preStyled}>{JSON.stringify(state.context.checkPhone.response, null, 2)}</pre>
+              !!stateContext.checkPhone.response && (
+                <pre className={classes.preStyled}>{JSON.stringify(stateContext.checkPhone.response, null, 2)}</pre>
               )
             }
           </ContentWithControls>
@@ -316,10 +310,10 @@ function App() {
             header='Подождите...'
             subheader={[
               clsx(
-                state.context.imei.response?.phone.vendor,
-                state.context.imei.response?.phone.model || '⚠️ Модель устройства не определена',
-                getReadableSnakeCase(state.context.imei.response?.phone.color || '') || state.context.color.selectedItem?.label,
-                state.context.imei.response?.phone.memory || state.context.memory.selectedItem?.label,
+                stateContext.imei.response?.phone.vendor,
+                stateContext.imei.response?.phone.model || '⚠️ Модель устройства не определена',
+                getReadableSnakeCase(stateContext.imei.response?.phone.color || '') || stateContext.color.selectedItem?.label,
+                stateContext.imei.response?.phone.memory || stateContext.memory.selectedItem?.label,
               ),
               '/photo/link',
             ]}
@@ -335,20 +329,20 @@ function App() {
             // isStickyBottomControls
           >
             {
-              state.context.photoLink.result.state === 'pending' ? (
+              stateContext.photoLink.result.state === 'pending' ? (
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}><Loader /></div>
               ) : (
                 <Alert
-                  type={state.context.photoLink.result.state === 'error' ? 'danger' : 'info'}
-                  header={state.context.photoLink.result.state}
+                  type={stateContext.photoLink.result.state === 'error' ? 'danger' : 'info'}
+                  header={stateContext.photoLink.result.state}
                 >
-                  <div>{state.context.photoLink.uiMsg}</div>
+                  <div>{stateContext.photoLink.uiMsg}</div>
                 </Alert>
               )
             }
             {
-              !!state.context.photoLink.response && (
-                <pre className={classes.preStyled}>{JSON.stringify(state.context.photoLink.response, null, 2)}</pre>
+              !!stateContext.photoLink.response && (
+                <pre className={classes.preStyled}>{JSON.stringify(stateContext.photoLink.response, null, 2)}</pre>
               )
             }
           </ContentWithControls>
@@ -356,23 +350,23 @@ function App() {
       case EStep.UploadPhotoInProgress:
         return (
           <>
-            {!state.context.imei.response?.id ? (
+            {!stateContext.imei.response?.id ? (
               <Alert
                 type='danger'
                 header='Отсутствует Tradein-Id для текущей сессии'
               >
-                <pre className={classes.preStyled}>{JSON.stringify(state.context.imei, null, 2)}</pre>
+                <pre className={classes.preStyled}>{JSON.stringify(stateContext.imei, null, 2)}</pre>
               </Alert>
             ) : (
               <UploadPhotoProcessStep
-                tradeinId={state.context.imei.response?.id}
+                tradeinId={stateContext.imei.response?.id}
                 header='Загрузите фото устройства'
                 subheader={[
                   clsx(
-                    state.context.imei.response?.phone.vendor,
-                    state.context.imei.response?.phone.model,
-                    getReadableSnakeCase(state.context.imei.response?.phone.color || '') || state.context.color.selectedItem?.label,
-                    state.context.imei.response?.phone.memory || state.context.memory.selectedItem?.label,
+                    stateContext.imei.response?.phone.vendor,
+                    stateContext.imei.response?.phone.model,
+                    getReadableSnakeCase(stateContext.imei.response?.phone.color || '') || stateContext.color.selectedItem?.label,
+                    stateContext.imei.response?.phone.memory || stateContext.memory.selectedItem?.label,
                   ),
                 ]}
                 initLastSubheader='Для финальной оценки и подтверждения состояния'
@@ -399,7 +393,7 @@ function App() {
                       break
                   }
                 }}
-                photoLinkResponse={state.context.photoLink.response}
+                photoLinkResponse={stateContext.photoLink.response}
               />
             )}
           </>
@@ -426,10 +420,10 @@ function App() {
               header='Oops...'
             >
               {
-                state.context.photoStatus.uiMsg ? (
-                  <div>{state.context.photoStatus.uiMsg}</div>
+                stateContext.photoStatus.uiMsg ? (
+                  <div>{stateContext.photoStatus.uiMsg}</div>
                 ) : (
-                  <pre className={classes.preStyled}>{JSON.stringify(state.context.photoStatus.response, null, 2)}</pre>
+                  <pre className={classes.preStyled}>{JSON.stringify(stateContext.photoStatus.response, null, 2)}</pre>
                 )
               }
             </Alert>
@@ -442,33 +436,33 @@ function App() {
             header='Итоговая сумма скидки'
             subheader={[
               clsx(
-                state.context.imei.response?.phone.vendor,
-                state.context.imei.response?.phone.model || '⚠️ Модель устройства не определена',
-                getReadableSnakeCase(state.context.imei.response?.phone.color || '') || state.context.color.selectedItem?.label,
-                state.context.imei.response?.phone.memory || state.context.memory.selectedItem?.label,
+                stateContext.imei.response?.phone.vendor,
+                stateContext.imei.response?.phone.model || '⚠️ Модель устройства не определена',
+                getReadableSnakeCase(stateContext.imei.response?.phone.color || '') || stateContext.color.selectedItem?.label,
+                stateContext.imei.response?.phone.memory || stateContext.memory.selectedItem?.label,
               ),
               clsx(
-                state.context.checkPhone.response?.condition
+                stateContext.checkPhone.response?.condition
                 ? `Состояние – ${getCapitalizedFirstLetter(getTranslatedConditionCode(
-                  state.context.checkPhone.response?.condition,
+                  stateContext.checkPhone.response?.condition,
                   ))}${
-                    state.context.photoStatus.response?.condition_limit_reason
-                      ? ` ${getTranslatedConditionSuffixCode({ suffixCode: state.context.photoStatus.response.condition_limit_reason })}`
+                    stateContext.photoStatus.response?.condition_limit_reason
+                      ? ` ${getTranslatedConditionSuffixCode({ suffixCode: stateContext.photoStatus.response.condition_limit_reason })}`
                       : ''
                   }`
                 : undefined,
-                state.context.photoStatus.response?.condition_limit_reason
+                stateContext.photoStatus.response?.condition_limit_reason
                 ? `/ ${getCapitalizedFirstLetter(getTranslatedDefectReasonCode({
-                  deviceType: state.context.imei.response?.phone.type || 'NO DEVICE TYPE in imei.response!',
-                  defectCode: state.context.photoStatus.response.condition_limit_reason,
+                  deviceType: stateContext.imei.response?.phone.type || 'NO DEVICE TYPE in imei.response!',
+                  defectCode: stateContext.photoStatus.response.condition_limit_reason,
                 }))}`
                 : undefined
               ),
               // clsx(
-              //   state.context.photoStatus.response?.condition_limit_reason
+              //   stateContext.photoStatus.response?.condition_limit_reason
               //     ? getCapitalizedFirstLetter(getTranslatedDefectReasonCode({
-              //       deviceType: state.context.imei.response?.phone.type || 'NO DEVICE TYPE in imei.response!',
-              //       defectCode: state.context.photoStatus.response.condition_limit_reason,
+              //       deviceType: stateContext.imei.response?.phone.type || 'NO DEVICE TYPE in imei.response!',
+              //       defectCode: stateContext.photoStatus.response.condition_limit_reason,
               //     }))
               //     : undefined
               // )
@@ -489,21 +483,21 @@ function App() {
             autofocusBtnId='1'
           >
             {
-              state.context.imei.response && state.context.checkPhone.response && state.context.photoStatus.response ? (
+              stateContext.imei.response && stateContext.checkPhone.response && stateContext.photoStatus.response ? (
                 <FinalPriceTableStep
-                  imeiResponse={state.context.imei.response}
-                  checkPhoneResponse={state.context.checkPhone.response}
-                  photoStatusResponse={state.context.photoStatus.response}
+                  imeiResponse={stateContext.imei.response}
+                  checkPhoneResponse={stateContext.checkPhone.response}
+                  photoStatusResponse={stateContext.photoStatus.response}
                   byUser={{
-                    selectedColor: state.context.color.selectedItem,
-                    selectedMemory: state.context.memory.selectedItem,
+                    selectedColor: stateContext.color.selectedItem,
+                    selectedMemory: stateContext.memory.selectedItem,
                   }}
-                  conditionCodeValidator={({ value }) => value === state.context.photoStatus.response?.condition }
+                  conditionCodeValidator={({ value }) => value === stateContext.photoStatus.response?.condition }
                   finalPriceTableProps={{
                     subsidiesStruct2: {
                       tableHeader: 'Сумма с учетом дополнительной скидки при покупке следующих моделей',
-                      price: state.context.checkPhone.response.price || 0,
-                      subsidies: state.context.checkPhone.response.subsidies || [],
+                      price: stateContext.checkPhone.response.price || 0,
+                      subsidies: stateContext.checkPhone.response.subsidies || [],
                       noAllZeroSubsidies: true,
                       itemValidation: ({ price /* vendor, model, title */ }) => !!price,
                     },
@@ -520,9 +514,9 @@ function App() {
                   >
                     <div>Отсутствуют ожидаемые ответы от сервера</div>
                     <pre className={classes.preStyled}>{JSON.stringify({
-                      'imei.response': state.context.imei.response ? 'OK' : String(state.context.imei.response),
-                      'checkPhone.response': state.context.checkPhone.response,
-                      'photoStatus.response': state.context.photoStatus.response,
+                      'imei.response': stateContext.imei.response ? 'OK' : String(stateContext.imei.response),
+                      'checkPhone.response': stateContext.checkPhone.response,
+                      'photoStatus.response': stateContext.photoStatus.response,
                     }, null, 2)}</pre>
                   </Alert>
                 </ResponsiveBlock>
@@ -580,7 +574,7 @@ function App() {
               <ContractStep
                 // NOTE: Корректный features.country_code будет в любом случае,
                 // иначе пользователь не продвинулся бы далее EStep.AppInit
-                defaultCountryCode={state.context.initApp.response?.features.country_code || ECountryCode.RU}
+                defaultCountryCode={stateContext.initApp.response?.features.country_code || ECountryCode.RU}
                 onFormReady={({ formState }) => {
                   send({ type: 'SET_CONTRACT_FORM_STATE', value: { state: formState, isReady: true } })
                 }}
@@ -588,7 +582,7 @@ function App() {
                   send({ type: 'SET_CONTRACT_FORM_STATE', value: { state: formState, isReady: false } })
                 }}
               />
-              {/* <pre className={classes.preStyled}>{JSON.stringify(state.context.contract, null, 2)}</pre> */}
+              {/* <pre className={classes.preStyled}>{JSON.stringify(stateContext.contract, null, 2)}</pre> */}
             </div>
           </ContentWithControls>
         )
@@ -621,10 +615,10 @@ function App() {
           >
             <Alert
               type='danger'
-              header={state.context.contract.uiMsg || 'Что-то пошло не так'}
+              header={stateContext.contract.uiMsg || 'Что-то пошло не так'}
             >
               <pre className={classes.preStyled}>{JSON.stringify({
-                contractResponse: state.context.contract.response,
+                contractResponse: stateContext.contract.response,
               }, null, 2)}</pre>
             </Alert>
             <ReportMessageForDevs />
@@ -639,8 +633,8 @@ function App() {
                 id: '1',
                 label: 'Скачать договор повторно',
                 onClick: () => {
-                  // NOTE: Expected in state.context.imei.response?.id
-                  window.open(`/partner_api/tradein/buyout_doc/i/${state.context.imei.response?.id}.pdf`, '_blank')
+                  // NOTE: Expected in stateContext.imei.response?.id
+                  window.open(`/partner_api/tradein/buyout_doc/i/${stateContext.imei.response?.id}.pdf`, '_blank')
                 },
                 btn: {
                   color: 'primary',
@@ -683,7 +677,7 @@ function App() {
       default:
         return (
           <ContentWithControls
-            header={`Unknown step: ${String(state.value)}`}
+            header={`Unknown step: ${String(stateValue)}`}
             controls={[]}
             isStickyBottomControls
           >
@@ -692,21 +686,21 @@ function App() {
         )
     }
   }, [
-    state.value, send, state.context.imei, can,
-    state.context.color.selectedItem, state.context.memory.selectedItem,
-    state.context.color.dynamicList,
-    state.context.checkPhone.result.state,
-    state.context.checkPhone.response,
-    state.context.checkPhone.uiMsg,
-    state.context.photoLink.response,
-    state.context.photoLink.result.state,
-    state.context.photoLink.uiMsg,
-    state.context.photoStatus.uiMsg,
-    state.context.photoStatus.response,
-    state.context.contract,
-    state.context.memory.dynamicList,
-    state.context.initApp.response,
-    state.context.initApp.uiMsg,
+    stateValue, send, stateContext.imei, can,
+    stateContext.color.selectedItem, stateContext.memory.selectedItem,
+    stateContext.color.dynamicList,
+    stateContext.checkPhone.result.state,
+    stateContext.checkPhone.response,
+    stateContext.checkPhone.uiMsg,
+    stateContext.photoLink.response,
+    stateContext.photoLink.result.state,
+    stateContext.photoLink.uiMsg,
+    stateContext.photoStatus.uiMsg,
+    stateContext.photoStatus.response,
+    stateContext.contract,
+    stateContext.memory.dynamicList,
+    stateContext.initApp.response,
+    stateContext.initApp.uiMsg,
     colorAndMemoryHasDetectedOnServer,
   ])
 
@@ -716,11 +710,11 @@ function App() {
   const stepContentTopRef = useRef<HTMLDivElement>(null)
   useLayoutEffect(() => {
     // @ts-ignore
-    if (state.value) vi.common.stateValue = String(state.value)
+    if (stateValue) vi.common.stateValue = String(stateValue)
     else vi.common.stateValue = EStep.AppInit
 
     if (stepContentTopRef.current) window.scrollTo({ top: stepContentTopRef.current.offsetTop, behavior: 'smooth'})
-  }, [state.value])
+  }, [stateValue])
 
   return (
     <>
@@ -738,7 +732,7 @@ function App() {
 
           {/* <ResponsiveBlock isPaddedMobile isLimitedForDesktop>
             <div className={classes.card}>
-              <pre className={classes.preStyled}>{JSON.stringify(state.context.photoLink, null, 2)}</pre>
+              <pre className={classes.preStyled}>{JSON.stringify(stateContext.photoLink, null, 2)}</pre>
             </div>
           </ResponsiveBlock> */}
         </div>

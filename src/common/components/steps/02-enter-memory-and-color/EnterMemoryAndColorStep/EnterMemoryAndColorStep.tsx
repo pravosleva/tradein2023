@@ -5,6 +5,8 @@ import clsx from 'clsx'
 import { Listbox, TListboxProps } from '~/common/components/tailwind'
 import { NSP } from '~/utils/httpClient'
 
+const isFakeStaticEnabled = import.meta.env.VITE_FAKE_IMG_SRC === '1'
+
 type TProps = {
   header: string;
   subheader: string | string[];
@@ -71,8 +73,12 @@ export const EnterMemoryAndColorStep = memo(({
       {
         !!imeiResponse?.photo && (
           <LazyImage
-            // src={isStaging ? `https://smartprice.ru/static/img/smartprice/${imeiResponse?.photo}` : `/static/img/smartprice/${imeiResponse?.photo}`}
-            src={`https://smartprice.ru/static/img/smartprice/${imeiResponse?.photo}`}
+            src={
+              isFakeStaticEnabled
+              ? imeiResponse?.photo
+              : `/static/img/smartprice/${imeiResponse?.photo}`
+            }
+            // src={`https://smartprice.ru/static/img/smartprice/${imeiResponse?.photo}`}
             alt='p'
             style={{
               width: '200px',

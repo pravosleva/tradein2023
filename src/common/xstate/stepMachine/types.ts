@@ -1,5 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NSP, NResponseValidate } from '~/utils/httpClient'
+import {
+  ActorRefFrom,
+  StateFrom,
+  StateSchema,
+  TypegenMeta,
+  Typestate,
+} from 'xstate'
+import { stepMachine } from './stepMachine';
+import { TItem } from '~/common/components/tailwind';
 
 export enum EStep {
   AppInit = 'app-init',
@@ -108,4 +117,31 @@ export type TContractForm = {
   middlename?: string;
   phone?: string;
   [key: string]: any;
+}
+
+export namespace NStepMachine {
+  export type TContext = TStepMachineContextFormat;
+  export type TEvent =  
+    { type: 'SET_IMEI'; value: string; }
+    | { type: 'SET_COLOR'; value: TItem; }
+    | { type: 'SET_MEMORY'; value: TItem; }
+    | { type: 'SET_PHOTO_STATUS_RESPONSE'; value: NSP.TPhotoStatusResponse; }
+    | { type: 'RESET_ALL_RESPONSES'; }
+    | { type: 'SET_CONTRACT_FORM_STATE'; value: { state: { [key: string]: string | number; }, isReady: boolean; } }
+    | { type: 'goPrev'; }
+    | { type: 'goNext'; }
+    | { type: 'goErr'; }
+    | { type: 'goContract'; }
+    | { type: 'goStart'; }
+  export type TActorRef = ActorRefFrom<typeof stepMachine>
+
+  // NOTE: Will be added in xstate@5.x
+  // export type TSnapshot = SnapshotFrom<typeof stepMachine>
+  // export type TActorLogic = ActorLogicFrom<typeof stepMachine>
+  // export type TMeta = ActorLogicFrom<typeof stepMachine>
+
+  export type TState = StateFrom<typeof stepMachine>
+  export type TStateSchema = StateSchema<TStepMachineContextFormat>
+  export type TTypegenMeta = TypegenMeta
+  export type TTypestate = Typestate<TStepMachineContextFormat>
 }

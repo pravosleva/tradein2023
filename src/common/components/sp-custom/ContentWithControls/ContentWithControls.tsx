@@ -156,6 +156,7 @@ export const ContentWithControls = memo(({
                     [classes.stickyBottomControls]: isStickyBottomControls,
                   },
                   'fade-in',
+                  'slide-up',
                 )}
               >
                 <ResponsiveBlock

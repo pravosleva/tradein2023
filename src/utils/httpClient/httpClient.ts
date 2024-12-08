@@ -64,14 +64,15 @@ class Singleton extends API {
         color: '',
         memory: '512 GB',
 
-        vendor: 'Samsung',
-        model: 'Galaxy S22',
+        // vendor: 'Samsung',
+        // model: 'Galaxy S22',
         
-        // vendor: 'Apple',
-        // model: 'iPhone 12 Pro',
+        vendor: 'Apple',
+        model: 'iPhone 12 Pro',
       },
-      photo: 'models/samsung/galaxy-s22/01.jpg',
+      // photo: 'models/samsung/galaxy-s22/01.jpg',
       // photo: 'models/apple/iphone-12-pro/color_graphite_01.jpg',
+      photo: 'https://pravosleva.pro/express-helper/chat/storage/uploads/sp.pravosleva/1729670432155.jpg',
 
       // ok: false,
       // message: 'FRONT tst',
