@@ -4,16 +4,6 @@ import { PriceTable, TPriceTableProps } from '~/common/components/sp-custom'
 export const PrePriceTableStep = (props: TPriceTableProps) => {
   return (
     <>
-      {/* <ResponsiveBlock
-        isPaddedMobile
-        isLimitedForDesktop
-        style={{
-          border: '1px dashed lightgray',
-        }}
-      >
-        Descr
-      </ResponsiveBlock> */}
-
       <ResponsiveBlock
         isPaddedMobile
         isLimitedForDesktop
@@ -24,21 +14,9 @@ export const PrePriceTableStep = (props: TPriceTableProps) => {
             justifyContent: 'center',
           }}
         >
-          <PriceTable
-            {...props}
-          />
+          <PriceTable {...props} />
         </div>
       </ResponsiveBlock>
-
-      {/* <ResponsiveBlock
-        isPaddedMobile
-        isLimitedForDesktop
-        style={{
-          border: '1px dashed lightgray',
-        }}
-      >
-        <pre>{JSON.stringify(values, null, 2)}</pre>
-      </ResponsiveBlock> */}
     </>
   )
 }

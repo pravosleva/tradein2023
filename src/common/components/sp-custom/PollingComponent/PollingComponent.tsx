@@ -4,6 +4,7 @@ import { useRef, useState, useCallback, memo, useLayoutEffect } from 'react';
 import baseClasses from '~/App.module.scss'
 import { Alert, Loader } from '~/common/components/sp-custom'
 import clsx from 'clsx'
+import { NSP } from '~/utils/httpClient';
 
 type TProps = {
   delay?: number;
@@ -27,7 +28,7 @@ export const PollingComponent = memo(({
   const timeoutRef = useRef<any>(null)
   const [isWorking, setIsWorking] = useState<boolean>(true)
   const [retryCounter, setRetryCounter] = useState<number>(0)
-  const [lastResponse, setLastResponse] = useState<any>(null)
+  const [lastResponse, setLastResponse] = useState<NSP.TStandartMinimalResponse | null>(null)
 
   const updateCounterIfNecessary = useCallback(async () => {
     await promise()

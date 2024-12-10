@@ -4,41 +4,11 @@ import React, { useMemo } from 'react'
 import clsx from 'clsx'
 import classes from './Buttom.module.scss'
 import baseClasses from '~/App.module.scss'
-// import Icon from '@mdi/react'
-// import {
-//   mdiArrowRight,
-//   // mdiArrowRightBox,
-// } from '@mdi/js'
-// import { FaBeer } from 'react-icons/fa'
-import {
-  // FaArrowRightLong,
-  // FaArrowRight,
-  // FaArrowLeft,
-  FaCheck,
-} from 'react-icons/fa6'
-import {
-  FaArrowLeft, FaArrowRight,
-  // FaCheck,
-  // FaCheckCircle,
-} from 'react-icons/fa'
-// import { FaCheck } from 'react-icons/fa'
-// import { IoMdCheckmarkCircleOutline } from 'react-icons/io'
-// import { FaCheckCircle } from 'react-icons/fa'
+import { FaCheck } from 'react-icons/fa6'
+import { FaArrowLeft, FaArrowRight } from 'react-icons/fa'
 import { TColor, TVariant } from './types'
 
-// export enum EVariant {
-//   Filled = 'filled',
-//   Outlined = 'outlined',
-// }
-// export enum EColor {
-//   Primary = 'primary',
-//   Secondary = 'secondary',
-//   Default = 'default',
-// }
-
 export interface IButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  // title: string;
-  // showIcon: boolean;
   color: TColor;
   fullWidth?: boolean;
   variant: TVariant;

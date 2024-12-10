@@ -73,7 +73,7 @@ export const ButtonWidthFormInModal = memo(({
   isDebugEnabled,
 }: TProps) => {
   const initAppState = useSnapshot(vi.smState.initApp)
-  const defaultCountryCode = initAppState.response?.features?.country_code
+  const defaultCountryCode = initAppState.response?.features?.country_code || ECountryCode.RU
 
   const [isModalOpened, setIsModalOpened] = useState(false)
   const handleOpenModal = useCallback(() => {
@@ -139,7 +139,7 @@ export const ButtonWidthFormInModal = memo(({
         Body={
           <Form
             makeFocusOnFirstInput
-            defaultCountryCode={defaultCountryCode || ECountryCode.RU}
+            defaultCountryCode={defaultCountryCode}
             // onChangeField={handleSetExternalStore}
             getValues={(vals) => {
               console.log(vals)

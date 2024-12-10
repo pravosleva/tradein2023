@@ -2,8 +2,6 @@ import { useState, useCallback, memo } from 'react'
 import {
   TBtnUISettings,
 } from '~/common/components/sp-custom'
-// import baseClasses from '~/App.module.scss'
-// import clsx from 'clsx'
 import { Button, ImageGallery } from '~/common/components/sp-custom'
 import { TGalleryImage } from '~/common/xstate/stepMachine/services/ui-cfg'
 
@@ -33,14 +31,6 @@ export const ButtonWithImageGallery = memo(({
         items={activeGalleryImages || []}
         onClose={handleClose}
       />
-
-      {/* <div>Селекторы с выбором для типа устройства <code className={baseClasses.inlineCode}>{imeiResponse?.phone.type}</code> {imeiResponse?.phone.vendor}</div> */}
-      {/* <Alert
-        type='info'
-        header='WIP'
-      >
-        <pre className={clsx('text-sm', baseClasses.preStyled)}>{JSON.stringify(targetOptionsPack, null, 2)}</pre>
-      </Alert> */}
       
       <Button
         EnabledStartIcon={EnabledStartIcon}

@@ -1,5 +1,5 @@
 {
-  "name": "sp.offline-tradein-2023.mtsmain.xstate",
+  "name": "sp-tradein-2023.xstate",
   "private": true,
   "version": "3.0.12-exp",
   "engines": {

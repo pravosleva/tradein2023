@@ -259,6 +259,27 @@ export const BottomSheet = memo(() => {
                     })
                   }
                 </CollapsibleBox>
+                <CollapsibleBox
+                  title='package.json'
+                  level={1}
+                >
+                  <pre
+                    className={clsx(
+                      baseClasses.preStyled,
+                      'bg-spBlueMain',
+                      'text-xs',
+                    )}
+                    style={{
+                      padding: '8px',
+                      color: '#FFF',
+                      overflowY: 'hidden',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    {/* @ts-ignore */}
+                    {JSON.stringify(pkg, null, 2)}
+                  </pre>
+                </CollapsibleBox>
               </div>
             </div>
           </Sheet.Content>

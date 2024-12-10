@@ -181,8 +181,6 @@ export const Form = memo(({
       if (onChangeField && !!name) onChangeField({ name, value: state[String(name)] })
       // --
 
-      // console.log({ state, name, type })
-      // const counters = { ok: 0, fail: 0 }
       const errsObj: any = {}
       const okObj: any = {}
       for (const key in schema) {
@@ -192,22 +190,15 @@ export const Form = memo(({
               let options = undefined
               if (key === 'phone') {
                 options = { currentCountryInfo: currentCountryInfoRef.current }
-                // console.log(options)
               }
               const validationResult = schema[key].validate({ value: state[key], options, cfg: schema[key] })
-              // if (key === 'comment') console.log(validationResult)
               if (!validationResult.ok) {
-                // counters.fail += 1
                 errsObj[key] = validationResult.reason
                 okObj[key] = false
-              } else {
-                // counters.ok += 1
+              } else
                 okObj[key] = true
-              }
-            } else {
-              // counters.ok += 1
+            } else
               okObj[key] = true
-            }
             break
         }
       }
@@ -270,18 +261,20 @@ export const Form = memo(({
                             const rusSymbolsToChangeP7 = ['7', '+7', '8', '+8']
                             const rusSymbolsToChangeP79 = ['9', '+9']
                             // TODO? const rusSymbolsToChangeP791 = ['78']
-                            if (rusSymbolsToChangeP7.includes(val)) {
-                              setAuxStateValue('phone', '+7')
-                              setValue('phone', '7')
-                              return;
+                            switch (true) {
+                              case rusSymbolsToChangeP7.includes(val):
+                                setAuxStateValue('phone', '+7')
+                                setValue('phone', '7')
+                                break
+                              case rusSymbolsToChangeP79.includes(val):
+                                setAuxStateValue('phone', '+79');
+                                setValue('phone', '79')
+                                break
+                              default:
+                                setAuxStateValue('phone', !!val ? `+${val}` : '')
+                                setValue('phone', val)
+                                break
                             }
-                            if (rusSymbolsToChangeP79.includes(val)) {
-                              setAuxStateValue('phone', '+79');
-                              setValue('phone', '79')
-                              return;
-                            }
-                            setAuxStateValue('phone', !!val ? `+${val}` : '')
-                            setValue('phone', val)
                           }}
                         />
                         {/* <span
