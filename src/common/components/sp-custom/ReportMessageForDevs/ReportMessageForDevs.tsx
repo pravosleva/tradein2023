@@ -110,7 +110,7 @@ export const ReportMessageForDevs = memo(({ isDebugEnabled }: TProps) => {
                           comment: {
                             type: 'text-multiline',
                             // label: 'Ваш комментарий',
-                            descr: 'Пример: На шаге Проверьте устройство кнопка Продолжить не реагирует на действия пользователя',
+                            descr: 'Пример: Не могу продолжить сценарий. На текущем шаге кнопка Продолжить неактивна',
                             limit: 200,
                             validate: ({ value, cfg }) => {
                               const limit = cfg?.limit
