@@ -210,7 +210,10 @@ const isNewNativeEvent = ({ newCode: n, prevCode: p }) => {
           newCode: `[sock-nat]: ${NES.Socket.ENative.CONNECT}`,
           prevCode: !!_perfInfo.tsList.length > 1 ? _perfInfo.tsList[_perfInfo.tsList.length - 1].descr : undefined,
         })) _perfInfo.tsList.push({ descr: `[sock-nat]: ${NES.Socket.ENative.CONNECT}`, p: performance.now(), ts: new Date().getTime(), name: 'Socket подключен' })
-        if (dbg.socketState.isEnabled) log({ label: '🟢 Socket connected', msgs: ['no event'] })
+        if (dbg.socketState.isEnabled) {
+          log({ label: '🟢 Socket connected', msgs: ['no event'] })
+          self.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA, message: 'Connected', code: 'ui_message_success' })
+        }
         self.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_CONN })
       },
       [NES.Socket.ENative.CONNECT_ERROR]: function (e) {
@@ -247,7 +250,10 @@ const isNewNativeEvent = ({ newCode: n, prevCode: p }) => {
           ts: new Date().getTime(),
           name: 'Socket отключен',
         })
-        if (dbg.socketState.isEnabled) log({ label: '🔴 Socket disconnected', msgs: [e] })
+        if (dbg.socketState.isEnabled) {
+          log({ label: '🔴 Socket disconnected', msgs: [e] })
+          self.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA, message: 'Disconnected', code: 'ui_message_danger' })
+        }
         self.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_DISCONN, ...e, })
       },
       [NES.Socket.Metrix.EClientIncoming.SP_MX_EV]: function (e) {
