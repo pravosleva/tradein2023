@@ -157,6 +157,11 @@ export const EnterImeiStep = memo(({
         }}
       >
         <Alert
+          type='slate'
+        >
+          IMEI not obliged to be valid. You can enter anything...
+        </Alert>
+        <Alert
           type='danger'
         >
           IMEI устройства можно проверить запросом USSD-команды <CopyToClipboardWrapper text='*#06#' onCopy={handleUSSDCopy} /> в приложении «Телефон»

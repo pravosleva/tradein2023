@@ -206,77 +206,77 @@ export const useMetrix = ({ isDebugEnabled }: TProps) => {
         }
         customData.reportType = EReportType.ERROR
         break
-        /*
-      case EStep.FinalScenarioErr:
-        customData.stepDetails = {
-          appMode: {
-            currentMode: structuredClone(smViSnap.appMode.currentMode, {
-              // avoid throwing
-              lossy: true,
-              // avoid throwing *and* looks for toJSON
-              json: true
-            }),
-          },
-          appMode2: {
-            currentMode: structuredClone(smViSnap.appMode2.currentMode, { lossy: true, json: true }),
-          },
+      /*
+    case EStep.FinalScenarioErr:
+      customData.stepDetails = {
+        appMode: {
+          currentMode: structuredClone(smViSnap.appMode.currentMode, {
+            // avoid throwing
+            lossy: true,
+            // avoid throwing *and* looks for toJSON
+            json: true
+          }),
+        },
+        appMode2: {
+          currentMode: structuredClone(smViSnap.appMode2.currentMode, { lossy: true, json: true }),
+        },
+      }
+      customData.reportType = EReportType.ERROR
+      break
+    case EStep.AppModeMenu:
+      customData.stepDetails = {
+        initApp: {
+          response: structuredClone(smViSnap.initApp.response, { lossy: true, json: true }),
+          result: structuredClone(smViSnap.initApp.result, { lossy: true, json: true }),
         }
-        customData.reportType = EReportType.ERROR
-        break
-      case EStep.AppModeMenu:
-        customData.stepDetails = {
-          initApp: {
-            response: structuredClone(smViSnap.initApp.response, { lossy: true, json: true }),
-            result: structuredClone(smViSnap.initApp.result, { lossy: true, json: true }),
-          }
-        }
-        customData.reportType = EReportType.DEFAULT
-        break
-      case EStep.AppModeMenu2:
-        customData.stepDetails = {
-          appMode: {
-            currentMode: structuredClone(smViSnap.appMode.currentMode, { lossy: true, json: true }),
+      }
+      customData.reportType = EReportType.DEFAULT
+      break
+    case EStep.AppModeMenu2:
+      customData.stepDetails = {
+        appMode: {
+          currentMode: structuredClone(smViSnap.appMode.currentMode, { lossy: true, json: true }),
+        },
+      }
+      customData.reportType = EReportType.DEFAULT
+      break
+    case EStep.AppModeMenu2FinalErr:
+      customData.stepDetails = {
+        appMode: {
+          currentMode: structuredClone(smViSnap.appMode.currentMode, { lossy: true, json: true }),
+        },
+      }
+      customData.reportType = EReportType.ERROR
+      break
+    case EStep.CheckDeviceCharge:
+      customData.stepDetails = {
+        appMode: {
+          currentMode: structuredClone(smViSnap.appMode.currentMode, { lossy: true, json: true }),
+        },
+        appMode2: {
+          currentMode: structuredClone(smViSnap.appMode2.currentMode, { lossy: true, json: true }),
+        },
+      }
+      customData.reportType = EReportType.INFO
+      break
+    
+    case EStep.EnterImei:
+      customData.stepDetails = {
+        appMode: {
+          currentMode: structuredClone(smViSnap.appMode.currentMode, { lossy: true, json: true }),
+        },
+        appMode2: {
+          currentMode: structuredClone(smViSnap.appMode2.currentMode, { lossy: true, json: true }),
+        },
+        checkDeviceCharge: {
+          form: {
+            state: structuredClone(smViSnap.checkDeviceCharge.form.state, { lossy: true, json: true }),
           },
-        }
-        customData.reportType = EReportType.DEFAULT
-        break
-      case EStep.AppModeMenu2FinalErr:
-        customData.stepDetails = {
-          appMode: {
-            currentMode: structuredClone(smViSnap.appMode.currentMode, { lossy: true, json: true }),
-          },
-        }
-        customData.reportType = EReportType.ERROR
-        break
-      case EStep.CheckDeviceCharge:
-        customData.stepDetails = {
-          appMode: {
-            currentMode: structuredClone(smViSnap.appMode.currentMode, { lossy: true, json: true }),
-          },
-          appMode2: {
-            currentMode: structuredClone(smViSnap.appMode2.currentMode, { lossy: true, json: true }),
-          },
-        }
-        customData.reportType = EReportType.INFO
-        break
-      
-      case EStep.EnterImei:
-        customData.stepDetails = {
-          appMode: {
-            currentMode: structuredClone(smViSnap.appMode.currentMode, { lossy: true, json: true }),
-          },
-          appMode2: {
-            currentMode: structuredClone(smViSnap.appMode2.currentMode, { lossy: true, json: true }),
-          },
-          checkDeviceCharge: {
-            form: {
-              state: structuredClone(smViSnap.checkDeviceCharge.form.state, { lossy: true, json: true }),
-            },
-          },
-        }
-        customData.reportType = EReportType.INFO
-        break
-      */
+        },
+      }
+      customData.reportType = EReportType.INFO
+      break
+    */
       case EStep.SendImeiErr:
         customData.stepDetails = {
           // appMode: {
@@ -494,7 +494,10 @@ export const useMetrix = ({ isDebugEnabled }: TProps) => {
         metrixEventType: NEvents.EMetrixClientOutgoing;
         reportType: EReportType;
         stateValue: EStep;
-        appVersion: string;
+        app: {
+          name: string;
+          version: string;
+        };
         stepDetails?: {
           [key: string]: any;
         };
@@ -507,7 +510,10 @@ export const useMetrix = ({ isDebugEnabled }: TProps) => {
           ts: new Date().getTime(),
           room: 'FOR_EXAMPLE',
           reportType: EReportType.DEFAULT,
-          appVersion: vi.common.appVersion,
+          app: {
+            name: vi.common.app.name,
+            version: vi.common.app.version,
+          },
           ...input,
           ...customData,
         },

@@ -8,7 +8,7 @@ const dbg = {
     },
   },
   socketState: {
-    isEnabled: false,
+    isEnabled: true,
   },
   swState: {
     isEnabled: false,

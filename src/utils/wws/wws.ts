@@ -55,7 +55,7 @@ class Singleton {
 
     return Singleton.instance
   }
-  private log ({ label, msgs }: { label: string; msgs?: any[] }): void {
+  private log({ label, msgs }: { label: string; msgs?: any[] }): void {
     if (this.isDebugEnabled) groupLog({ namespace: `-webWorkersInstance: ${label}`, items: msgs || [] })
   }
 
@@ -171,7 +171,10 @@ class Singleton {
           metrixEventType: NEvents.EMetrixClientOutgoing;
           reportType: EReportType;
           stateValue: EStep;
-          appVersion: string;
+          app: {
+            name: string;
+            version: string;
+          };
           stepDetails?: {
             [key: string]: any;
             comment: string;
@@ -191,7 +194,10 @@ class Singleton {
             metrixEventType: NEvents.EMetrixClientOutgoing.SP_HISTORY_REPORT_EV,
             reportType: EReportType.WARNING,
             stateValue: vi.common.stateValue,
-            appVersion: vi.common.appVersion,
+            app: {
+              name: vi.common.app.name,
+              version: vi.common.app.version,
+            },
             stepDetails: {
               comment,
               network: structuredClone(network, { lossy: true, json: true }),
@@ -206,7 +212,7 @@ class Singleton {
       return Promise.resolve({ ok: true, message: 'Sent to Worker' })
     } catch (err: any) {
       if (this.isDebugEnabled) groupLog({ namespace: 'wws err', items: [err] })
-      
+
       return Promise.reject({ ok: false, message: err?.message || 'No err.message' })
     }
   }

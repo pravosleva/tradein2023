@@ -1,3 +1,5 @@
+console.log('LOADED: dx.worker')
+
 const t0 = performance.now()
 const tsT0 = new Date().getTime()
 const _perfInfo = {
@@ -154,7 +156,7 @@ const isNewNativeEvent = ({ newCode: n, prevCode: p }) => {
               input,
             }
           } = e
-    
+
           if (!!input?.metrixEventType) {
             _perfInfo.tsList.push({
               descr: `c->[w:listener:metrixEventType]->s: ${input.metrixEventType}`,
@@ -173,13 +175,13 @@ const isNewNativeEvent = ({ newCode: n, prevCode: p }) => {
               socket,
               _cb: ({ eventData, _message }) => {
                 const { __eType, ...restData } = eventData
-                  if (dbg.workerEvs.fromClient.isEnabled) {
-                    self.postMessage({
-                      __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA,
-                      message: `[DEBUG] OK: withCustomEmitters _cb: ${_message || 'No _message'} | ${restData.input.metrixEventType} | ${restData.input.stateValue}`,
-                      code: 'ui_message_info',
-                    })
-                  }
+                if (dbg.workerEvs.fromClient.isEnabled) {
+                  self.postMessage({
+                    __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA,
+                    message: `[DEBUG] OK: withCustomEmitters _cb: ${_message || 'No _message'} | ${restData.input.metrixEventType} | ${restData.input.stateValue}`,
+                    code: 'ui_message_info',
+                  })
+                }
               },
             })
             // --
@@ -192,7 +194,7 @@ const isNewNativeEvent = ({ newCode: n, prevCode: p }) => {
           })
         }
         break
-      } 
+      }
     }
 
     // const t1 = performance.now()
@@ -300,7 +302,7 @@ const isNewNativeEvent = ({ newCode: n, prevCode: p }) => {
         self.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA, ...e, code: 'ui_message_danger' })
       },
       // --
-      [NES.Socket.ECustom.DONT_RECONNECT]: function(e) {
+      [NES.Socket.ECustom.DONT_RECONNECT]: function (e) {
         const { yourData: { _wService, ...restYourData }, ...rest } = e
         const dataForMemory = { yourData: restYourData, ...rest }
         _perfInfo.tsList.push({
@@ -311,7 +313,7 @@ const isNewNativeEvent = ({ newCode: n, prevCode: p }) => {
           name: 'Socket will not be reconnected',
         })
         if (dbg.workerEvs.fromServer.isEnabled) log({ label: '🚫 Socket receive custom decline event from server', msgs: [e] })
-        
+
         self.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA, ...e, code: 'socket_must_die' })
         socket.io.reconnectionAttempts(0)
       },

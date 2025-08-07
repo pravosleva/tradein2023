@@ -1,3 +1,5 @@
+console.log('LOADED: dx.shared-worker')
+
 const t0 = performance.now()
 const tsT0 = new Date().getTime()
 const _perfInfo = {
@@ -58,7 +60,7 @@ const isNewNativeEvent = ({ newCode: n, prevCode: p }) => {
 
   if (dbg.swState.isEnabled) log({ label: '⚪ SharedWorker loaded...' })
 
-  self.addEventListener(NES.SharedWorker.Native.ESelf.CONNECT, function(e) {
+  self.addEventListener(NES.SharedWorker.Native.ESelf.CONNECT, function (e) {
     _perfInfo.tsList.push({
       descr: `[sw:self:listener-setup]: init listener for "${NES.SharedWorker.Native.ESelf.CONNECT}"`,
       p: performance.now(),
@@ -69,8 +71,8 @@ const isNewNativeEvent = ({ newCode: n, prevCode: p }) => {
     // port = e.ports[0] // NOTE: or port = e.source
     port = e.source
     connectionsCounter++
-  
-    port.addEventListener(NES.SharedWorker.Native.EPort.MESSAGE, function(e) {
+
+    port.addEventListener(NES.SharedWorker.Native.EPort.MESSAGE, function (e) {
       //  - TODO: New events only
       // if (!!e.data && !!e.data.input && !!e.data.input.stateValue) {
       //   if (_perfInfo.tsList.length > 1 && !!_perfInfo.tsList[_perfInfo.tsList.length - 1].data) {
@@ -169,7 +171,7 @@ const isNewNativeEvent = ({ newCode: n, prevCode: p }) => {
                 input,
               }
             } = e
-      
+
             if (!!input?.metrixEventType) {
               _perfInfo.tsList.push({
                 descr: `c->[sw:port:listener:metrixEventType]->s: ${input.metrixEventType}`,
@@ -207,16 +209,16 @@ const isNewNativeEvent = ({ newCode: n, prevCode: p }) => {
             })
           }
           break
-        } 
+        }
       }
     }, false)
-  
+
     port.start()
     // NOTE: https://developer.mozilla.org/ru/docs/Web/API/SharedWorker
     // необходимо при добавлении обработчиков с помощью addEventListener.
     // При использовании сеттера port.onmessage, данный метод вызывается автоматически, неявно
   }, false)
-  self.addEventListener(NES.SharedWorker.Native.ESelf.ERROR, function(e) {
+  self.addEventListener(NES.SharedWorker.Native.ESelf.ERROR, function (e) {
     _perfInfo.tsList.push({
       descr: `[sw:err]: ${e?.data?.message || 'No e.data.message'}`,
       p: performance.now(),
@@ -327,7 +329,7 @@ const isNewNativeEvent = ({ newCode: n, prevCode: p }) => {
         port.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA, ...e, code: 'ui_message_danger' })
       },
       // --
-      [NES.Socket.ECustom.DONT_RECONNECT]: function(e) {
+      [NES.Socket.ECustom.DONT_RECONNECT]: function (e) {
         const { yourData: { _wService, ...restYourData }, ...rest } = e
         const dataForMemory = { yourData: restYourData, ...rest }
         _perfInfo.tsList.push({
@@ -338,7 +340,7 @@ const isNewNativeEvent = ({ newCode: n, prevCode: p }) => {
           name: 'Socket will not be reconnected',
         })
         if (dbg.workerEvs.fromServer.isEnabled) log({ label: '🚫 Socket receive custom decline event from server', msgs: [e] })
-        
+
         port.postMessage({ __eType: NES.Custom.EType.WORKER_TO_CLIENT_REMOTE_DATA, ...e, code: 'socket_must_die' })
         socket.io.reconnectionAttempts(0)
       },

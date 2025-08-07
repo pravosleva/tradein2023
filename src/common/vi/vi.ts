@@ -12,7 +12,7 @@ import {
 } from '../xstate/stepMachine/types'
 import { mutateObject } from '~/utils/aux-ops'
 import clsx from 'clsx'
-import pkg from '../../../package.json' 
+import pkg from '../../../package.json'
 // import { TItem } from '../components/tailwind'
 import { NViDevtools } from './types'
 
@@ -35,7 +35,10 @@ class Singleton {
   }
   private _common: {
     stateValue: EStep | null;
-    appVersion: string;
+    app: {
+      name: string;
+      version: string;
+    };
     devtools: {
       isUIEnabled: boolean;
       network: {
@@ -64,14 +67,17 @@ class Singleton {
     })
     this._common = proxy({
       stateValue: null,
-      appVersion: pkg.version,
+      app: {
+        name: pkg.name,
+        version: pkg.version,
+      },
       devtools: {
         isUIEnabled: false,
         network: {
           // -- NOTE: Could be disabled by developer upon app initialization (you can set this value to 0)
-        __reportsByUserLimit: 1,
-        isReportsByUserDisabled: false,
-        // --
+          __reportsByUserLimit: 1,
+          isReportsByUserDisabled: false,
+          // --
           socket: {
             // --- NOTE: Dont touch!
             __isConnectionIgnoredForUI: false,
@@ -195,7 +201,7 @@ class Singleton {
     this.setAppMode2(null)
   }
   */
-  public setUserDataResponse ({ res, reqState }: {
+  public setUserDataResponse({ res, reqState }: {
     res: NSP.TUserDataResponse | null;
     reqState: 'stopped' | 'pending' | 'success' | 'error';
   }) {
@@ -218,7 +224,7 @@ class Singleton {
     // TODO?: isReady is unnecessary yet...
   }
   */
-  public setImeiStepResponse ({ res, reqState }: {
+  public setImeiStepResponse({ res, reqState }: {
     res: NSP.TImeiResponse | null;
     reqState: 'stopped' | 'pending' | 'success' | 'error';
   }) {
@@ -249,17 +255,17 @@ class Singleton {
     this._stepMachineState.checkFMIP.result.state = reqState
   }
   */
-  public setPhotoStatusResponse ({ res, reqState }: {
+  public setPhotoStatusResponse({ res, reqState }: {
     res: NSP.TPhotoStatusResponse | null;
     reqState: 'stopped' | 'pending' | 'success' | 'error';
   }) {
     this._stepMachineState.photoStatus.response = res
     this._stepMachineState.photoStatus.result.state = reqState
   }
-  public setContractStepResponse (res: NSP.TStandartMinimalResponse | null) {
+  public setContractStepResponse(res: NSP.TStandartMinimalResponse | null) {
     this._stepMachineState.contract.response = res
   }
-  public setPhoneCheckResponse (res: NSP.TCheckPhoneResponse | null) {
+  public setPhoneCheckResponse(res: NSP.TCheckPhoneResponse | null) {
     this._stepMachineState.checkPhone.response = res
   }
   public resetState() {
